@@ -1,5 +1,6 @@
 # OpenShade
-OpenShade is a C#/WPF tool to modify HLSL shader files in Prepar3D v4.
+Higly Experimental and WIP, use at your own risk!
+OpenShade is a C#/WPF tool to modify HLSL shader files in Prepar3D v5.
 
 **The software is no longer developed, it has been superseded by TomatoShade (better and free alternative) available [here](https://live-cockpits.weebly.com/uploads/1/1/9/4/119425006/tomatoshade.zip).**
 
