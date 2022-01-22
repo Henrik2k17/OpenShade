@@ -57,7 +57,7 @@ namespace OpenShade
         IniFile loadedPreset;
 
         // TODO: put this in a struct somewhere
-        public static string cloudText, generalText, terrainText, funclibText, terrainFXHText, shadowText, HDRText, PBRText;
+        public static string cloudText, generalText, terrainText, funclibText, terrainFXHText, shadowText, HDRText;
 
         public MainWindow()
         {
@@ -78,10 +78,20 @@ namespace OpenShade
             ClearChangesInfo(postProcesses);
 
             Tweak_List.ItemsSource = tweaks;
+            CustomTweak_List.ItemsSource = customTweaks;
+            PostProcess_List.ItemsSource = postProcesses;
 
             CollectionView tweaksView = (CollectionView)CollectionViewSource.GetDefaultView(Tweak_List.ItemsSource);
             PropertyGroupDescription groupDescription = new PropertyGroupDescription("category");
             tweaksView.GroupDescriptions.Add(groupDescription);
+
+            CustomTweakShaderFile_ComboBox.Items.Add(FileIO.cloudFile);
+            CustomTweakShaderFile_ComboBox.Items.Add(FileIO.generalFile);
+            CustomTweakShaderFile_ComboBox.Items.Add(FileIO.terrainFXHFile);
+            CustomTweakShaderFile_ComboBox.Items.Add(FileIO.funclibFile);
+            CustomTweakShaderFile_ComboBox.Items.Add(FileIO.terrainFile);
+            CustomTweakShaderFile_ComboBox.Items.Add(FileIO.shadowFile);
+            CustomTweakShaderFile_ComboBox.Items.Add(FileIO.HDRFile);
 
             fileData = new FileIO(this);
 
@@ -89,6 +99,7 @@ namespace OpenShade
             customTweaksHash = HelperFunctions.GetDictHashCode(customTweaks);
             postProcessesHash = HelperFunctions.GetDictHashCode(postProcesses);
             commentHash = comment;
+
 
             // Shaders files
             P3DDirectory = (string)Registry.GetValue(@"HKEY_CURRENT_USER\Software\Lockheed Martin\Prepar3D v5", "AppPath", null);
@@ -105,11 +116,10 @@ namespace OpenShade
             P3DMain_TextBox.Text = P3DDirectory;
 
             shaderDirectory = P3DDirectory + "ShadersHLSL\\";
-            backupDirectory = currentDirectory + "\\Backup Shaders\\"; // Default directory        
 
             if (!Directory.Exists(shaderDirectory))
             {
-                Log(ErrorType.Error, "P3D shader directory not found!");
+                Log(ErrorType.Error, "P3D shader directory not found");
                 ChangeMenuBarState(false);
                 return;
             }
@@ -117,11 +127,13 @@ namespace OpenShade
 
             if (!Directory.Exists(cacheDirectory))
             {
-                Log(ErrorType.Error, "Shader cache directory not found, please launch P3D first!");
+                Log(ErrorType.Error, "Shader cache directory not found");
                 ChangeMenuBarState(false);
                 return;
             }
             ShaderCache_TextBox.Text = cacheDirectory;
+
+            backupDirectory = currentDirectory + "\\Backup Shaders\\"; // Default directory           
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -278,6 +290,108 @@ namespace OpenShade
         private void TweakList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             List_SelectionChanged(Tweak_List, TweakStack, TweakClearStack, TweakTitleTextblock, TweakDescriptionTextblock);
+        }
+        #endregion
+
+        #region CustomTweaks
+        private void CustomTweakList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (CustomTweak_List.SelectedItem != null)
+            {
+                CustomTweaks_Grid.Visibility = Visibility.Visible;
+
+                CustomTweak selectedTweak = (CustomTweak)CustomTweak_List.SelectedItem;
+                CustomTweakName_TextBox.Text = selectedTweak.name;
+                CustomTweakShaderFile_ComboBox.SelectedValue = selectedTweak.shaderFile;
+
+                CustomTweakOldCode_RichTextBox.Document.Blocks.Clear();
+                CustomTweakOldCode_RichTextBox.Document.Blocks.Add(new Paragraph(new Run(selectedTweak.oldCode)));
+
+                CustomTweakNewCode_RichTextBox.Document.Blocks.Clear();
+                CustomTweakNewCode_RichTextBox.Document.Blocks.Add(new Paragraph(new Run(selectedTweak.newCode)));
+            }
+            else
+            {
+                CustomTweaks_Grid.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void AddCustomTweak(object sender, RoutedEventArgs e)
+        {
+            if (AddCustomTweak_TextBox.Text != "")
+            {
+                customTweaks.Add(new CustomTweak("CUSTOM_TWEAK" + (customTweaks.Count).ToString(), AddCustomTweak_TextBox.Text, FileIO.cloudFile, customTweaks.Count, "", "", false));
+                CustomTweak_List.SelectedIndex = customTweaks.Count - 1;
+                CustomTweak_List.ScrollIntoView(CustomTweak_List.SelectedItem);
+                AddCustomTweak_TextBox.Text = "";
+
+                CustomTweak_List.Items.Refresh();
+            }
+        }
+
+        private void DeleteCustomTweak(object sender, RoutedEventArgs e)
+        {
+            if (CustomTweak_List.SelectedItem != null)
+            {
+                CustomTweak selectedTweak = (CustomTweak)CustomTweak_List.SelectedItem;
+                var item = customTweaks.First(p => p == selectedTweak); // Not the best
+                customTweaks.Remove(item);
+                CustomTweak_List.Items.Refresh();
+            }
+        }
+
+        private void ShaderFile_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Debug.Assert(CustomTweak_List.SelectedItem != null);
+            Debug.Assert(CustomTweakShaderFile_ComboBox.SelectedItem != null);
+
+            CustomTweak selectedTweak = (CustomTweak)CustomTweak_List.SelectedItem;
+            selectedTweak.shaderFile = (string)CustomTweakShaderFile_ComboBox.SelectedItem;
+        }            
+        #endregion
+
+        #region PostProcesses        
+        private void PostProcessList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            List_SelectionChanged(PostProcess_List, PostProcessStack, PostClearStack, PostTitleTextblock, PostDescriptionTextblock);
+        }
+
+        // DRAG & DROP ----------------------------------------------------
+        private void MouseMoveEventHandler(object sender, MouseEventArgs e)
+        {
+            if (sender is ListViewItem && e.LeftButton == MouseButtonState.Pressed)
+            {
+                ListViewItem draggedItem = sender as ListViewItem;
+                DragDrop.DoDragDrop(draggedItem, draggedItem.DataContext, DragDropEffects.Move);
+                draggedItem.IsSelected = true;
+            }
+
+        }
+
+        private void DropEventHandler(object sender, DragEventArgs e)
+        {
+            PostProcess droppedData = e.Data.GetData(typeof(PostProcess)) as PostProcess;
+            PostProcess target = ((ListViewItem)sender).DataContext as PostProcess;
+
+            int removedIdx = PostProcess_List.Items.IndexOf(droppedData);
+            int targetIdx = PostProcess_List.Items.IndexOf(target);
+
+            if (removedIdx < targetIdx)
+            {
+                postProcesses.Insert(targetIdx + 1, droppedData);
+                postProcesses.RemoveAt(removedIdx);
+            }
+            else
+            {
+                int remIdx = removedIdx + 1;
+                if (postProcesses.Count + 1 > remIdx)
+                {
+                    postProcesses.Insert(targetIdx, droppedData);
+                    postProcesses.RemoveAt(remIdx);
+                }
+            }
+
+            PostProcess_List.Items.Refresh();
         }
         #endregion
 
@@ -497,6 +611,7 @@ namespace OpenShade
             Parameter param = null;
 
             if (currentTab.Name == "Tweak_Tab") { param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == checkbox.Uid); }
+            if (currentTab.Name == "Post_Tab") { param = ((PostProcess)PostProcess_List.SelectedItem).parameters.First(p => p.id == checkbox.Uid); }
                        
             if (checkbox.IsChecked == true)
             {
@@ -510,6 +625,7 @@ namespace OpenShade
             // TODO: This is terrible code, but it simplifies things for now...
             TextBox tb = null;
             if (currentTab.Name == "Tweak_Tab") { tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox"); }
+            if (currentTab.Name == "Post_Tab") { tb = (TextBox)HelperFunctions.FindUid(PostProcessStack, param.id + "-changeTxtbox"); }
             tb.Visibility = param.hasChanged ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -520,12 +636,15 @@ namespace OpenShade
             Parameter param = null;
 
             if (currentTab.Name == "Tweak_Tab") { param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == txtBox.Uid); }
+            if (currentTab.Name == "Post_Tab") { param = ((PostProcess)PostProcess_List.SelectedItem).parameters.First(p => p.id == txtBox.Uid); }
+            if (currentTab.Name == "Custom_Tab") { ((CustomTweak)CustomTweak_List.SelectedItem).name = txtBox.Text; } // NOTE: Maybe unify this to behave like tweaks and post-processes
 
             if (currentTab.Name != "Custom_Tab") {                
                 param.value = txtBox.Text;
 
                 TextBox tb = null;
                 if (currentTab.Name == "Tweak_Tab") { tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox"); }
+                if (currentTab.Name == "Post_Tab") { tb = (TextBox)HelperFunctions.FindUid(PostProcessStack, param.id + "-changeTxtbox"); }
                 tb.Visibility = param.hasChanged ? Visibility.Visible : Visibility.Collapsed;
             }
         }
@@ -536,13 +655,15 @@ namespace OpenShade
             TabItem currentTab = HelperFunctions.FindAncestorOrSelf<TabItem>(spinner);
             Parameter param = null;
 
-            if (currentTab.Name == "Tweak_Tab") { param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == spinner.Uid); }    
+            if (currentTab.Name == "Tweak_Tab") { param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == spinner.Uid); }
+            if (currentTab.Name == "Post_Tab") { param = ((PostProcess)PostProcess_List.SelectedItem).parameters.First(p => p.id == spinner.Uid); }            
 
             if (currentTab.Name != "Custom_Tab") {                
                 param.value = spinner.Value.ToString();
 
                 TextBox tb = null;
                 if (currentTab.Name == "Tweak_Tab") { tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox"); }
+                if (currentTab.Name == "Post_Tab") { tb = (TextBox)HelperFunctions.FindUid(PostProcessStack, param.id + "-changeTxtbox"); }
                 tb.Visibility = param.hasChanged ? Visibility.Visible : Visibility.Collapsed;
             }
         }
@@ -588,6 +709,7 @@ namespace OpenShade
             Parameter param = null;
 
             if (currentTab.Name == "Tweak_Tab") { param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == uid); }
+            if (currentTab.Name == "Post_Tab") { param = ((PostProcess)PostProcess_List.SelectedItem).parameters.First(p => p.id == uid); }
             
             string oldR = param.value.Split(',')[0];
             string oldG = param.value.Split(',')[1];
@@ -608,6 +730,7 @@ namespace OpenShade
 
             TextBox tb = null;
             if (currentTab.Name == "Tweak_Tab") { tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox"); }
+            if (currentTab.Name == "Post_Tab") { tb = (TextBox)HelperFunctions.FindUid(PostProcessStack, param.id + "-changeTxtbox"); }
             tb.Visibility = param.hasChanged ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -618,12 +741,15 @@ namespace OpenShade
             Parameter param = null;
 
             if (currentTab.Name == "Tweak_Tab") { param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == combo.Uid); }
+            if (currentTab.Name == "Post_Tab") { param = ((PostProcess)PostProcess_List.SelectedItem).parameters.First(p => p.id == combo.Uid); }
+            if (currentTab.Name == "Custom_Tab") { ((CustomTweak)CustomTweak_List.SelectedItem).name = combo.Text; }
 
             if (currentTab.Name != "Custom_Tab") {                
                 param.value = combo.SelectedIndex.ToString();
 
                 TextBox tb = null;
                 if (currentTab.Name == "Tweak_Tab") { tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox"); }
+                if (currentTab.Name == "Post_Tab") { tb = (TextBox)HelperFunctions.FindUid(PostProcessStack, param.id + "-changeTxtbox"); }
                 tb.Visibility = param.hasChanged ? Visibility.Visible : Visibility.Collapsed;
             }
         }
@@ -635,9 +761,11 @@ namespace OpenShade
             switch (rich.Name)
             {
                 case "CustomTweakOldCode_RichTextBox":
+                    ((CustomTweak)CustomTweak_List.SelectedItem).oldCode = new TextRange(CustomTweakOldCode_RichTextBox.Document.ContentStart, CustomTweakOldCode_RichTextBox.Document.ContentEnd).Text;
                     break;
 
                 case "CustomTweakNewCode_RichTextBox":
+                    ((CustomTweak)CustomTweak_List.SelectedItem).newCode = new TextRange(CustomTweakNewCode_RichTextBox.Document.ContentStart, CustomTweakNewCode_RichTextBox.Document.ContentEnd).Text;
                     break;
             }
         }
@@ -650,6 +778,7 @@ namespace OpenShade
             ListView currentList = null;
 
             if (currentTab.Name == "Tweak_Tab") { currentList = Tweak_List; }
+            if (currentTab.Name == "Post_Tab") { currentList = PostProcess_List; }
 
             BaseTweak selectedEffect = (BaseTweak)currentList.SelectedItem;
 
@@ -659,6 +788,7 @@ namespace OpenShade
             }
 
             if (currentTab.Name == "Tweak_Tab") { List_SelectionChanged(Tweak_List, TweakStack, TweakClearStack, TweakTitleTextblock, TweakDescriptionTextblock); }
+            if (currentTab.Name == "Post_Tab") { List_SelectionChanged(PostProcess_List, PostProcessStack, PostClearStack, PostTitleTextblock, PostDescriptionTextblock); }
         }
 
         private void ResetParametersPreset_Click(object sender, EventArgs e)
@@ -668,7 +798,8 @@ namespace OpenShade
 
             ListView currentList = null;
 
-            if (currentTab.Name == "Tweak_Tab") { currentList = Tweak_List; }           
+            if (currentTab.Name == "Tweak_Tab") { currentList = Tweak_List; }
+            if (currentTab.Name == "Post_Tab") { currentList = PostProcess_List; }            
 
             BaseTweak selectedEffect = (BaseTweak)currentList.SelectedItem;
 
@@ -677,7 +808,8 @@ namespace OpenShade
                 param.value = param.oldValue;
             }
 
-            if (currentTab.Name == "Tweak_Tab") { List_SelectionChanged(Tweak_List, TweakStack, TweakClearStack, TweakTitleTextblock, TweakDescriptionTextblock); }            
+            if (currentTab.Name == "Tweak_Tab") { List_SelectionChanged(Tweak_List, TweakStack, TweakClearStack, TweakTitleTextblock, TweakDescriptionTextblock); }
+            if (currentTab.Name == "Post_Tab") { List_SelectionChanged(PostProcess_List, PostProcessStack, PostClearStack, PostTitleTextblock, PostDescriptionTextblock); }            
         }
         #endregion
 
@@ -793,8 +925,11 @@ namespace OpenShade
             commentHash = comment;
 
             List_SelectionChanged(Tweak_List, TweakStack, TweakClearStack, TweakTitleTextblock, TweakDescriptionTextblock);
+            List_SelectionChanged(PostProcess_List, PostProcessStack, PostClearStack, PostTitleTextblock, PostDescriptionTextblock);
 
-            Tweak_List.Items.Refresh();                 
+            Tweak_List.Items.Refresh();
+            PostProcess_List.Items.Refresh();
+            CustomTweak_List.Items.Refresh();                     
         }
 
         private void SavePreset_Click(object sender, RoutedEventArgs e)
@@ -891,50 +1026,6 @@ namespace OpenShade
                     switch (tweak.name)
                     {
 
-                        #region EnhancedAtmospherics
-
-                        case "EnhancedAtmosphericsAtmosphere":
-
-
-                            /*
-                                                        generalText = generalText.AddAfter(ref success, "ToReplace;", "\r\n New Code1" +
-"                                                                                          \r\n New Code2" +
-"                                                                                          \r\n Last Line");
-                            */
-
-
-                            //Fog Gamma Correct
-                            currentFile = FileIO.generalFile;
-                            generalText = generalText.AddAfter(ref success, "ToReplace;", "\r\n New Code1" +
-"                                                                                          \r\n New Code2" +
-"                                                                                          \r\n Last Line");
-                            break;
-
-                        case "EnhancedAtmosphericsClouds":
-
-
-                            /*
-                                                        generalText = generalText.AddAfter(ref success, "ToReplace;", "\r\n New Code1" +
-"                                                                                          \r\n New Code2" +
-"                                                                                          \r\n Last Line");
-                            */
-
-
-                            //Fog Gamma Correct
-                            currentFile = FileIO.generalFile;
-                            generalText = generalText.AddAfter(ref success, "ToReplace;", "\r\n New Code1" +
-"                                                                                          \r\n New Code2" +
-"                                                                                          \r\n Last Line");
-                            break;
-
-
-
-                        #endregion
-
-
-
-
-
                         #region Clouds       
                         case "'No popcorn' clouds":
                             currentFile = FileIO.cloudFile; // I really don't like this
@@ -943,7 +1034,7 @@ namespace OpenShade
 const float fExp = saturate(exp(-cloudDistance * cloudDistance * {tweak.parameters[0].value} ));
 fIntensity = lerp(0.36f, fIntensity, fExp);");
                             
-                            cloudText = cloudText.AddAfter(ref success, "diffuse = saturate(float4(colorIntensity.rgb + (0.33f * saturate(colorIntensity.rgb - 1)), colorIntensity.a));", "\r\nif (diffuse.a > " + tweak.parameters[1].value.ToString() + ") { diffuse.a = lerp(" + tweak.parameters[1].value.ToString() + ", diffuse.a, fExp); }");
+                            cloudText = cloudText.AddAfter(ref success, "diffuse = saturate(float4(.85f * colorIntensity.rgb + (0.33f * saturate(colorIntensity.rgb - 1)), colorIntensity.a));", "\r\nif (diffuse.a > " + tweak.parameters[1].value.ToString() + ") { diffuse.a = lerp(" + tweak.parameters[1].value.ToString() + ", diffuse.a, fExp); }");
                             cloudText = cloudText.AddAfter(ref success, "GetPointDiffuse(Out.diffuse[i], position, spriteCenter.xyz", ", cloudDistance");
                             cloudText = cloudText.AddAfter(ref success, "GetPointDiffuse( Out.diffuse[i], position, spriteCenter.xyz", ", cloudDistance");
                             break;
@@ -962,7 +1053,7 @@ fIntensity = lerp(0.36f, fIntensity, fExp);");
                         case "Cloud light scattering":
                             currentFile = FileIO.cloudFile;
                             cloudText = cloudText.CommentOut(ref success, "if (fIntensity < -cb_mMedianLine)", "    fIntensity = clamp(fIntensity, 0, 1);", false);
-                            cloudText = cloudText.AddBefore(ref success, "/*if (fIntensity < -cb_mMedianLine)", $@"const float fScatter = {tweak.parameters[0].value} + cb_mDayNightInterpolant + (cb_mView.fPrecipitationLevel*0.1);
+                            cloudText = cloudText.AddBefore(ref success, "/*if (fIntensity < -cb_mMedianLine)", $@"const float fScatter = {tweak.parameters[0].value} + cb_mDayNightInterpolant + (cb_fPrecipitationLevel*0.1);
 fIntensity =  saturate(fScatter * fIntensity + {tweak.parameters[1].value});
 ");
 
@@ -998,12 +1089,12 @@ fIntensity =  saturate(fScatter * fIntensity + {tweak.parameters[1].value});
 
                         case "Reduce cloud brightness at dawn/dusk/night":
                             currentFile = FileIO.cloudFile;
-                            cloudText = cloudText.AddBefore(ref success, "    //Add fast aprox scatter to diffuse.", "\r\n    float fCumulusDusk = 1 + saturate(fColor.g/(cb_View.mFogColor.g + 0.00001) - 2);\r\n    fColor /= fCumulusDusk;\r\n");
+                            cloudText = cloudText.AddAfter(ref success, "float3 fColor = fIntensity * cb_mCloudDirectional.rgb + cb_mCloudAmbient.rgb;", "\r\n    float fCumulusDusk = 1 + saturate(fColor.g/(cb_mFogColor.g + 0.00001) - 2);\r\n    fColor /= fCumulusDusk;\r\n");
                             break;
 
                         case "Reduce top layer cloud brightness at dawn/dusk/night":
                             currentFile = FileIO.generalFile;
-                            generalText = generalText.AddAfter(ref success, "    #endif //SHD_FADE_AT_NEAR_CLIP", "\r\n \r\n if (cb_mObjectType == (uint)3)\r\n {\r\n    float fCirrusDusk = 1 + saturate(cColor.g / (cb_View.mFogColor.g + 0.00001) - 2);\r\n     cColor.rgb /= fCirrusDusk;\r\n  }\r\n");
+                            generalText = generalText.AddAfter(ref success, "#endif //SHD_ALPHA_TEST", "\r\nif (cb_mObjectType == (uint)3)\r\n {\r\n      float fCirrusDusk = 1 + saturate(cColor.g / (cb_mFogColor.g + 0.00001) - 2);\r\n     cColor.rgb /= fCirrusDusk;\r\n  }\r\n", 2);
                             break;
 
                         case "Cloud puffs width and height scaling":
@@ -1020,8 +1111,8 @@ fIntensity =  saturate(fScatter * fIntensity + {tweak.parameters[1].value});
                             {
                                 currentFile = FileIO.funclibFile;
 
-                                funclibText = funclibText.AddBefore(ref success, "float3 DirectionalLighting",
-                                    $@"float3 DirectionalLightingTweak(const float3 vNormalWS, const float shadowContrib, float tweak1, float tweak2, float tweak3, float tweak4,
+                                funclibText = funclibText.AddBefore(ref success, "void DirectionalLighting",
+                                    $@"void DirectionalLightingTweak(const float3 vNormalWS, const float shadowContrib, float tweak1, float tweak2, float tweak3, float tweak4,
     out float3 diffuseAndAmbient)
 {{
 #if defined(SHD_VERTICAL_NORMAL)
@@ -1032,8 +1123,8 @@ fIntensity =  saturate(fScatter * fIntensity + {tweak.parameters[1].value});
     const float fDotMoon = saturate(dot(vNormalWS, normalize(cb_mMoon.mDirection)));
 #endif
 
-    diffuseAndAmbient = saturate((cb_mCombinedAmbient.xyz * tweak1 + (shadowContrib * (cb_mSun.mDiffuse.xyz  * tweak2 * fDotSun))) +
-                        (cb_mCombinedAmbient.xyz * tweak3 + (shadowContrib * (cb_mMoon.mDiffuse.xyz * tweak4  * fDotMoon))));
+    diffuseAndAmbient = saturate((cb_mSun.mAmbient.xyz * tweak1 + (shadowContrib * (cb_mSun.mDiffuse.xyz  * tweak2 * fDotSun))) +
+                        (cb_mMoon.mAmbient.xyz * tweak3 + (shadowContrib * (cb_mMoon.mDiffuse.xyz * tweak4  * fDotMoon))));
 }}
 ");
 
@@ -1046,12 +1137,12 @@ fIntensity =  saturate(fScatter * fIntensity + {tweak.parameters[1].value});
                                     aircraftLighting = "&&& ADD THE AIRCRAFT LIGHTING TWEAK HERE &&&";
                                 }
 
-                                generalText = generalText.ReplaceAll(ref success, "directionalDiffuse = DirectionalLighting(vNormalWS, 1.0f);",
+                                generalText = generalText.ReplaceAll(ref success, "DirectionalLighting(vNormalWS, shadowContrib, directionalDiffuse);",
                                     $@"if (cb_mObjectType != 19) 
                     DirectionalLightingTweak(vNormalWS, shadowContrib, {tweak.parameters[0].value}, {tweak.parameters[1].value}, {tweak.parameters[2].value}, {tweak.parameters[3].value}, directionalDiffuse);
                 {aircraftLighting}                
                 else
-                    directionalDiffuse = DirectionalLighting(vNormalWS, 1.0f);
+                    DirectionalLighting(vNormalWS, shadowContrib, directionalDiffuse);
 "
                                 );
 
@@ -1065,8 +1156,8 @@ fIntensity =  saturate(fScatter * fIntensity + {tweak.parameters[1].value});
                                 {
                                     currentFile = FileIO.funclibFile;
 
-                                    funclibText = funclibText.AddBefore(ref success, "float3 DirectionalLighting",
-                                        $@"float3 DirectionalLightingTweak(const float3 vNormalWS, const float shadowContrib, float tweak1, float tweak2, float tweak3, float tweak4,
+                                    funclibText = funclibText.AddBefore(ref success, "void DirectionalLighting",
+                                        $@"void DirectionalLightingTweak(const float3 vNormalWS, const float shadowContrib, float tweak1, float tweak2, float tweak3, float tweak4,
     out float3 diffuseAndAmbient)
 {{
 #if defined(SHD_VERTICAL_NORMAL)
@@ -1077,8 +1168,8 @@ fIntensity =  saturate(fScatter * fIntensity + {tweak.parameters[1].value});
     const float fDotMoon = saturate(dot(vNormalWS, normalize(cb_mMoon.mDirection)));
 #endif
 
-    diffuseAndAmbient = saturate((cb_mCombinedAmbient.xyz * tweak1 + (shadowContrib * (cb_mSun.mDiffuse.xyz  * tweak2 * fDotSun))) +
-                        (cb_mCombinedAmbient.xyz * tweak3 + (shadowContrib * (cb_mMoon.mDiffuse.xyz * tweak4  * fDotMoon))));
+    diffuseAndAmbient = saturate((cb_mSun.mAmbient.xyz * tweak1 + (shadowContrib * (cb_mSun.mDiffuse.xyz  * tweak2 * fDotSun))) +
+                        (cb_mMoon.mAmbient.xyz * tweak3 + (shadowContrib * (cb_mMoon.mDiffuse.xyz * tweak4  * fDotMoon))));
 }}
 ");
                                 }
@@ -1086,10 +1177,10 @@ fIntensity =  saturate(fScatter * fIntensity + {tweak.parameters[1].value});
 
                                 currentFile = FileIO.generalFile;
 
-                                string replaceText = "directionalDiffuse = DirectionalLighting(vNormalWS, 1.0f);";
+                                string replaceText = "DirectionalLighting(vNormalWS, shadowContrib, directionalDiffuse);";
                                 string elseText = "";
                                 string finalText = @"else
-			  directionalDiffuse = DirectionalLighting(vNormalWS, 1.0f);";
+			  DirectionalLighting(vNormalWS, shadowContrib, directionalDiffuse);";
 
                                 if (generalText.IndexOf("&&& ADD THE AIRCRAFT LIGHTING TWEAK HERE &&&") >= 0)
                                 {
@@ -1104,7 +1195,7 @@ fIntensity =  saturate(fScatter * fIntensity + {tweak.parameters[1].value});
 
              $@"#if !defined(PS_NEEDS_TANSPACE)
 			    {elseText}if (cb_mObjectType == 19) 
-                    directionalDiffuse = DirectionalLighting(vNormalWS, 1.0f);                       
+                    DirectionalLighting(vNormalWS, shadowContrib, directionalDiffuse);                       
 			    #else
 			    {elseText}if (cb_mObjectType == 19)
 			      DirectionalLightingTweak(vNormalWS, shadowContrib, {tweak.parameters[0].value}, {tweak.parameters[1].value}, {tweak.parameters[2].value}, {tweak.parameters[3].value}, directionalDiffuse);
@@ -1132,8 +1223,8 @@ fIntensity =  saturate(fScatter * fIntensity + {tweak.parameters[1].value});
                                 {
                                     currentFile = FileIO.funclibFile;
 
-                                    funclibText = funclibText.AddBefore(ref success, "float3 DirectionalLighting",
-                                        $@"float3 DirectionalLightingTweak(const float3 vNormalWS, const float shadowContrib, float tweak1, float tweak2, float tweak3, float tweak4,
+                                    funclibText = funclibText.AddBefore(ref success, "void DirectionalLighting",
+                                        $@"void DirectionalLightingTweak(const float3 vNormalWS, const float shadowContrib, float tweak1, float tweak2, float tweak3, float tweak4,
     out float3 diffuseAndAmbient)
 {{
 #if defined(SHD_VERTICAL_NORMAL)
@@ -1144,8 +1235,8 @@ fIntensity =  saturate(fScatter * fIntensity + {tweak.parameters[1].value});
     const float fDotMoon = saturate(dot(vNormalWS, normalize(cb_mMoon.mDirection)));
 #endif
 
-    diffuseAndAmbient = saturate((cb_mCombinedAmbient.xyz * tweak1 + (shadowContrib * (cb_mSun.mDiffuse.xyz  * tweak2 * fDotSun))) +
-                        (cb_mCombinedAmbient.xyz * tweak3 + (shadowContrib * (cb_mMoon.mDiffuse.xyz * tweak4  * fDotMoon))));
+    diffuseAndAmbient = saturate((cb_mSun.mAmbient.xyz * tweak1 + (shadowContrib * (cb_mSun.mDiffuse.xyz  * tweak2 * fDotSun))) +
+                        (cb_mMoon.mAmbient.xyz * tweak3 + (shadowContrib * (cb_mMoon.mDiffuse.xyz * tweak4  * fDotMoon))));
 }}
 ");
                                 }
@@ -1153,10 +1244,10 @@ fIntensity =  saturate(fScatter * fIntensity + {tweak.parameters[1].value});
 
                                 currentFile = FileIO.generalFile;
 
-                                string replaceText = "directionalDiffuse = DirectionalLighting(vNormalWS, 1.0f);";
+                                string replaceText = "DirectionalLighting(vNormalWS, shadowContrib, directionalDiffuse);";
                                 string elseText = "";
                                 string finalText = @"else
-			  directionalDiffuse = DirectionalLighting(vNormalWS, 1.0f);";
+			  DirectionalLighting(vNormalWS, shadowContrib, directionalDiffuse);";
 
                                 if (generalText.IndexOf("&&& ADD THE AIRCRAFT LIGHTING TWEAK HERE &&&") >= 0)
                                 {
@@ -1181,7 +1272,7 @@ fIntensity =  saturate(fScatter * fIntensity + {tweak.parameters[1].value});
                     DirectionalLightingTweak(vNormalWS, shadowContrib, {tweak.parameters[0].value}, {tweak.parameters[1].value}, {tweak.parameters[2].value}, {tweak.parameters[3].value}, directionalDiffuse);                   
 			    #else
 			    {elseText}if (cb_mObjectType == 19)
-			      directionalDiffuse = DirectionalLighting(vNormalWS, 1.0f);
+			      DirectionalLighting(vNormalWS, shadowContrib, directionalDiffuse);
 			    #endif
 			{finalText}");
 
@@ -1256,7 +1347,7 @@ fIntensity =  saturate(fScatter * fIntensity + {tweak.parameters[1].value});
                                 rayleighString = "&&& ADD THE RAYLEIGH TWEAK HERE &&&";
                             }
 
-                            funclibText = funclibText.AddBefore(ref success, "return lerp(cFog, cColor, saturate(exp(-fDistanceSquared*fFogDensitySquared)));",
+                            funclibText = funclibText.AddBefore(ref success, "return lerp(cFog, cColor, saturate(exp(-fDistance*fDistance*fFogDensitySquared)));",
 $@"#if !defined(SHD_VOLUMETRIC_FOG)
 float3 FinalColor = cColor;
 if ((cb_mObjectType != (uint)1) && (cb_mObjectType != (uint)3) && (cb_mObjectType != (uint)21) && (cb_mObjectType != (uint)19))
@@ -1271,7 +1362,7 @@ if ((cb_mObjectType != (uint)1) && (cb_mObjectType != (uint)3) && (cb_mObjectTyp
                             if (tweak.parameters[2].value == "1")
                             {
                                 // NOTE: Careful with this, the search string has a variable in it...
-                                funclibText = funclibText.ReplaceAll(ref success, "FinalColor.rgb, saturate(exp(-distQuared * " + tweak.parameters[1].value.ToString() + "))", "FinalColor.rgb, saturate(exp(-distQuared * " + tweak.parameters[1].value.ToString() + " * saturate(1.0f - cb_View.mAltitude/15000)))");
+                                funclibText = funclibText.ReplaceAll(ref success, "FinalColor.rgb, saturate(exp(-distQuared * " + tweak.parameters[1].value.ToString() + "))", "FinalColor.rgb, saturate(exp(-distQuared * " + tweak.parameters[1].value.ToString() + " * saturate(1.0f - cb_Altitude/15000)))");
                             }
 
                             break;
@@ -1290,12 +1381,12 @@ if ((cb_mObjectType != (uint)1) && (cb_mObjectType != (uint)3) && (cb_mObjectTyp
                                     funclibText = funclibText.AddBefore(ref success, "return lerp(cFog, cColor, saturate(exp(-fDistance*fDistance*fFogDensitySquared)));", "#if !defined(SHD_VOLUMETRIC_FOG)\r\n     float3 FinalColor = cColor;\r\n  if ((cb_mObjectType != (uint)1) && (cb_mObjectType != (uint)21) && (cb_mObjectType != (uint)19))\r\n   {\r\n  const float DensFactor = " + tweak.parameters[1].value.ToString() + ";\r\n  const float DistK = " + tweak.parameters[0].value.ToString() + " * (1 - saturate(exp(-fDistance * fDistance * DensFactor))) * saturate(cb_mSun.mDiffuse.g - 0.15);\r\n    FinalColor.rgb = FinalColor.rgb * (1 - float3(0.00, 0.055, 0.111) * DistK) + float3(0.00, 0.055, 0.111) * DistK;\r\n  }\r\n  return lerp(cFog, FinalColor, saturate(exp(-fDistance * fDistance * fFogDensitySquared)));\r\n #endif\r\n");
                                 }
 
-                                funclibText = funclibText.AddBefore(ref success, "        foggedColor.rgb += fogBlend[0] * (first.cb_mFogColor.rgb + ambient);", "\r\n  if ((cb_mObjectType != (uint)1) && (cb_mObjectType != (uint)21) && (cb_mObjectType != (uint)19))\r\n  {\r\n    const float DensFactor = " + tweak.parameters[1].value.ToString() + ";\r\n    const float DistK = " + tweak.parameters[0].value.ToString() + " * (1 - saturate(exp(-distQuared * DensFactor))) * saturate(cb_mSun.mDiffuse.g - 0.15);\r\n   FinalColor.rgb = FinalColor.rgb * (1 - float3(0.00, " + tweak.parameters[4].value.ToString() + ", " + tweak.parameters[5].value.ToString() + ") * DistK) + float3(0.00, " + tweak.parameters[4].value.ToString() + ", " + tweak.parameters[5].value.ToString() + ") * DistK;\r\n  }");
+                                funclibText = funclibText.AddAfter(ref success, "float3 layerEnableFade = float3(1, 1, 1);", "\r\n#if !defined(SHD_ADDITIVE) && !defined(SHD_MULTIPLICATIVE)\r\n  if ((cb_mObjectType != (uint)1) && (cb_mObjectType != (uint)21) && (cb_mObjectType != (uint)19))\r\n  {\r\n    const float DensFactor = " + tweak.parameters[1].value.ToString() + ";\r\n    const float DistK = " + tweak.parameters[0].value.ToString() + " * (1 - saturate(exp(-distQuared * DensFactor))) * saturate(cb_mSun.mDiffuse.g - 0.15);\r\n   FinalColor.rgb = FinalColor.rgb * (1 - float3(0.00, " + tweak.parameters[4].value.ToString() + ", " + tweak.parameters[5].value.ToString() + ") * DistK) + float3(0.00, " + tweak.parameters[4].value.ToString() + ", " + tweak.parameters[5].value.ToString() + ") * DistK;\r\n  }\r\n#endif");
 
                                 if (tweak.parameters[2].value == "1")
                                 {
                                     // NOTE: Careful with this, the search string has a variable in it...
-                                    funclibText = funclibText.ReplaceAll(ref success, "const float DensFactor = " + tweak.parameters[1].value.ToString() + ";", "const float DensFactor = " + tweak.parameters[1].value.ToString() + " * saturate(1.0f - cb_View.mAltitude/15000);");
+                                    funclibText = funclibText.ReplaceAll(ref success, "const float DensFactor = " + tweak.parameters[1].value.ToString() + ";", "const float DensFactor = " + tweak.parameters[1].value.ToString() + " * saturate(1.0f - cb_Altitude/15000);");
                                     funclibText = funclibText.ReplaceAll(ref success, "if ((cb_mObjectType != (uint)1) && (cb_mObjectType != (uint)21) && (cb_mObjectType != (uint)19))", "if ((cb_mObjectType != (uint)1) && (cb_mObjectType != (uint)3) && (cb_mObjectType != (uint)21) && (cb_mObjectType != (uint)19))");
                                 }
 
@@ -1353,23 +1444,10 @@ if ((cb_mObjectType != (uint)1) && (cb_mObjectType != (uint)3) && (cb_mObjectTyp
 
                         #endregion
 
-
-
-                        // New Custom Tweaks
-                        #region HenrikMode
-                        case "PBR Brightness":
-                            currentFile = FileIO.PBRFile;
-                            PBRText = PBRText.AddAfter(ref success, "float3 ambient = (iblDiffuse + iblSpecular * pbrMaterial.fIBLRadianceScale) * occlusion;", "\r\nif (cb_mObjectType == 19)");
-                            break;
-                        #endregion
-
-
-
                         #region HDR
                         case "Alternate tonemap adjustment":
                             currentFile = FileIO.HDRFile;
-                            HDRText = HDRText.ReplaceAll(ref success, "float3 ToneMap(float3 color)", "float3 ToneMapACES(float3 color)");
-                            HDRText = HDRText.AddBefore(ref success, "// Applies exposure and tone mapping to the input, and combines it with the", "\r\n float3 ToneMap(float3 color) \r\n { \r\n return color / (color + 1.0); \r\n  } \r\n");
+                            HDRText = HDRText.ReplaceAll(ref success, "return saturate(pow(color, 2.2f));", "return saturate(pow(color, 2.5f) * 1.2f);");
                             break;
 
                         case "Contrast tuning":
@@ -2122,6 +2200,7 @@ return colorInput;
             LoadPreset(activePreset, false);
 
             List_SelectionChanged(Tweak_List, TweakStack, TweakClearStack, TweakTitleTextblock, TweakDescriptionTextblock);
+            List_SelectionChanged(PostProcess_List, PostProcessStack, PostClearStack, PostTitleTextblock, PostDescriptionTextblock);
 
             Log(ErrorType.None, "Active preset parameters restored.");
         }
@@ -2149,12 +2228,15 @@ return colorInput;
             customTweaks.Clear();
 
             List_SelectionChanged(Tweak_List, TweakStack, TweakClearStack, TweakTitleTextblock, TweakDescriptionTextblock);
+            List_SelectionChanged(PostProcess_List, PostProcessStack, PostClearStack, PostTitleTextblock, PostDescriptionTextblock);
 
             Tweak_List.Items.Refresh();
-
+            PostProcess_List.Items.Refresh();
+            CustomTweak_List.Items.Refresh();
 
             Log(ErrorType.None, "Parameters reset to default");
         }
+
 
         private void ClearChangesInfo<T>(List<T> effectsList) {
             foreach (T entry in effectsList)
@@ -2164,21 +2246,20 @@ return colorInput;
                 foreach (var param in effect.parameters) {
                     param.oldValue = param.value;
                 }                
-            }    
-            
+            }           
         }
 
         public void ChangeMenuBarState(bool enable)
         {
-            //NewPreset_btn.IsEnabled = enable;
-            //OpenPreset_btn.IsEnabled = enable;
-            //SavePreset_btn.IsEnabled = enable;
-            //SavePresetAs_btn.IsEnabled = enable;
-            //ApplyPreset_btn.IsEnabled = enable;
-            //ResetShaderFiles_btn.IsEnabled = enable;
-            //ClearShaders_btn.IsEnabled = enable;
-            //ResetToDefaults_btn.IsEnabled = enable;
-            //ResetToPreset_btn.IsEnabled = enable;
+            NewPreset_btn.IsEnabled = enable;
+            OpenPreset_btn.IsEnabled = enable;
+            SavePreset_btn.IsEnabled = enable;
+            SavePresetAs_btn.IsEnabled = enable;
+            ApplyPreset_btn.IsEnabled = enable;
+            ResetShaderFiles_btn.IsEnabled = enable;
+            ClearShaders_btn.IsEnabled = enable;
+            ResetToDefaults_btn.IsEnabled = enable;
+            ResetToPreset_btn.IsEnabled = enable;
         }
 
         public void Log(ErrorType type, string message)

@@ -23,7 +23,7 @@
         <Setter Property="Background" Value="{DynamicResource WindowBackground}" />
     </Style>
 
-<!--Default Checkbox style-->
+    <!--Default Checkbox style-->
     <Style x:Key="FocusVisual">
         <Setter Property="Control.Template">
             <Setter.Value>
@@ -114,8 +114,8 @@
     </Style>
 
 
-    <Style TargetType="TextBox">        
-        <Setter Property="VerticalContentAlignment" Value="Center"/>        
+    <Style TargetType="TextBox">
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
 
 </ResourceDictionary>

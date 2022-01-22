@@ -15,11 +15,12 @@ namespace OpenShade.Classes
 
         public const string cloudFile = "Cloud.fx";
         public const string generalFile = "General.fx";
-        public const string terrainFile = "GPUTerrain.fx";
+        public const string terrainFile = "Terrain.fx";
         public const string funclibFile = "FuncLibrary.fxh";
-        public const string terrainFXHFile = "GPUTerrain.fxh";
+        public const string terrainFXHFile = "Terrain.fxh";
         public const string shadowFile = "Shadow.fxh";
         public const string HDRFile = "HDR.hlsl";
+        public const string PBRFile = "PBRBase.fx";
 
         public FileIO(MainWindow handle)
         {
@@ -32,9 +33,9 @@ namespace OpenShade.Classes
             {
                 MainWindow.cloudText = File.ReadAllText(dir + cloudFile);
                 MainWindow.generalText = File.ReadAllText(dir + generalFile);
-                MainWindow.terrainText = File.ReadAllText(dir + terrainFile);
                 MainWindow.funclibText = File.ReadAllText(dir + funclibFile);
                 MainWindow.terrainFXHText = File.ReadAllText(dir + terrainFXHFile);
+                MainWindow.terrainText = File.ReadAllText(dir + terrainFile);
                 MainWindow.shadowText = File.ReadAllText(dir + shadowFile);
                 MainWindow.HDRText = File.ReadAllText(dir + HDRFile);
 
@@ -51,9 +52,9 @@ namespace OpenShade.Classes
         public bool CheckShaderBackup(string dir) {
             if (File.Exists(dir + cloudFile) == false) { return false; }
             if (File.Exists(dir + generalFile) == false) { return false; }
-            if (File.Exists(dir + terrainFile) == false) { return false; }
             if (File.Exists(dir + funclibFile) == false) { return false; }
             if (File.Exists(dir + terrainFXHFile) == false) { return false; }
+            if (File.Exists(dir + terrainFile) == false) { return false; }
             if (File.Exists(dir + shadowFile) == false) { return false; }
             if (File.Exists(dir + HDRFile) == false) { return false; }
 
@@ -66,9 +67,9 @@ namespace OpenShade.Classes
             {
                 File.Copy(origin + cloudFile, destination + cloudFile, true);
                 File.Copy(origin + generalFile, destination + generalFile, true);
-                File.Copy(origin + terrainFile, destination + terrainFile, true);
                 File.Copy(origin + funclibFile, destination + funclibFile, true);
                 File.Copy(origin + terrainFXHFile, destination + terrainFXHFile, true);
+                File.Copy(origin + terrainFile, destination + terrainFile, true);
                 File.Copy(origin + shadowFile, destination + shadowFile, true);
 
                 if (origin.Contains("ShadersHLSL"))
@@ -413,12 +414,6 @@ namespace OpenShade.Classes
                         case "Col1_Width":
                             mainWindowHandle.Tweaks_Grid.ColumnDefinitions[0].Width = new GridLength(double.Parse(parts[1].Trim()));
                             break;
-                        case "Col2_Width":
-                            mainWindowHandle.Post_Grid.ColumnDefinitions[0].Width = new GridLength(double.Parse(parts[1].Trim()));
-                            break;
-                        case "Col3_Width":
-                            mainWindowHandle.Custom_Grid.ColumnDefinitions[0].Width = new GridLength(double.Parse(parts[1].Trim()));
-                            break;
                     }
                 }
                 else
@@ -440,9 +435,7 @@ namespace OpenShade.Classes
             lines.Add("Backup_Directory, " + mainWindowHandle.backupDirectory);
             lines.Add("Main_Width, " + mainWindowHandle.Width.ToString());
             lines.Add("Main_Height, " + mainWindowHandle.Height.ToString());
-            lines.Add("Col1_Width, " + mainWindowHandle.Tweaks_Grid.ColumnDefinitions[0].Width.ToString());
-            lines.Add("Col2_Width, " + mainWindowHandle.Post_Grid.ColumnDefinitions[0].Width.ToString());
-            lines.Add("Col3_Width, " + mainWindowHandle.Custom_Grid.ColumnDefinitions[0].Width.ToString());         
+            lines.Add("Col1_Width, " + mainWindowHandle.Tweaks_Grid.ColumnDefinitions[0].Width.ToString());       
 
             try
             {

@@ -12,7 +12,7 @@ namespace OpenShade
     public enum Themes
     {
         Default,
-        Dark
+        ColorfulDark
     }
 
     public partial class App : Application
@@ -47,11 +47,11 @@ namespace OpenShade
                     default:
                     case Themes.Default:
                         this.Resources.MergedDictionaries.Clear();
-                        AddResourceDictionary("UI/DefaultTheme.xaml");
+                        AddResourceDictionary("Theme/DarkTheme.xaml");
                         break;
-                    case Themes.Dark:
+                    case Themes.ColorfulDark:
                         this.Resources.MergedDictionaries.Clear();
-                        AddResourceDictionary("UI/DarkTheme.xaml");
+                        AddResourceDictionary("Theme/ColourfulDarkTheme.xaml");
                         break;
                 }
             }
