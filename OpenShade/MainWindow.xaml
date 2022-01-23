@@ -155,7 +155,7 @@
                                 <ColumnDefinition Width="100*"/>
                             </Grid.ColumnDefinitions>
                             <StackPanel x:Name="TweakStack" Grid.Column="0"/>
-                            <StackPanel x:Name="TweakClearStack" Grid.Column="1"/>
+                            <StackPanel x:Name="TweakClearStack" Grid.Column="1" />
                         </Grid>
                     </StackPanel>
                 </Grid>
@@ -209,8 +209,8 @@
                             <Label Grid.Row="0" Grid.Column="0">Theme:</Label>
                             <ComboBox x:Name="Theme_ComboBox" Foreground="{DynamicResource TextColor}" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Width="100" HorizontalAlignment="Left" SelectionChanged="Theme_SelectionChanged"/>
                         </Grid>
-
                     </GroupBox>
+                    
                 </DockPanel>
             </TabItem>
         </TabControl>

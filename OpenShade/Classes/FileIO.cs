@@ -40,6 +40,7 @@ namespace OpenShade.Classes
                 MainWindow.shadowText = File.ReadAllText(dir + shadowFile);
                 MainWindow.HDRText = File.ReadAllText(dir + HDRFile);
                 MainWindow.PBRText = File.ReadAllText(dir + PBRFile);
+                MainWindow.CompositeText = File.ReadAllText(dir + compositeFile);
 
                 return true;
 
@@ -185,93 +186,6 @@ namespace OpenShade.Classes
             }           
         }
 
-        public void LoadCustomTweaks(ObservableCollection<CustomTweak> customTweaks, IniFile pref, bool monitorChanges)
-        {
-            // TODO: Find a decent way to check if there are changes between the new loaded custom tweaks and the old ones
-
-            customTweaks.Clear();
-            int count = 0;
-            string section = "CUSTOM_TWEAK" + count.ToString();
-            bool customExists = pref.KeyExists("isActive", section);
-
-            while (customExists)
-            {
-                var newTweak = new CustomTweak(section, 
-                    pref.Read("Name", section),
-                    Path.GetFileName(pref.Read("Shader", section)), // to remove Post-Process// directory for HDR file
-                    int.Parse(pref.Read("Index", section)),
-                    pref.Read("OldPattern", section).FromHexString(),
-                    pref.Read("NewPattern", section).FromHexString(),
-                    pref.Read("IsActive", section) == "1" ? true : false);
-
-                customTweaks.Add(newTweak);
-
-                count++;
-                section = "CUSTOM_TWEAK" + count.ToString();
-                customExists = pref.KeyExists("isActive", section);
-            }
-
-        }
-
-        public void LoadPostProcesses(List<PostProcess> postProcesses, IniFile pref, bool monitorChanges)
-        {
-            foreach (var post in postProcesses)
-            {
-                bool wasEnabled = post.isEnabled;
-                if (!pref.KeyExists("IsActive", post.key))
-                {
-                    mainWindowHandle.Log(ErrorType.Warning, "Missing entry 'IsActive' for post-process [" + post.key + "]");
-                    break;
-                }
-                post.isEnabled = pref.Read("IsActive", post.key) == "1" ? true : false;
-
-                if (!monitorChanges)
-                {
-                    post.wasEnabled = post.isEnabled;
-                }                
-
-                post.index = int.Parse(pref.Read("Index", post.key));
-
-                string rawParams = pref.Read("Params", post.key).FromHexString();
-                string[] lines = rawParams.Split(new string[] { "\r\n" }, StringSplitOptions.None);
-
-                foreach (var param in post.parameters)
-                {
-                    param.oldValue = param.value;
-
-                    if (param.control == UIType.RGB)
-                    {
-                        string dataR = param.dataName.Split(',')[0];
-                        string dataG = param.dataName.Split(',')[1];
-                        string dataB = param.dataName.Split(',')[2];
-
-                        string identifiedLineR = lines.FirstOrDefault(p => p.StartsWith(dataR));
-                        string identifiedLineG = lines.FirstOrDefault(p => p.StartsWith(dataG));
-                        string identifiedLineB = lines.FirstOrDefault(p => p.StartsWith(dataB));
-
-                        if (identifiedLineR == null) { mainWindowHandle.Log(ErrorType.Warning, "Missing entry '" + dataR + "' for post-process [" + post.key + "]"); break; }
-                        if (identifiedLineG == null) { mainWindowHandle.Log(ErrorType.Warning, "Missing entry '" + dataG + "' for post-process [" + post.key + "]"); break; }
-                        if (identifiedLineB == null) { mainWindowHandle.Log(ErrorType.Warning, "Missing entry '" + dataB + "' for post-process [" + post.key + "]"); break; }
-
-                        param.value = identifiedLineR.Split('=')[1] + "," + identifiedLineG.Split('=')[1] + "," + identifiedLineB.Split('=')[1];
-                    }
-                    else
-                    {
-                        string identifiedLine = lines.FirstOrDefault(p => p.StartsWith(param.dataName));
-                        if (identifiedLine == null) { mainWindowHandle.Log(ErrorType.Warning, "Missing entry '" + param.dataName + "' for post-process [" + post.key + "]"); break; }
-                        param.value = identifiedLine.Split('=')[1];
-                    }
-                    
-                    if (!monitorChanges) {
-                        param.oldValue = param.value;
-                    }
-                }                
-            }
-
-            // Reorder the list based on process index
-            postProcesses.Sort((x, y) => x.index.CompareTo(y.index));
-        }
-
         public string LoadComments(IniFile pref) {
             if (pref.KeyExists("Comment", "PRESET COMMENTS")) {
                 string rawComment = pref.Read("Comment", "PRESET COMMENTS");
@@ -281,10 +195,10 @@ namespace OpenShade.Classes
             return "";            
         }
 
-        public void SavePreset(List<Tweak> tweaks, ObservableCollection<CustomTweak> customTweaks, List<PostProcess> postProcesses, string comment, IniFile preset)
+        public void SavePreset(List<Tweak> tweaks, string comment, IniFile preset)
         {
-            // Standard tweaks    
 
+            // Standard tweaks    
             foreach (var tweak in tweaks) {
                 preset.Write("IsActive", tweak.isEnabled ? "1" : "0", tweak.key);
 
@@ -315,53 +229,6 @@ namespace OpenShade.Classes
                     }
                 }                
             }       
-
-            // Custom tweaks
-
-            foreach (var custom in customTweaks)
-            {
-                preset.Write("IsActive", custom.isEnabled ? "1" : "0", custom.key);
-                preset.Write("Name", custom.name, custom.key);
-                preset.Write("Shader", custom.shaderFile, custom.key);
-                preset.Write("Index", custom.index.ToString(), custom.key);
-                preset.Write("OldPattern", custom.oldCode.ToHexString(), custom.key);
-                preset.Write("NewPattern", custom.newCode.ToHexString(), custom.key);                
-            }
-
-            // Post-Process
-            
-            foreach (var post in postProcesses)
-            {
-                preset.Write("IsActive", post.isEnabled ? "1" : "0", post.key);
-                preset.Write("Index", post.index.ToString(), post.key);
-
-                string finalString = "";
-
-                foreach (var param in post.parameters)
-                {
-                    if (param.control == UIType.RGB)
-                    {
-                        string dataR = param.dataName.Split(',')[0];
-                        string dataG = param.dataName.Split(',')[1];
-                        string dataB = param.dataName.Split(',')[2];
-
-                        string valueR = param.value.Split(',')[0];
-                        string valueG = param.value.Split(',')[1];
-                        string valueB = param.value.Split(',')[2];
-
-                        finalString += dataR + "=" + valueR + "\r\n";
-                        finalString += dataG + "=" + valueG + "\r\n";
-                        finalString += dataB + "=" + valueB + "\r\n";
-                    }
-                    else
-                    {
-                        finalString += param.dataName + "=" + param.value + "\r\n";
-                    }
-
-                    preset.Write("Params", finalString.ToHexString(), post.key);
-                }                
-            }
-
             // Comment
             preset.Write("Comment", comment.Replace("\r\n", "~^#"), "PRESET COMMENTS");
         }
