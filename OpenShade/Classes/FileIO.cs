@@ -21,6 +21,7 @@ namespace OpenShade.Classes
         public const string shadowFile = "Shadow.fxh";
         public const string HDRFile = "HDR.hlsl";
         public const string PBRFile = "PBRBase.fx";
+        public const string compositeFile = "DeferredComposite.fx";
 
         public FileIO(MainWindow handle)
         {
@@ -38,6 +39,7 @@ namespace OpenShade.Classes
                 MainWindow.terrainText = File.ReadAllText(dir + terrainFile);
                 MainWindow.shadowText = File.ReadAllText(dir + shadowFile);
                 MainWindow.HDRText = File.ReadAllText(dir + HDRFile);
+                MainWindow.PBRText = File.ReadAllText(dir + PBRFile);
 
                 return true;
 
@@ -57,6 +59,8 @@ namespace OpenShade.Classes
             if (File.Exists(dir + terrainFile) == false) { return false; }
             if (File.Exists(dir + shadowFile) == false) { return false; }
             if (File.Exists(dir + HDRFile) == false) { return false; }
+            if (File.Exists(dir + PBRFile) == false) { return false; }
+            if (File.Exists(dir + compositeFile) == false) { return false; }
 
             return true;
         }
@@ -71,6 +75,8 @@ namespace OpenShade.Classes
                 File.Copy(origin + terrainFXHFile, destination + terrainFXHFile, true);
                 File.Copy(origin + terrainFile, destination + terrainFile, true);
                 File.Copy(origin + shadowFile, destination + shadowFile, true);
+                File.Copy(origin + PBRFile, destination + PBRFile, true);
+                File.Copy(origin + compositeFile, destination + compositeFile, true);
 
                 if (origin.Contains("ShadersHLSL"))
                 {

@@ -61,10 +61,10 @@
 
 
 
-            <Label Grid.Column="2"  Grid.Row="0" VerticalAlignment="Bottom" Content="Loaded Preset:" Margin="0,0,210,3" FontSize="13" FontWeight="SemiBold" Height="20"/>
+            <Label Grid.Column="2"  Grid.Row="0" VerticalAlignment="Bottom" Content="Loaded Preset:" Margin="0,0,210,3" FontSize="13"  Height="20"/>
             <TextBlock Grid.Column="2"  Grid.Row="0" VerticalAlignment="Bottom" Text="" x:Name="LoadedPreset_TextBlock" Width="Auto" FontSize="13"  Margin="90,0,0,3" Height="20"/>
 
-            <Label  VerticalAlignment="Bottom" Content="Active Preset:" Margin="390,0,120,3" Height="20" FontSize="13" FontWeight="SemiBold"/>
+            <Label  VerticalAlignment="Bottom" Content="Active Preset:" Margin="390,0,120,3" Height="20" FontSize="13" />
             <TextBlock  VerticalAlignment="Bottom"  Text="" x:Name="ActivePreset_TextBlock" Width="Auto"  Grid.ColumnSpan="2" Margin="482,0,0,3" Height="20" FontSize="13"/>
         </Grid>
 
@@ -76,7 +76,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="400*" MinWidth="100"/>
                     </Grid.ColumnDefinitions>
-                    <ListView x:Name="Tweak_List" Grid.Column="0" Width="Auto" SelectionChanged="TweakList_SelectionChanged" Margin="-5,-5,0,-5">
+                    <ListView x:Name="Tweak_List" Grid.Column="0" Width="Auto" SelectionChanged="TweakList_SelectionChanged" Margin="-6,-5,0,-5">
                         <ListView.GroupStyle>
                             <GroupStyle>
                                 <GroupStyle.ContainerStyle>
@@ -84,9 +84,9 @@
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate>
-                                                    <Expander IsExpanded="True" Margin="0,0,0,10" ExpandDirection="Down">
+                                                    <Expander IsExpanded="True" Margin="0,0,0,0" ExpandDirection="Down">
                                                         <Expander.Header>
-                                                            <Label Content="{Binding Name}" FontWeight="Bold"/>
+                                                            <Label Content="{Binding Name}" FontWeight="Medium" VerticalAlignment="Center" Margin="-5,-3,0,0" FontSize="12"/>
                                                         </Expander.Header>
                                                         <ItemsPresenter />
                                                     </Expander>
@@ -147,7 +147,7 @@
                         <Label x:Name="TweakTitleTextblock" Content="" FontWeight="Bold"/>
                         <Separator/>
                         <TextBlock x:Name="TweakDescriptionTextblock" TextWrapping="Wrap" Height="100" />
-                        <Label Content="Parameters"/>
+                        <Label Content="Parameters" />
                         <Separator/>
                         <Grid Margin="10">
                             <Grid.ColumnDefinitions>

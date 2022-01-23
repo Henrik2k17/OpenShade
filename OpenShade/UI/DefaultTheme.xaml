@@ -19,6 +19,54 @@
     <SolidColorBrush x:Key="TextRed" Color="#FFCB1010"/>
 
 
+    <!--Expander Arrow-->
+
+    <ControlTemplate x:Key="ToggleButtonControlTemplate" TargetType="{x:Type ToggleButton}">
+        <Grid Background="{TemplateBinding Background}">
+            <Rectangle
+                    x:Name="Rectangle"
+                    Margin="0,0,0,0"
+                    Fill="Transparent"
+                    Stroke="Transparent"/>
+            <Path
+                    x:Name="Up_Arrow"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Fill="{DynamicResource TextColor}"
+                    Data="M 0 0 L 4 4 L 8 0 Z"                />
+
+
+            <Path
+                    x:Name="Down_Arrow"
+                    Visibility="Collapsed"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Fill="{DynamicResource TextColor}"
+                    Data="M 0 0 L 4 4 L 8 0 Z"                />
+            
+            
+            
+        </Grid>
+        <ControlTemplate.Triggers>
+
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Fill" Value="{DynamicResource MouseOverColor1}" TargetName="Up_Arrow"/>
+                <Setter Property="Fill" Value="{DynamicResource MouseOverColor1}" TargetName="Down_Arrow"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="true">
+                <Setter Property="Fill" Value="{DynamicResource PressedBrush}" TargetName="Rectangle"/>
+            </Trigger>
+            <Trigger Property="IsChecked" Value="true">
+                <Setter Property="Visibility" Value="Visible" TargetName="Down_Arrow"/>
+                <Setter Property="Visibility" Value="Collapsed" TargetName="Up_Arrow"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!--Expander Arrow End-->
+
+    
+    
     <Style x:Key="WindowStyle" TargetType="Window">
         <Setter Property="Background" Value="{DynamicResource WindowBackground}" />
     </Style>
@@ -117,5 +165,63 @@
     <Style TargetType="TextBox">
         <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
+    
+    
+    <!--Expander-->
+
+    <Style TargetType="{x:Type Expander}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Expander}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="22"/>
+                            <RowDefinition Height="*" x:Name="ContentRow"/>
+                        </Grid.RowDefinitions>
+                        <Border  x:Name="Border" Grid.Row="0" BorderThickness="1" BorderBrush="#CECECE"  CornerRadius="0,0,3,3">
+                            <Border.Background>
+                                <LinearGradientBrush EndPoint="0.9,0.9" StartPoint="0.5,1">
+                                    <GradientStop Color="#EAEAEA" Offset="3"/>
+                                    <GradientStop Color="#EFEFEF"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <ToggleButton
+                                        Template="{DynamicResource ToggleButtonControlTemplate}"
+                                        Background="{TemplateBinding Background}"
+                                        IsChecked="{Binding Path=IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                        OverridesDefaultStyle="True"
+                                    />
+                                <ContentPresenter Grid.Column="1" Margin="4" RecognizesAccessKey="True" ContentSource="Header"/>
+                            </Grid>
+                        </Border>
+                        <Border  x:Name="ExpandSite" Grid.Row="1" Visibility="Collapsed" BorderThickness="1,0,1,1" CornerRadius="0,0,2,2">
+                            <ContentPresenter
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Margin="{TemplateBinding Padding}"
+                                    Focusable="false" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsExpanded" Value="True">
+                            <Setter Property="Visibility" Value="Visible" TargetName="ExpandSite"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    
+
+    
+    <!--Expander End-->
+
+
 
 </ResourceDictionary>

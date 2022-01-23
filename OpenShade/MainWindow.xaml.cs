@@ -45,7 +45,7 @@ namespace OpenShade
         string cacheDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Lockheed Martin\\Prepar3D v5\\Shaders\\";
         string currentDirectory = Directory.GetCurrentDirectory();
         string P3DDirectory;
-        public string P3DVersion;
+        public string P3DVersion = "5.3.17.28160";
 
         FileIO fileData;
         string shaderDirectory;
