@@ -1,4 +1,4 @@
-#Currently WIP
+Currently WIP
 
 
 # OpenShade
