@@ -44,27 +44,21 @@
                 </MenuItem>
 
                 <MenuItem Header="Actions" FontSize="13"   >
-                    <MenuItem Header="Apply Preset" Click="ApplyPreset" InputGestureText="F9" ></MenuItem>
+                    <MenuItem Header="Apply Preset" Click="ApplyPreset"></MenuItem>
                     <MenuItem Header="Restore Original Shaders" Click="ResetShaderFiles"  ></MenuItem>
                     <MenuItem Header="Clear Shader Cache" Click="ClearShaders_Click"  ></MenuItem>
                     <MenuItem Header="Reset Current Preset Defaults" Click="ClearShaders_Click"  ></MenuItem>
                     <MenuItem Header="Reset All Tweak Values To Defaults" Click="ClearShaders_Click"  ></MenuItem>
                 </MenuItem>
-
-                <MenuItem Header="Settings" FontSize="13"   >
-                    <MenuItem Header="Settings and Preset Coments">
-                    </MenuItem>
-                </MenuItem>
-
             </Menu>
 
 
 
 
-            <Label Grid.Column="2"  Grid.Row="0" VerticalAlignment="Bottom" Content="Loaded Preset:" Margin="0,0,210,3" FontSize="13"  Height="20"/>
+            <Label Grid.Column="2"  Grid.Row="0" VerticalAlignment="Bottom" Content="Loaded Preset:" Margin="0,0,210,3" FontSize="13"  Height="20" FontWeight="SemiBold"/>
             <TextBlock Grid.Column="2"  Grid.Row="0" VerticalAlignment="Bottom" Text="" x:Name="LoadedPreset_TextBlock" Width="Auto" FontSize="13"  Margin="90,0,0,3" Height="20"/>
 
-            <Label  VerticalAlignment="Bottom" Content="Active Preset:" Margin="390,0,120,3" Height="20" FontSize="13" />
+            <Label  VerticalAlignment="Bottom" Content="Active Preset:" Margin="390,0,120,3" Height="20" FontSize="13" FontWeight="SemiBold" />
             <TextBlock  VerticalAlignment="Bottom"  Text="" x:Name="ActivePreset_TextBlock" Width="Auto"  Grid.ColumnSpan="2" Margin="482,0,0,3" Height="20" FontSize="13"/>
         </Grid>
 
@@ -167,7 +161,7 @@
                         <TextBox x:Name="PresetComments_TextBox" VerticalAlignment="Bottom"  Height="164" Margin="0,0,0,2" VerticalContentAlignment="Top" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
                     </GroupBox>
 
-                    <GroupBox Header="Directories" Margin="5" DockPanel.Dock="Top" VerticalAlignment="Top" Height="184">
+                    <GroupBox Header="Directories" Margin="5" DockPanel.Dock="Top" VerticalAlignment="Top" Height="202">
                         <Grid Margin="10">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -184,12 +178,14 @@
                             <Label Grid.Row="1" Grid.Column="0" Margin="0,5,0,5">Prepar3D v5 shaders:</Label>
                             <Label Grid.Row="2" Grid.Column="0" Margin="0,5,0,5">Shader cache:</Label>
                             <Label Grid.Row="3" Grid.Column="0" Margin="0,5,0,5">Shader backup:</Label>
+                            <Label Grid.Row="3" Grid.Column="0" Margin="0,37,0,-27" Content="P3D Version:"/>
 
                             <TextBox Grid.Row="0" Grid.Column="1" x:Name="P3DMain_TextBox" VerticalAlignment="Bottom"  Height="20" Margin="20,5,0,5" TextWrapping="NoWrap" IsReadOnly="True"/>
                             <TextBox Grid.Row="1" Grid.Column="1" x:Name="P3DShaders_TextBox" VerticalAlignment="Bottom" Height="20" Margin="20,5,0,5" TextWrapping="NoWrap" IsReadOnly="True"/>
                             <TextBox Grid.Row="2" Grid.Column="1" x:Name="ShaderCache_TextBox" VerticalAlignment="Bottom" Height="20" Margin="20,5,0,5" TextWrapping="NoWrap" IsReadOnly="True"/>
                             <TextBox Grid.Row="3" Grid.Column="1" x:Name="ShaderBackup_TextBox" VerticalAlignment="Bottom" Height="20" Margin="20,5,0,5" TextWrapping="NoWrap" IsReadOnly="True"/>
-
+                            <TextBox Grid.Row="3" Grid.Column="1" x:Name="CurrentP3DVersionText" VerticalAlignment="Bottom" Height="20" Margin="20,0,0,-26" TextWrapping="NoWrap" IsReadOnly="True"/>
+                            
                             <Button Grid.Row="0" Grid.Column="2" x:Name="P3DMain_Button" Height="20" Width="25" Content="..." HorizontalAlignment="Left" Margin="10,0,0,0" Visibility="Collapsed"/>
                             <Button Grid.Row="1" Grid.Column="2" x:Name="P3DShaders_Button" Height="20" Width="25" Content="..." HorizontalAlignment="Left" Margin="10,0,0,0" Visibility="Collapsed"/>
                             <Button Grid.Row="2" Grid.Column="2" x:Name="ShaderCache_Button" Height="20" Width="25" Content="..." HorizontalAlignment="Left" Margin="10,0,0,0" Visibility="Collapsed"/>
@@ -197,7 +193,7 @@
                         </Grid>
                     </GroupBox>
 
-                    <GroupBox Header="User Interface" Margin="5" DockPanel.Dock="Top" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <GroupBox Header="User Interface" Margin="5,5,0,5" DockPanel.Dock="Top" HorizontalAlignment="Left" VerticalAlignment="Top">
                         <Grid Margin="10">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50"/>

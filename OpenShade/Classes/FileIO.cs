@@ -40,7 +40,7 @@ namespace OpenShade.Classes
                 MainWindow.shadowText = File.ReadAllText(dir + shadowFile);
                 MainWindow.HDRText = File.ReadAllText(dir + HDRFile);
                 MainWindow.PBRText = File.ReadAllText(dir + PBRFile);
-                MainWindow.CompositeText = File.ReadAllText(dir + compositeFile);
+                MainWindow.compositeText = File.ReadAllText(dir + compositeFile);
 
                 return true;
 

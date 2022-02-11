@@ -21,11 +21,12 @@ namespace OpenShade
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     /// 
-    public enum ErrorType { None, Warning, Error };
+    public enum ErrorType { None, Warning, Error, Info };
 
-    
+
     public partial class MainWindow : Window
     {
+        public string Debug = "yes"; //Debug Options: yes/no 
         string tweaksHash;
         string customTweaksHash;
         string postProcessesHash;
@@ -57,7 +58,7 @@ namespace OpenShade
         IniFile loadedPreset;
 
         // TODO: put this in a struct somewhere
-        public static string cloudText, generalText, terrainText, funclibText, terrainFXHText, shadowText, HDRText, PBRText, CompositeText;
+        public static string cloudText, generalText, terrainText, funclibText, terrainFXHText, shadowText, HDRText, PBRText, compositeText;
 
         public MainWindow()
         {
@@ -170,14 +171,25 @@ namespace OpenShade
             // Load Theme
             Theme_ComboBox.ItemsSource = Enum.GetValues(typeof(Themes)).Cast<Themes>();
             Theme_ComboBox.SelectedItem = ((App)Application.Current).CurrentTheme;
-            
-            // Load Backup files
-            ShaderBackup_TextBox.Text = backupDirectory;            
 
+            // Load Backup files
+            ShaderBackup_TextBox.Text = backupDirectory;
+
+            // Show P3D Version Info and some Debug stuff
+            string currentP3DEXEVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
+            Log(ErrorType.Info, "You currently running P3D Version: " + currentP3DEXEVersion);
+            CurrentP3DVersionText.Text = currentP3DEXEVersion;
+            if (Debug == "yes") {
+            Log(ErrorType.Info, "Application Hardcoded Version: " + P3DVersion);
+            Log(ErrorType.Info, "Current P3D EXE Version: " + currentP3DEXEVersion);
+            Log(ErrorType.Info, "Current P3D Path: " + P3DDirectory);
+            Log(ErrorType.Info, "Current Backup Directory: " + backupDirectory);
+            }
+
+            //Handling Current P3D Version
             if (Directory.Exists(backupDirectory))
             {
                 string currentP3DVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
-
                 if (P3DVersion != currentP3DVersion)
                 {
                     MessageBoxResult result = MessageBox.Show("OpenShade has detected a new version of Prepar3D (" + currentP3DVersion + ").\r\n\r\nIt is STRONGLY recommended that you backup the default shader files again otherwise they will be overwritten by old shader files when applying a preset.", "New version detected", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, MessageBoxResult.OK); // TODO: Localization
@@ -195,7 +207,6 @@ namespace OpenShade
                         }
                     }                    
                 }
-
 
                 if (fileData.CheckShaderBackup(backupDirectory))
                 {
@@ -394,7 +405,7 @@ namespace OpenShade
                             spinner.Decimals = 10;
                             spinner.MinValue = param.min;
                             spinner.MaxValue = param.max;
-                            spinner.Step = 0.1m;                           
+                            spinner.Step = 0.1m;
                             spinner.ValueChanged += new EventHandler(ParameterSpinner_ValueChanged);
 
                             var item = new MenuItem();
@@ -409,7 +420,7 @@ namespace OpenShade
                             var txtbox = new TextBox();
                             txtbox.Uid = param.id;
                             txtbox.Width = 170;
-                            txtbox.Height = 50;
+                            txtbox.Height = 25;
                             txtbox.VerticalContentAlignment = VerticalAlignment.Top;
                             //spinner.TextWrapping = TextWrapping.Wrap;
                             txtbox.Text = param.value;
@@ -437,6 +448,24 @@ namespace OpenShade
 
                             rowStack.Children.Add(spinner);
                             rowStack.Children.Add(txtbox);
+                        }
+
+                        else if (param.control == UIType.TextBox)
+                        {
+
+                            var txtbox = new TextBox();
+                            txtbox.Uid = param.id;
+                            txtbox.Width = 190;
+                            txtbox.Height = 23;
+                            txtbox.VerticalAlignment = VerticalAlignment.Center;
+                            txtbox.VerticalContentAlignment = VerticalAlignment.Center;
+                            //spinner.TextWrapping = TextWrapping.Wrap;
+                            txtbox.Text = param.value;
+                            txtbox.KeyUp += new KeyEventHandler(ParameterText_KeyUp);
+
+                            rowStack.Children.Add(txtbox);
+
+
                         }
 
                         else if (param.control == UIType.Combobox)
@@ -871,6 +900,12 @@ namespace OpenShade
             // NOTE: Not sure what is the best way to implement this... for now just handle each tweak on a case by case basis, which is a lot of code but fine for now
             // NOTE: This code is getting more awful by the minute
 
+
+            //                            currentFile = FileIO.compositeFile;
+            //                            compositeText = compositeText.AddAfter(ref success, "const float ToReplace;", "\r\n New Code1" +
+            //"                                                                                          \r\n New Code2"+
+            //"                                                                                          \r\n Last Line");
+
             int tweakCount = 0;
 
             foreach (var tweak in tweaks)
@@ -886,85 +921,110 @@ namespace OpenShade
 
                         #region EnhancedAtmospherics
 
-                        case "EnhancedAtmosphericsAtmosphere":
+                        case "Enhanced Atmospherics Atmosphere":
+                            currentFile = FileIO.funclibFile;
+
+                            // Add required constants and phase functions
+                            // Const
+                            funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\n\r\nstatic const float3 normalized_ozone_coefficient = float3(0.61344749, 0.0, 1.0);\r\n\r\n\r\n\r\n");
+                            
+                            //map
+                            funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\nfloat map(float input_value, float input_start, float input_end, float output_start, float output_end)" +
+                            "\r\n{" +
+                            "\r\n    float slope = (output_end - output_start) / (input_end - input_start);\r\n" +
+                            "\r\n     return clamp(output_start + (slope * (input_value - input_start)), min(output_start, output_end), max(output_start, output_end));" +
+                            "\r\n}\r\n");
+
+                            //interpolate_sun_angle
+                            funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\nfloat interpolate_sun_angle(float sun_angle, float day_value, float twilight_value, float night_value)" +
+                            "\r\n{" +
+                            "\r\n    float output_value;\r\n" +
+                            "\r\n    if (sun_angle > 0.0) output_value = map(sqrt(sun_angle), sqrt(0.175), 0.0, day_value, twilight_value);" +
+                            "\r\n    else output_value = map(sun_angle, -0.125, -0.25, twilight_value, night_value); \r\n" +
+                            "\r\n    return output_value;" +
+                            "\r\n}\r\n");
+
+                            // get_luminance
+                            funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\nfloat3 get_luminance(float3 input_color)" +
+                            "\r\n{" +
+                            "\r\n    float output_luminance = dot(input_color, float3(0.2126, 0.7152, 0.0722));" +
+                            "\r\n    return float3(output_luminance, output_luminance, output_luminance);" +
+                            "\r\n}\r\n");
+
+                            //Add main Tweaks in func lib
+                            funclibText = funclibText.AddBefore(ref success, "#if !defined(SHD_NO_FOG)", $"       insc = interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[3].value}, {tweak.parameters[4].value}, {tweak.parameters[5].value}) * lerp(insc, insc * normalized_ozone_coefficient, interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[0].value}, {tweak.parameters[1].value}, {tweak.parameters[2].value}));" +
+                            $"\r\n        insc = lerp(get_luminance(insc), insc, interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[6].value}, {tweak.parameters[7].value}, {tweak.parameters[8].value}));\r\n");
 
 
-                            /*
-                                                        generalText = generalText.AddAfter(ref success, "ToReplace;", "\r\n New Code1" +
-"                                                                                          \r\n New Code2" +
-"                                                                                          \r\n Last Line");
-                            */
-
-
-                            //Fog Gamma Correct
-                            currentFile = FileIO.generalFile;
-                            generalText = generalText.AddAfter(ref success, "ToReplace;", "\r\n New Code1" +
-"                                                                                          \r\n New Code2" +
-"                                                                                          \r\n Last Line");
+                            //Add main Tweaks in composite
+                            currentFile = FileIO.compositeFile;
+                            compositeText = compositeText.AddAfter(ref success, "        loss = txBindless(cb_mLoss2DTextureIndex).SampleLevel(samClamp, lossUV, 0);", $"\r\n\r\n        insc.rgb = interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[3].value}, {tweak.parameters[4].value}, {tweak.parameters[5].value}) * lerp(insc.rgb, insc.rgb * normalized_ozone_coefficient, interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[0].value}, {tweak.parameters[1].value}, {tweak.parameters[2].value}));" +
+                            $"\r\n        insc.rgb = lerp(get_luminance(insc.rgb), insc.rgb, interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[6].value}, {tweak.parameters[7].value}, {tweak.parameters[8].value}));");
                             break;
 
-                        case "EnhancedAtmosphericsClouds":
+                        case "Enhanced Atmospherics Clouds":
 
+                            //Add Cloud Tweak in composite
+                            currentFile = FileIO.compositeFile;
+                            compositeText = compositeText.AddAfter(ref success, "            clouds = lerp(clouds, nearClouds, cloudFade);", $"\r\n\r\n            clouds.rgb = interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[3].value}, {tweak.parameters[4].value}, {tweak.parameters[5].value}) * lerp(clouds.rgb, clouds.rgb * normalized_ozone_coefficient, interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[0].value}, {tweak.parameters[1].value}, {tweak.parameters[2].value}));" +
+                            $"\r\n            clouds.rgb = lerp(get_luminance(clouds.rgb), clouds.rgb, interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[6].value}, {tweak.parameters[7].value}, {tweak.parameters[8].value}));\r\n");
 
-                            /*
-                                                        generalText = generalText.AddAfter(ref success, "ToReplace;", "\r\n New Code1" +
-"                                                                                          \r\n New Code2" +
-"                                                                                          \r\n Last Line");
-                            */
-
-
-                            //Fog Gamma Correct
-                            currentFile = FileIO.generalFile;
-                            generalText = generalText.AddAfter(ref success, "ToReplace;", "\r\n New Code1" +
-"                                                                                          \r\n New Code2" +
-"                                                                                          \r\n Last Line");
+                            currentFile = FileIO.cloudFile;
+                            cloudText = cloudText.AddAfter(ref success, "    fColor += scatter * cb_mCombinedDiffuse.rgb;", "\r\n\r\n    #if defined(SHD_ENHANCED_ATMOSPHERICS_BLEND)" +
+                            $"\r\n        fColor *= interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[3].value}, {tweak.parameters[4].value}, {tweak.parameters[5].value});" +
+                            $"\r\n        fColor = lerp(get_luminance(fColor), fColor, interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[6].value}, {tweak.parameters[7].value}, {tweak.parameters[8].value}));\r\n" +
+                            "    #endif\r\n");
                             break;
-
-
-
                         #endregion
+
+
+
 
                         #region PBR
-                        case "PBR Brightness":
+                        case "Aircraft PBR brightness":
                             currentFile = FileIO.PBRFile;
-                            PBRText = PBRText.AddAfter(ref success, "float3 ambient = (iblDiffuse + iblSpecular * pbrMaterial.fIBLRadianceScale) * occlusion;", "\r\nif (cb_mObjectType == 19)");
+                            PBRText = PBRText.AddBefore(ref success, "        color.rgb += ambient;", "\r\n        if (cb_mObjectType == 19) " +
+                            $"\r\n			color.rgb += ambient*(2.2-(lerp( {tweak.parameters[0].value}, {tweak.parameters[1].value}, cb_mDayNightInterpolant)));" +
+                            "\r\n		else");
+
+
+
+
+
                             break;
                         #endregion
+
+
+
 
                         #region HDR
                         case "Alternate tonemap adjustment":
                             currentFile = FileIO.HDRFile;
-                            HDRText = HDRText.ReplaceAll(ref success, "float3 ToneMap(float3 color)", "float3 ToneMapACES(float3 color)");
-                            HDRText = HDRText.AddBefore(ref success, "// Applies exposure and tone mapping to the input, and combines it with the", "\r\n float3 ToneMap(float3 color) \r\n { \r\n return color / (color + 1.0); \r\n  } \r\n");
+                            HDRText = HDRText.AddBefore(ref success, "shared cbuffer cbHDRData : REGISTER(b, POST_PROCESS_CB_REGISTER)", "\r\nstatic const float toneMapFactor2 = 0.001;");
+                            HDRText = HDRText.AddBefore(ref success, "shared cbuffer cbHDRData : REGISTER(b, POST_PROCESS_CB_REGISTER)", "\r\nstatic const float exposureKey2 = 0.8;\r\n");
+
+                            HDRText = HDRText.AddAfter(ref success, "shared StructuredBuffer<float> exposureBuffer: register(t2);", "\r\n\r\nfloat GetAvgLuminance(Texture2D lumTex, float2 texCoord){" +
+                            "\r\n	return exp(lumTex.Sample(samClamp, texCoord).x);" +
+                            "\r\n}");
+
+                            HDRText = HDRText.AddAfter(ref success, "shared StructuredBuffer<float> exposureBuffer: register(t2);", "\r\n\r\nfloat LinearExposure(float GetAvgLuminance){" +
+                            "\r\n    return (exposureKey2 + toneMapFactor2) / (GetAvgLuminance + toneMapFactor2);" +
+                            "\r\n}");
+
+                            HDRText = HDRText.AddAfter(ref success, "shared StructuredBuffer<float> exposureBuffer: register(t2);", "\r\n\r\nfloat3 ToneMapExposure(float3 E) {" +
+                            $"\r\n	return pow(1 - exp(-E* {tweak.parameters[0].value}), {tweak.parameters[1].value});" +
+                            "\r\n}");
+
+                            HDRText = HDRText.ReplaceAll(ref success, "//ACES based ToneMapping curve, takes and outputs linear values.\r\nfloat3 ToneMap(float3 color)\r\n{  \r\n    const float A = 2.51;\r\n    const float B = 0.03;\r\n    const float C = 2.43;\r\n    const float D = 0.59;\r\n    const float E = 0.14;\r\n	return saturate((color * (A * color + B)) / (color * (C * color + D) + E));\r\n}\r\n", "float3 ToneMap(float3 color, float GetAvgLuminance){" +                          
+                            "\r\n	float3 linearColor = color * LinearExposure(GetAvgLuminance);" +
+                            "\r\n    float3 tonmappedColor = ToneMapExposure(linearColor);\r\n" +
+                            "\r\n    return tonmappedColor;" +
+                            "\r\n}\r\n\r\n\r\n\r\n");
+
+                            HDRText = HDRText.ReplaceAll(ref success, "	color.rgb = ToneMap(color.rgb);", "	color.rgb = ToneMap(color.rgb, 1.0);");
+
                             break;
-
-                        case "Contrast tuning":
-                            currentFile = FileIO.HDRFile;
-                            double tweakValue = double.Parse(tweak.parameters[0].value); // TODO: Robustness, error checking etc
-                            double val1 = 1 + (0 - 1) * tweakValue;
-                            double val2 = 2.2 + (1.2 - 2.2) * tweakValue;
-
-                            HDRText = HDRText.ReplaceAll(ref success, "color = (color * (6.2f * color + 0.5f)) / (color * (6.2f * color + 1.7f) + 0.06f);", $"color = (color * (6.2f * color + {val1.ToString()})) / (color * (6.2f * color + {val2.ToString()}) + 0.06);");
-                            break;
-
-                        case "Scene tone adjustment":
-                            currentFile = FileIO.HDRFile;
-                            HDRText = HDRText.AddBefore(ref success, "return float4(finalColor, alpha);", $"finalColor.rgb = saturate(finalColor.rgb * float3({tweak.parameters[0].value}))\r\n;");
-                            break;
-
-                        case "Turn off HDR luminance adaptation effect":
-                            currentFile = FileIO.HDRFile;
-                            HDRText = HDRText.ReplaceAll(ref success, "return max(exp(lumTex.Sample(samClamp, texCoord).x), 0.1f);", "return max((1-cb_mDayNightInterpolant) * 0.35, 0.1);");
-                            break;
-
-                        case "Disable HDR with post-processes":
-                            currentFile = FileIO.HDRFile;
-                            HDRText = HDRText.CommentOut(ref success, "//Calculate the bloom.", "float3 finalColor = lerp(luminance, color.rgb, SaturationScalar);", true);
-                            HDRText = HDRText.ReplaceSecond(ref success, "float4 color = srcTex.Sample(samClamp, vert.texcoord);", "float4 finalColor = srcTex.Sample(samClamp, vert.texcoord);");
-                            HDRText = HDRText.ReplaceAll(ref success, "float alpha = color.a;", "float alpha = finalColor.a;");
-                            break;
-
-                            #endregion
+                         #endregion
 
                     }
 
@@ -994,6 +1054,9 @@ namespace OpenShade
                 File.WriteAllText(shaderDirectory + FileIO.funclibFile, funclibText);
                 File.WriteAllText(shaderDirectory + FileIO.terrainFile, terrainText);
                 File.WriteAllText(shaderDirectory + FileIO.terrainFXHFile, terrainFXHText);
+                File.WriteAllText(shaderDirectory + FileIO.shadowFile, shadowText);
+                File.WriteAllText(shaderDirectory + FileIO.PBRFile, PBRText);
+                File.WriteAllText(shaderDirectory + FileIO.compositeFile, compositeText);
                 File.WriteAllText(shaderDirectory + "PostProcess\\" + FileIO.HDRFile, HDRText);
             }
             catch
@@ -1106,7 +1169,7 @@ namespace OpenShade
 
             Tweak_List.Items.Refresh();
 
-
+             
             Log(ErrorType.None, "Parameters reset to default");
         }
 
@@ -1154,6 +1217,10 @@ namespace OpenShade
                 case ErrorType.Error:
                     typeString = "Error";
                     color = Brushes.Red;
+                    break;
+                case ErrorType.Info:
+                    typeString = "Information";
+                    color = Brushes.Black;
                     break;
             }
 
