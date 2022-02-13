@@ -920,7 +920,6 @@ namespace OpenShade
                     {
 
                         #region EnhancedAtmospherics
-
                         case "Enhanced Atmospherics Atmosphere":
                             currentFile = FileIO.funclibFile;
 
@@ -944,7 +943,7 @@ namespace OpenShade
                             "\r\n    return output_value;" +
                             "\r\n}\r\n");
 
-                            // get_luminance
+                            //get_luminance
                             funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\nfloat3 get_luminance(float3 input_color)" +
                             "\r\n{" +
                             "\r\n    float output_luminance = dot(input_color, float3(0.2126, 0.7152, 0.0722));" +
@@ -977,6 +976,38 @@ namespace OpenShade
                             break;
                         #endregion
 
+                        #region Terrain
+                        case "Terrain Reflectance":
+                            currentFile = FileIO.terrainFile;
+
+                            //reflectance
+                            terrainText = terrainText.ReplaceAll(ref success, "    float reflectance = 0.25;", $"    float reflectance = {tweak.parameters[0].value} ;");
+                            break;
+
+                        case "Terrain Lighting":
+                            currentFile = FileIO.terrainFile;
+
+                            //Diffuse 
+                            terrainText = terrainText.ReplaceAll(ref success, "    float3 diffuseColor = CalculateDiffuseColor(baseColor.rgb, 0);", $"    float3 diffuseColor = CalculateDiffuseColor(baseColor.rgb, 0)* {tweak.parameters[0].value};");
+
+                            //Ambient 
+                            terrainText = terrainText.ReplaceAll(ref success, "    color.rgb += ambient;", $"    color.rgb += ambient * {tweak.parameters[1].value};");
+                            
+                            //Moon 
+                            terrainText = terrainText.ReplaceAll(ref success, "	color.rgb = (sunContrib + moonContrib)* shadowContrib;", $"	color.rgb = (sunContrib + moonContrib * {tweak.parameters[2].value})* shadowContrib;");
+
+                            break;
+
+
+                        case "Terrain Saturation":
+                            currentFile = FileIO.terrainFile;
+                            //saturate 
+                            terrainText = terrainText.AddBefore(ref success, "    //Apply emissive.", $"    color.rgb = saturate(lerp(dot(color.rgb, float3(0.299f, 0.587f, 0.114f)), color.rgb, {tweak.parameters[0].value}));\r\n");
+                            break;
+
+
+                        #endregion
+
 
 
 
@@ -986,11 +1017,6 @@ namespace OpenShade
                             PBRText = PBRText.AddBefore(ref success, "        color.rgb += ambient;", "\r\n        if (cb_mObjectType == 19) " +
                             $"\r\n			color.rgb += ambient*(2.2-(lerp( {tweak.parameters[0].value}, {tweak.parameters[1].value}, cb_mDayNightInterpolant)));" +
                             "\r\n		else");
-
-
-
-
-
                             break;
                         #endregion
 
@@ -1022,7 +1048,6 @@ namespace OpenShade
                             "\r\n}\r\n\r\n\r\n\r\n");
 
                             HDRText = HDRText.ReplaceAll(ref success, "	color.rgb = ToneMap(color.rgb);", "	color.rgb = ToneMap(color.rgb, 1.0);");
-
                             break;
                          #endregion
 

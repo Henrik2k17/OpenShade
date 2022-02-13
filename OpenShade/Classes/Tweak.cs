@@ -9,6 +9,8 @@ namespace OpenShade.Classes
     public enum Category
     {
         EnhancedAtmospherics,
+        Lighting,
+        Terrain,
         PBR,
         HDR
     };
@@ -243,6 +245,32 @@ namespace OpenShade.Classes
             newTweak.parameters.Add(new Parameter("CloudSaturationDay", "Cloud Saturation Day", 1, 1, 0.01, 5, UIType.TextBox));
             newTweak.parameters.Add(new Parameter("CloudSaturationTwilight", "Cloud Saturation Twilight", 0.325, 1, 0.01, 5, UIType.TextBox));
             newTweak.parameters.Add(new Parameter("CloudSaturationNight", "Cloud Saturation Night", 1, 1, 0.01, 51, UIType.TextBox));
+            tweaks.Add(newTweak);
+
+            //// -----------------------
+            ////  Lighting
+            //// -----------------------
+
+            //newTweak = new Tweak("LIGHTING_COCKPIT_LIGHTING", Category.Lighting, "Cockpit Lighting", "");
+            ////newTweak.parameters.Add(new Parameter("SkyOzoneEffectDay", "Sky Ozone Effect Day", 0.125, 1, 0.01, 5, UIType.TextBox));
+            //tweaks.Add(newTweak);
+
+            // -----------------------
+            //  Terrain
+            // -----------------------
+
+            newTweak = new Tweak("TERRAIN_REFLECTANCE", Category.Terrain, "Terrain Reflectance", "Adjust how much the terrain reflects, 0.25 is the default p3d pbr terrain reflectance");
+            newTweak.parameters.Add(new Parameter("TerrainReflectance", "Terrain Reflectance", 0.02, 1, 0.001, 1, UIType.TextBox));
+            tweaks.Add(newTweak);
+                                                                                                                                                                                                                                                                                                                                                                                                                                
+            newTweak = new Tweak("TERRAIN_LIGHTING", Category.Terrain, "Terrain Lighting", "Terrain Lighting Diffuse - Diffuse Lighting Factor of the terrain\r\nTerrain Lighting Ambient - Ambient Lighting Factor of the terrain\r\nTerrain Lighting Moon - This value defines how much the moonlight affects the terrain at night\r\n\r\nPro Tip: Use Expressions to darken the ambient/diffuse only at a given time\r\n             Something like this  saturate(0.5 + cb_mSun.mDiffuse.g/0.33)");
+            newTweak.parameters.Add(new Parameter("TerrainLightingDiffuse", "Terrain Lighting Diffuse", 1, 1, 0.01, 5, UIType.TextBox));
+            newTweak.parameters.Add(new Parameter("TerrainLightingAmbient", "Terrain Lighting Ambient", 1, 1, 0.01, 5, UIType.TextBox));
+            newTweak.parameters.Add(new Parameter("TerrainLightingMoon", "Terrain Lighting Moon", 1, 1, 0.01, 5, UIType.TextBox));
+            tweaks.Add(newTweak);
+
+            newTweak = new Tweak("TERRAIN_Saturation", Category.Terrain, "Terrain Saturation", "Saturates the terrain, 1.0 is the default p3d saturation\r\nIncrease or decrease as you like");
+            newTweak.parameters.Add(new Parameter("TerrainSaturation", "Terrain Saturation", 1, 1, 0.01, 5, UIType.TextBox));
             tweaks.Add(newTweak);
 
             // -----------------------
