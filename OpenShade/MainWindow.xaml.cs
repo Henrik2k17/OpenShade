@@ -21,8 +21,8 @@ namespace OpenShade
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     /// 
-    public enum ErrorType { None, Warning, Error, Info };
 
+    public enum ErrorType { None, Warning, Error, Info };
 
     public partial class MainWindow : Window
     {
@@ -160,7 +160,7 @@ namespace OpenShade
                 if (File.Exists(activePresetPath))
                 {                   
                     activePreset = new IniFile(activePresetPath);
-                    ActivePreset_TextBlock.Text = activePreset.filename;                    
+                    //ActivePreset_TextBlock.Text = activePreset.filename;                    
                 }
                 else
                 {
@@ -169,8 +169,8 @@ namespace OpenShade
             }
 
             // Load Theme
-            Theme_ComboBox.ItemsSource = Enum.GetValues(typeof(Themes)).Cast<Themes>();
-            Theme_ComboBox.SelectedItem = ((App)Application.Current).CurrentTheme;
+            //Theme_ComboBox.ItemsSource = Enum.GetValues(typeof(Themes)).Cast<Themes>();
+            //Theme_ComboBox.SelectedItem = ((App)Application.Current).CurrentTheme;
 
             // Load Backup files
             ShaderBackup_TextBox.Text = backupDirectory;
@@ -289,6 +289,7 @@ namespace OpenShade
         {
             List_SelectionChanged(Tweak_List, TweakStack, TweakClearStack, TweakTitleTextblock, TweakDescriptionTextblock);
         }
+
         #endregion
 
         #region ParametersUpdates
@@ -455,9 +456,9 @@ namespace OpenShade
 
                             var txtbox = new TextBox();
                             txtbox.Uid = param.id;
-                            txtbox.Width = 190;
-                            txtbox.Height = 23;
-                            txtbox.VerticalAlignment = VerticalAlignment.Center;
+                            txtbox.Width = 240;
+                            txtbox.Height = 20;
+                            txtbox.VerticalAlignment = VerticalAlignment.Top;
                             txtbox.VerticalContentAlignment = VerticalAlignment.Center;
                             //spinner.TextWrapping = TextWrapping.Wrap;
                             txtbox.Text = param.value;
@@ -524,8 +525,8 @@ namespace OpenShade
             TabItem currentTab = HelperFunctions.FindAncestorOrSelf<TabItem>(checkbox);
             Parameter param = null;
 
-            if (currentTab.Name == "Tweak_Tab") { param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == checkbox.Uid); }
-                       
+            //if (currentTab.Name == "Tweak_Tab") { param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == checkbox.Uid); }
+            param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == checkbox.Uid);
             if (checkbox.IsChecked == true)
             {
                 param.value = "1";
@@ -537,7 +538,8 @@ namespace OpenShade
 
             // TODO: This is terrible code, but it simplifies things for now...
             TextBox tb = null;
-            if (currentTab.Name == "Tweak_Tab") { tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox"); }
+            //if (currentTab.Name == "Tweak_Tab") { tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox"); }
+            tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox");
             tb.Visibility = param.hasChanged ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -547,15 +549,17 @@ namespace OpenShade
             TabItem currentTab = HelperFunctions.FindAncestorOrSelf<TabItem>(txtBox);            
             Parameter param = null;
 
-            if (currentTab.Name == "Tweak_Tab") { param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == txtBox.Uid); }
+            //if (currentTab.Name == "Tweak_Tab") { param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == txtBox.Uid); }
 
-            if (currentTab.Name != "Custom_Tab") {                
-                param.value = txtBox.Text;
+            param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == txtBox.Uid);
+            //if (currentTab.Name != "Custom_Tab") {                
+            param.value = txtBox.Text;
 
                 TextBox tb = null;
-                if (currentTab.Name == "Tweak_Tab") { tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox"); }
-                tb.Visibility = param.hasChanged ? Visibility.Visible : Visibility.Collapsed;
-            }
+            //if (currentTab.Name == "Tweak_Tab") { tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox"); }
+            tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox");
+            tb.Visibility = param.hasChanged ? Visibility.Visible : Visibility.Collapsed;
+            //}
         }
 
         private void ParameterSpinner_ValueChanged(object sender, EventArgs e)
@@ -564,15 +568,17 @@ namespace OpenShade
             TabItem currentTab = HelperFunctions.FindAncestorOrSelf<TabItem>(spinner);
             Parameter param = null;
 
-            if (currentTab.Name == "Tweak_Tab") { param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == spinner.Uid); }    
+            //if (currentTab.Name == "Tweak_Tab") { param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == spinner.Uid); }
+            param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == spinner.Uid);
 
-            if (currentTab.Name != "Custom_Tab") {                
-                param.value = spinner.Value.ToString();
+            //if (currentTab.Name != "Custom_Tab") {                
+            param.value = spinner.Value.ToString();
 
                 TextBox tb = null;
-                if (currentTab.Name == "Tweak_Tab") { tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox"); }
-                tb.Visibility = param.hasChanged ? Visibility.Visible : Visibility.Collapsed;
-            }
+            //if (currentTab.Name == "Tweak_Tab") { tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox"); }
+            tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox");
+            tb.Visibility = param.hasChanged ? Visibility.Visible : Visibility.Collapsed;
+            //}
         }
 
         private void ParameterSwitch_Click(object sender, EventArgs e)
@@ -615,8 +621,8 @@ namespace OpenShade
             TabItem currentTab = HelperFunctions.FindAncestorOrSelf<TabItem>(spinner);
             Parameter param = null;
 
-            if (currentTab.Name == "Tweak_Tab") { param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == uid); }
-            
+            //if (currentTab.Name == "Tweak_Tab") { param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == uid); }
+            param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == uid);
             string oldR = param.value.Split(',')[0];
             string oldG = param.value.Split(',')[1];
             string oldB = param.value.Split(',')[2];
@@ -635,7 +641,8 @@ namespace OpenShade
             }
 
             TextBox tb = null;
-            if (currentTab.Name == "Tweak_Tab") { tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox"); }
+            //if (currentTab.Name == "Tweak_Tab") { tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox"); }
+            tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox");
             tb.Visibility = param.hasChanged ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -645,15 +652,17 @@ namespace OpenShade
             TabItem currentTab = HelperFunctions.FindAncestorOrSelf<TabItem>(combo);
             Parameter param = null;
 
-            if (currentTab.Name == "Tweak_Tab") { param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == combo.Uid); }
+            //if (currentTab.Name == "Tweak_Tab") { param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == combo.Uid); }
+            param = ((Tweak)Tweak_List.SelectedItem).parameters.First(p => p.id == combo.Uid);
 
-            if (currentTab.Name != "Custom_Tab") {                
-                param.value = combo.SelectedIndex.ToString();
+            //if (currentTab.Name != "Custom_Tab") {                
+            param.value = combo.SelectedIndex.ToString();
 
                 TextBox tb = null;
-                if (currentTab.Name == "Tweak_Tab") { tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox"); }
-                tb.Visibility = param.hasChanged ? Visibility.Visible : Visibility.Collapsed;
-            }
+            //if (currentTab.Name == "Tweak_Tab") { tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox"); }
+            tb = (TextBox)HelperFunctions.FindUid(TweakStack, param.id + "-changeTxtbox");
+            tb.Visibility = param.hasChanged ? Visibility.Visible : Visibility.Collapsed;
+            //}
         }
 
         private void RichTextBox_LostFocus(object sender, EventArgs e)
@@ -677,7 +686,8 @@ namespace OpenShade
 
             ListView currentList = null;
 
-            if (currentTab.Name == "Tweak_Tab") { currentList = Tweak_List; }
+            //if (currentTab.Name == "Tweak_Tab") { currentList = Tweak_List; }
+            currentList = Tweak_List;
 
             BaseTweak selectedEffect = (BaseTweak)currentList.SelectedItem;
 
@@ -686,7 +696,8 @@ namespace OpenShade
                 param.value = param.defaultValue;
             }
 
-            if (currentTab.Name == "Tweak_Tab") { List_SelectionChanged(Tweak_List, TweakStack, TweakClearStack, TweakTitleTextblock, TweakDescriptionTextblock); }
+            //if (currentTab.Name == "Tweak_Tab") { List_SelectionChanged(Tweak_List, TweakStack, TweakClearStack, TweakTitleTextblock, TweakDescriptionTextblock); }
+            List_SelectionChanged(Tweak_List, TweakStack, TweakClearStack, TweakTitleTextblock, TweakDescriptionTextblock);
         }
 
         private void ResetParametersPreset_Click(object sender, EventArgs e)
@@ -696,7 +707,7 @@ namespace OpenShade
 
             ListView currentList = null;
 
-            if (currentTab.Name == "Tweak_Tab") { currentList = Tweak_List; }           
+            currentList = Tweak_List;
 
             BaseTweak selectedEffect = (BaseTweak)currentList.SelectedItem;
 
@@ -704,19 +715,19 @@ namespace OpenShade
             {
                 param.value = param.oldValue;
             }
-
-            if (currentTab.Name == "Tweak_Tab") { List_SelectionChanged(Tweak_List, TweakStack, TweakClearStack, TweakTitleTextblock, TweakDescriptionTextblock); }            
+            List_SelectionChanged(Tweak_List, TweakStack, TweakClearStack, TweakTitleTextblock, TweakDescriptionTextblock);
+            //if (currentTab.Name == "Tweak_Tab") { List_SelectionChanged(Tweak_List, TweakStack, TweakClearStack, TweakTitleTextblock, TweakDescriptionTextblock); }            
         }
         #endregion
 
         #region Settings
-        private void Theme_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (IsLoaded)
-            {
-                ((App)Application.Current).ChangeTheme((Themes)Theme_ComboBox.SelectedItem);
-            }
-        }
+        //private void Theme_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    if (IsLoaded)
+        //    {
+        //        ((App)Application.Current).ChangeTheme((Themes)Theme_ComboBox.SelectedItem);
+        //    }
+        //}
 
         private void ShaderBackup_Button_Click(object sender, RoutedEventArgs e)
         {
@@ -726,7 +737,7 @@ namespace OpenShade
             dlg.Multiselect = false;
             dlg.InitialDirectory = Directory.GetCurrentDirectory();
             dlg.Title = "Browse Backup Shader directory";
-                       
+
             var result = dlg.ShowDialog();
 
             if (result == Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogResult.Ok)
@@ -739,7 +750,8 @@ namespace OpenShade
                     Log(ErrorType.None, "All shader files found");
                     Log(ErrorType.None, "Backup directory set to " + backupDirectory);
                 }
-                else {
+                else
+                {
                     ChangeMenuBarState(false);
                     ShaderBackup_TextBox.Text = backupDirectory;
                     Log(ErrorType.Error, "Missing shader files in " + backupDirectory + ". OpenShade can not run");
@@ -934,14 +946,39 @@ namespace OpenShade
                             "\r\n     return clamp(output_start + (slope * (input_value - input_start)), min(output_start, output_end), max(output_start, output_end));" +
                             "\r\n}\r\n");
 
-                            //interpolate_sun_angle
-                            funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\nfloat interpolate_sun_angle(float sun_angle, float day_value, float twilight_value, float night_value)" +
+                            ////interpolate_sun_angle
+                            //funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\nfloat interpolate_sun_angle(float sun_angle, float day_value, float twilight_value, float night_value)" +
+                            //"\r\n{" +
+                            //"\r\n    float output_value;\r\n" +
+                            //"\r\n    if (sun_angle > 0.0) output_value = map(sqrt(sun_angle), sqrt(0.175), 0.0, day_value, twilight_value);" +
+                            //"\r\n    else output_value = map(sun_angle, -0.125, -0.25, twilight_value, night_value); \r\n" +
+                            //"\r\n    return output_value;" +
+                            //"\r\n}\r\n");
+
+                            //square
+                            funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\nfloat square(float value)" +
                             "\r\n{" +
-                            "\r\n    float output_value;\r\n" +
-                            "\r\n    if (sun_angle > 0.0) output_value = map(sqrt(sun_angle), sqrt(0.175), 0.0, day_value, twilight_value);" +
-                            "\r\n    else output_value = map(sun_angle, -0.125, -0.25, twilight_value, night_value); \r\n" +
+                            "\r\n    return value * value;" +
+                            "\r\n}\r\n");
+
+                            //interpolate_two_values
+                            funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\nfloat interpolate_two_values(float value_1, float value_2, float sun_angle)" +
+                            "\r\n{" +
+                            "\r\n    float output_value;" +
+                            "\r\n    if (sun_angle > 0.0) output_value = map(square(sun_angle), square(0.175), 0.0, value_1, value_2);" +
+                            "\r\n    else output_value = value_2;" +
                             "\r\n    return output_value;" +
                             "\r\n}\r\n");
+
+                            //interpolate_three_values
+                            funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\nfloat interpolate_three_values(float value_1, float value_2, float value_3, float sun_angle)" +
+                            "\r\n{" +
+                            "\r\n    float output_value;" +
+                            "\r\n    if (sun_angle > 0.0) output_value = map(sqrt(sun_angle), sqrt(0.175), 0.0, value_1, value_2);" +
+                            "\r\n    else output_value = map(sun_angle, -0.125, -0.25, value_2, value_3);" +
+                            "\r\n    return output_value;" +
+                            "\r\n}\r\n");
+
 
                             //get_luminance
                             funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\nfloat3 get_luminance(float3 input_color)" +
@@ -950,29 +987,239 @@ namespace OpenShade
                             "\r\n    return float3(output_luminance, output_luminance, output_luminance);" +
                             "\r\n}\r\n");
 
+
                             //Add main Tweaks in func lib
-                            funclibText = funclibText.AddBefore(ref success, "#if !defined(SHD_NO_FOG)", $"       insc = interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[3].value}, {tweak.parameters[4].value}, {tweak.parameters[5].value}) * lerp(insc, insc * normalized_ozone_coefficient, interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[0].value}, {tweak.parameters[1].value}, {tweak.parameters[2].value}));" +
-                            $"\r\n        insc = lerp(get_luminance(insc), insc, interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[6].value}, {tweak.parameters[7].value}, {tweak.parameters[8].value}));\r\n");
+                            funclibText = funclibText.AddBefore(ref success, "#if !defined(SHD_NO_FOG)", $"        insc = lerp(insc, insc * normalized_ozone_coefficient, interpolate_three_values({ tweak.parameters[0].value}, { tweak.parameters[1].value}, { tweak.parameters[2].value}, cb_mSun.mDirection.y));" +
+                            $"\r\n        insc = interpolate_three_values({ tweak.parameters[3].value}, { tweak.parameters[4].value}, { tweak.parameters[5].value}, cb_mSun.mDirection.y) *lerp(get_luminance(insc), insc, interpolate_three_values({ tweak.parameters[6].value}, { tweak.parameters[7].value}, { tweak.parameters[8].value}, cb_mSun.mDirection.y));\r\n");
 
 
                             //Add main Tweaks in composite
                             currentFile = FileIO.compositeFile;
-                            compositeText = compositeText.AddAfter(ref success, "        loss = txBindless(cb_mLoss2DTextureIndex).SampleLevel(samClamp, lossUV, 0);", $"\r\n\r\n        insc.rgb = interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[3].value}, {tweak.parameters[4].value}, {tweak.parameters[5].value}) * lerp(insc.rgb, insc.rgb * normalized_ozone_coefficient, interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[0].value}, {tweak.parameters[1].value}, {tweak.parameters[2].value}));" +
-                            $"\r\n        insc.rgb = lerp(get_luminance(insc.rgb), insc.rgb, interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[6].value}, {tweak.parameters[7].value}, {tweak.parameters[8].value}));");
+                            compositeText = compositeText.AddAfter(ref success, "        loss = txBindless(cb_mLoss2DTextureIndex).SampleLevel(samClamp, lossUV, 0);", $"\r\n\r\n        insc.rgb = lerp(insc.rgb, insc.rgb * normalized_ozone_coefficient, interpolate_three_values({ tweak.parameters[0].value}, { tweak.parameters[1].value}, { tweak.parameters[2].value}, cb_mSun.mDirection.y));" +
+                            $"\r\n        insc.rgb = interpolate_three_values({ tweak.parameters[3].value}, { tweak.parameters[4].value}, { tweak.parameters[5].value}, cb_mSun.mDirection.y) * lerp(get_luminance(insc.rgb), insc.rgb, interpolate_three_values({ tweak.parameters[6].value}, { tweak.parameters[7].value}, { tweak.parameters[8].value}, cb_mSun.mDirection.y));");
                             break;
 
                         case "Enhanced Atmospherics Clouds":
 
                             //Add Cloud Tweak in composite
                             currentFile = FileIO.compositeFile;
-                            compositeText = compositeText.AddAfter(ref success, "            clouds = lerp(clouds, nearClouds, cloudFade);", $"\r\n\r\n            clouds.rgb = interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[3].value}, {tweak.parameters[4].value}, {tweak.parameters[5].value}) * lerp(clouds.rgb, clouds.rgb * normalized_ozone_coefficient, interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[0].value}, {tweak.parameters[1].value}, {tweak.parameters[2].value}));" +
-                            $"\r\n            clouds.rgb = lerp(get_luminance(clouds.rgb), clouds.rgb, interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[6].value}, {tweak.parameters[7].value}, {tweak.parameters[8].value}));\r\n");
+                            compositeText = compositeText.AddAfter(ref success, "            clouds = lerp(clouds, nearClouds, cloudFade);", $"\r\n\r\n            clouds.rgb = lerp(clouds.rgb, clouds.rgb * normalized_ozone_coefficient, interpolate_three_values({ tweak.parameters[0].value}, { tweak.parameters[1].value}, { tweak.parameters[2].value}, cb_mSun.mDirection.y));" +
+                            $"\r\n            clouds.rgb = interpolate_three_values({ tweak.parameters[3].value}, { tweak.parameters[4].value}, { tweak.parameters[5].value}, cb_mSun.mDirection.y) * lerp(get_luminance(clouds.rgb), clouds.rgb, interpolate_three_values({ tweak.parameters[6].value}, { tweak.parameters[7].value}, { tweak.parameters[8].value}, cb_mSun.mDirection.y));\r\n");
+
+                            //Add Cloud Tweak in cloudfx
+                            cloudText = cloudText.AddAfter(ref success, "    #if defined(SHD_ENHANCED_ATMOSPHERICS_BLEND) ", "\r\nstatic const float3 normalized_ozone_coefficient = float3(0.61344749, 0.0, 1.0);\r\n");
 
                             currentFile = FileIO.cloudFile;
-                            cloudText = cloudText.AddAfter(ref success, "    fColor += scatter * cb_mCombinedDiffuse.rgb;", "\r\n\r\n    #if defined(SHD_ENHANCED_ATMOSPHERICS_BLEND)" +
-                            $"\r\n        fColor *= interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[3].value}, {tweak.parameters[4].value}, {tweak.parameters[5].value});" +
-                            $"\r\n        fColor = lerp(get_luminance(fColor), fColor, interpolate_sun_angle(cb_mSun.mDirection.y, {tweak.parameters[6].value}, {tweak.parameters[7].value}, {tweak.parameters[8].value}));\r\n" +
-                            "    #endif\r\n");
+                            cloudText = cloudText.AddBefore(ref success, "        cColor = EnhancedAtmosphericsBlend(cColor, In.position.xyw, viewInstanceWS, InstanceID);", $"\r\n\r\n            cColor.rgb = lerp(cColor.rgb, cColor.rgb * normalized_ozone_coefficient, interpolate_three_values({ tweak.parameters[0].value}, { tweak.parameters[1].value}, { tweak.parameters[2].value}, cb_mSun.mDirection.y));" +
+                            $"\r\n            cColor.rgb = interpolate_three_values({ tweak.parameters[3].value}, { tweak.parameters[4].value}, { tweak.parameters[5].value}, cb_mSun.mDirection.y) * lerp(get_luminance(cColor.rgb), cColor.rgb, interpolate_three_values({ tweak.parameters[6].value}, { tweak.parameters[7].value}, { tweak.parameters[8].value}, cb_mSun.mDirection.y));");
+                            break;
+                        #endregion
+
+                        #region Clouds       
+                        case "'No popcorn' clouds":
+                            currentFile = FileIO.cloudFile;
+                            cloudText = cloudText.AddAfter(ref success, "void GetPointDiffuse( out float4 diffuse, in float3 corner, in float3 groupCenter", ", in float cloudDistance");
+                            cloudText = cloudText.AddAfter(ref success, "float  fIntensity = -1.0f * max(dot(lightDirection, cloudGroupNormal), dot(lightDirection, facingDirection));", $@"
+                            const float fExp = saturate(exp(-cloudDistance * cloudDistance * {tweak.parameters[0].value} ));
+                            fIntensity = lerp(0.36f, fIntensity, fExp);");
+                            cloudText = cloudText.AddAfter(ref success, "diffuse = saturate(float4(colorIntensity.rgb + (0.33f * saturate(colorIntensity.rgb - 1)), colorIntensity.a));", "\r\nif (diffuse.a > " + tweak.parameters[1].value.ToString() + ") { diffuse.a = lerp(" + tweak.parameters[1].value.ToString() + ", diffuse.a, fExp); }");
+                            cloudText = cloudText.AddBefore(ref success, "rotationMatrix[2] = normalize(cameraFacingVector);", " float cloudDistance = length(positionVector);");
+                            cloudText = cloudText.ReplaceAll(ref success, "GetPointDiffuse(Out.diffuse[i], position, spriteCenter.xyz, rotationMatrix[2], cloudMaterial);", "GetPointDiffuse(Out.diffuse[i], position, spriteCenter.xyz, cloudDistance, rotationMatrix[2], cloudMaterial);");
+                            cloudText = cloudText.ReplaceAll(ref success, "GetPointDiffuse( Out.diffuse[i], position, spriteCenter.xyz, rotationMatrix[2], cloudMaterial);", "GetPointDiffuse( Out.diffuse[i], position, spriteCenter.xyz, cloudDistance, rotationMatrix[2], cloudMaterial);");
+                        break;
+
+                        case "Alternate lighting for cloud groups":
+                            currentFile = FileIO.cloudFile;
+                            cloudText = cloudText.ReplaceAll(ref success, "GetPointDiffuse(Out.diffuse[i], position, spriteCenter.xyz", "GetPointDiffuse(Out.diffuse[i], position, groupCenter.xyz");
+                            cloudText = cloudText.ReplaceAll(ref success, "GetPointDiffuse( Out.diffuse[i], position, spriteCenter.xyz", "GetPointDiffuse(Out.diffuse[i], position, groupCenter.xyz");
+                        break;
+
+                        case "Cirrus lighting":
+                            currentFile = FileIO.generalFile;
+                            generalText = generalText.AddBefore(ref success, "// Apply IR if active", "if (cb_mObjectType == (uint)3)\r\n    {\r\n        cColor.rgb = " + tweak.parameters[0].value.ToString() + " * saturate(lerp(dot(cColor.rgb, float3(0.299f, 0.587f, 0.114f)), cColor.rgb, " + tweak.parameters[1].value.ToString() + "));\r\n   }\r\n\r\n");
+                        break;
+
+                        case "Cloud light scattering":
+                            currentFile = FileIO.cloudFile;
+                            cloudText = cloudText.CommentOut(ref success, "if (fIntensity < -cb_mMedianLine)", "    fIntensity = clamp(fIntensity, 0, 1);", false);
+                            cloudText = cloudText.AddBefore(ref success, "/*if (fIntensity < -cb_mMedianLine)", $@"const float fScatter = {tweak.parameters[0].value} + cb_mDayNightInterpolant + (cb_mView.fPrecipitationLevel*0.1);
+                            fIntensity =  saturate(fScatter * fIntensity + {tweak.parameters[1].value});
+                            ");
+
+                            if (tweak.parameters[2].value == "1")
+                            {
+                                cloudText = cloudText.CommentOut(ref success, "float height = corner.y;", "float4 color = lerp(baseColor, topColor, s);", true);
+                                cloudText = cloudText.ReplaceAll(ref success, "float4 colorIntensity = float4(fColor.r, fColor.g, fColor.b, saturate(alpha)) * color;", "float4 colorIntensity = float4(fColor.r, fColor.g, fColor.b, saturate(alpha));");
+                            }
+                        break;
+
+                        case "Cloud lighting tuning":
+                            currentFile = FileIO.cloudFile;
+                            cloudText = cloudText.ReplaceAll(ref success, "diffuse = saturate(float4(colorIntensity.rgb + (0.33f * saturate(colorIntensity.rgb - 1)), colorIntensity.a));", "diffuse = saturate( float4( " + tweak.parameters[0].value.ToString() + " * colorIntensity.rgb + ( " + tweak.parameters[1].value.ToString() + " * saturate(colorIntensity.rgb - 1)), colorIntensity.a));");
+                        break;
+
+                        case "Cloud saturation":
+                            currentFile = FileIO.cloudFile;
+                            cloudText = cloudText.AddAfter(ref success, "* saturate(colorIntensity.rgb - 1)), colorIntensity.a));", "\r\ndiffuse.rgb = saturate(lerp(dot(diffuse.rgb, float3(0.299f, 0.587f, 0.114f)), diffuse.rgb, " + tweak.parameters[0].value.ToString() + "));");
+                        break;
+
+                        case "Cloud shadow depth":
+                            currentFile = FileIO.cloudFile;
+                            cloudText = cloudText.ReplaceAll(ref success, "    return float2(1.0f-cColor.a,In.z);", $"    return float2(1.0f-cColor.a * {tweak.parameters[0].value},In.z);");
+                        break;
+
+                        case "Cloud shadow extended size":
+                            currentFile = FileIO.cloudFile;
+                            cloudText = cloudText.ReplaceFirst(ref success, "Out.position[i] = mul(float4(position, 1.0), matWorld);", "Out.position[i] = mul(float4(position, 0.8), matWorld);");
+                        break;
+
+                        case "Reduce cloud brightness at dawn/dusk/night":
+                            currentFile = FileIO.cloudFile;
+                            cloudText = cloudText.AddAfter(ref success, "float3 fColor = fIntensity * cb_mCombinedDiffuse.rgb + cb_mCombinedAmbient.rgb;", "\r\n    float fCumulusDusk = 1 + saturate(fColor.g/(cb_View.mFogColor.g + 0.00001) - 2);\r\n    fColor /= fCumulusDusk;\r\n if (cb_mDayNightInterpolant > 0.9){ \r\n        fColor = fColor*0.1;\r\n    }\r\n ");
+                        break;
+
+                        case "Cloud puffs width and height scaling":
+                            currentFile = FileIO.cloudFile;
+                            cloudText = cloudText.ReplaceAll(ref success, "GetScreenQuadPositions(quad, width*0.5, height*0.5);", "GetScreenQuadPositions(quad, width*" + tweak.parameters[0].value.ToString() + ", height*" + tweak.parameters[1].value.ToString() + ");");
+                        break;
+
+
+                        #endregion
+
+                        #region Atmosphere
+
+                        case "Atmospheres Fog Fix":
+                            currentFile = FileIO.funclibFile;
+
+                            if (tweak.parameters[0].value == "1")
+                            {
+                                funclibText = funclibText.ReplaceAll(ref success, "#if !defined(SHD_ENHANCED_ATMOSPHERICS_BLEND) && !defined(SHD_TO_FAR_CLIP) && !defined(SHD_SKY_STARS)", "#if !defined(SHD_ENHANCED_ATMOSPHERICS_BLEND) && !defined(SHD_TO_FAR_CLIP)");
+                                PBRText = PBRText.AddAfter(ref success, "    #elif !defined(SHD_NO_FOG) && !defined(INPUT_SCREENSPACE_POSITION)", "\r\n        const float pixelDistance = distance(float3(0, 0, 0), Input.vPositionWS);");
+                            }
+                        break;
+
+                        case "Atmospheres Haze Effect":
+                            currentFile = FileIO.funclibFile;
+
+                            Tweak FogFix = tweaks.First(p => p.name == "Atmospheres Fog Fix");
+                            if (FogFix.isEnabled == false) {
+                                Log(ErrorType.Error, "Please activate the 'Atmospheres Fog Fix' tweak first!");
+                                break;
+                            }
+
+                            //HazeEffect
+                                funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\nfloat4 CalculateHazeEffectFog(const float fPositonY, const float4 fColor, const float fDistance){" +
+                                "\r\n    float4 FinalColor = fColor;" +
+                                "\r\n	#if !defined(SHD_ADDITIVE) && !defined(SHD_MULTIPLICATIVE)" +
+                                "\r\n        if ((cb_mObjectType != (uint)1) && (cb_mObjectType != (uint)3) && (cb_mObjectType != (uint)21) && (cb_mObjectType != (uint)19))" +
+                                "\r\n        {" +
+                                $"\r\n            FinalColor.rgb = lerp(pow(saturate(cb_View.mFogColor.rgb * float3({tweak.parameters[2].value}, {tweak.parameters[3].value}, {tweak.parameters[4].value})), (1 + saturate(cb_mSun.mDiffuse.g - 0.35f)) * {tweak.parameters[0].value})," +
+                                $"\r\n            FinalColor.rgb, saturate(exp(-fDistance * fDistance * {tweak.parameters[1].value})));" +
+                                "\r\n        }" +
+                                "\r\n    #endif" +
+                                "\r\n    return FinalColor;" +
+                                "\r\n}\r\n");
+
+                                if (tweak.parameters[5].value == "1")
+                                {
+                                    funclibText = funclibText.ReplaceAll(ref success, $"            FinalColor.rgb, saturate(exp(-fDistance * fDistance * {tweak.parameters[1].value})));", $"            FinalColor.rgb, saturate(exp(-fDistance * fDistance *  {tweak.parameters[1].value} *  saturate(1.0f - cb_mView.mAltitude/{tweak.parameters[6].value}))));");
+                                }
+
+
+                                generalText = generalText.AddBefore(ref success, "        cColor = CalculateFog(cColor, ViewInstancedWS, InstanceID);", "\r\n        cColor = CalculateHazeEffectFog(Input.vPositionWS.y - cb_View.mViewInstanceOffset.y, cColor, pixelDistance);");
+                                terrainText = terrainText.AddBefore(ref success, "            color = CalculateFog(color, ViewInstancedWS, InstanceID);", "\r\n            color = CalculateHazeEffectFog(Input.vPosWS.y, color, eyeDist);");
+                                PBRText = PBRText.AddBefore(ref success, "        color = CalculateFog(color, ViewInstancedWS, InstanceID);", "\r\n        color = CalculateHazeEffectFog(Input.vPositionWS.y - cb_View.mViewInstanceOffset.y, color, pixelDistance);");
+                                //PBRText = PBRText.AddAfter(ref success, "    #elif !defined(SHD_NO_FOG) && !defined(INPUT_SCREENSPACE_POSITION)", "\r\n        const float pixelDistance = distance(float3(0, 0, 0), Input.vPositionWS);");
+                                cloudText = cloudText.AddBefore(ref success, "        cColor = CalculateFog(cColor, viewInstanceWS, InstanceID);", "\r\n       cColor = CalculateHazeEffectFog(positionWS.y - cb_View.mViewInstanceOffset.y, cColor, In.fFogDistance / 2.0);");     
+                            break;
+
+
+                     case "Atmosphere Rayleight Scattering":
+                            currentFile = FileIO.funclibFile;
+
+
+                            Tweak HazeEffect = tweaks.First(p => p.name == "Atmospheres Haze Effect");
+                            if (HazeEffect.isEnabled == false)
+                            {
+                                Log(ErrorType.Error, "Please activate the 'Atmospheres Haze Effect' tweak first!");
+                                break;
+                            }
+
+                            //Rayleigh
+                            funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\nfloat4 CalculateRayleightScatteringFog(const float fPositonY, const float4 fColor, const float fDistance){" +
+                            "\r\n    float4 FinalColor = fColor;" +
+                            "\r\n    #if !defined(SHD_ADDITIVE) && !defined(SHD_MULTIPLICATIVE)" +
+                            "\r\n        if ((cb_mObjectType != (uint)1) && (cb_mObjectType != (uint)3) && (cb_mObjectType != (uint)21) && (cb_mObjectType != (uint)19))" +
+                            "\r\n        {" +
+                            $"\r\n            const float DensFactor = {tweak.parameters[1].value};" +
+                            "\r\n            const float DistK = 2 * (1 - saturate(exp(-fDistance * fDistance * DensFactor))) * saturate(cb_mSun.mDiffuse.g - 0.15);" +
+                            $"\r\n            FinalColor.rgb = FinalColor.rgb * (1 - float3(0.00, {tweak.parameters[2].value}, {tweak.parameters[3].value}) * DistK) + float3(0.00, {tweak.parameters[2].value}, {tweak.parameters[3].value}) * DistK;" +
+                            "\r\n        }" +
+                            "\r\n    #endif" +
+                            "\r\n    return FinalColor;" +
+                            "\r\n}\r\n");
+
+                            if (tweak.parameters[4].value == "1")
+                            {
+                                funclibText = funclibText.ReplaceAll(ref success, $"            const float DensFactor = {tweak.parameters[1].value};", $"            const float DensFactor = 0.0000000002 * saturate(1.0f - cb_mView.mAltitude/{tweak.parameters[5].value});");
+                            }
+
+
+                            generalText = generalText.AddAfter(ref success, "    #elif !defined(SHD_NO_FOG) && !defined(INPUT_SCREENSPACE_POSITION)", "\r\n        cColor = CalculateRayleightScatteringFog(Input.vPositionWS.y - cb_View.mViewInstanceOffset.y, cColor, pixelDistance);");
+                            terrainText = terrainText.AddAfter(ref success, "        #if !defined(SHD_NO_FOG)", "\r\n            color = CalculateRayleightScatteringFog(Input.vPosWS.y, color, eyeDist); //Draw Rayleigh");
+                            PBRText = PBRText.AddAfter(ref success, "    #elif !defined(SHD_NO_FOG) && !defined(INPUT_SCREENSPACE_POSITION)", "\r\n        color = CalculateRayleightScatteringFog(Input.vPositionWS.y - cb_View.mViewInstanceOffset.y, color, pixelDistance);");
+                            //PBRText = PBRText.AddAfter(ref success, "    #elif !defined(SHD_NO_FOG) && !defined(INPUT_SCREENSPACE_POSITION)", "\r\n        const float pixelDistance = distance(float3(0, 0, 0), Input.vPositionWS);");
+                     break;
+
+
+                        case "Sky Saturation":
+                            currentFile = FileIO.generalFile;
+                            generalText = generalText.AddBefore(ref success, "// Apply IR if active", "\r\n\r\n    if(cb_mObjectType ==(uint)1){ \r\n" +
+                            $"\r\n        cColor.rgb = saturate(lerp(dot(cColor.rgb, float3(0.299f, 0.587f, 0.114f)), cColor.rgb, {tweak.parameters[0].value}));" +
+                            "\r\n\r\n    }");
+                        break;
+                        #endregion
+
+                        #region Lighting
+                        case "Cockpit Lighting":
+                            currentFile = FileIO.generalFile;
+                            //add the secondary DirectionalLighting in the fragment shader
+                            generalText = generalText.AddBefore(ref success, "VS_OUTPUT VS( VS_INPUT Input )", "\r\nfloat3 DirectionalLighting2(const float3 vNormalWS, const float shadowContrib, out float3 DiffuseAndAmbient)" +
+                            "\r\n{" +
+                            $"\r\n#if defined(SHD_VERTICAL_NORMAL)" +
+                            $"\r\n    const float fDotSun = max(cb_mSun.mDirection.y, 0);" +
+                            $"\r\n    const float fDotMoon = max(cb_mMoon.mDirection.y, 0);" +
+                            $"\r\n#else" +
+                            $"\r\n    const float fDotSun = saturate(dot(vNormalWS, normalize(cb_mSun.mDirection)));" +
+                            $"\r\n    const float fDotMoon = saturate(dot(vNormalWS, normalize(cb_mMoon.mDirection)));" +
+                            $"\r\n#endif\r\n" +
+                            $"\r\n    #if defined(PS_NEEDS_TANSPACE)" +
+                            $"\r\n        if (cb_mObjectType ==19)" +
+                            $"\r\n            DiffuseAndAmbient = (shadowContrib * (cb_mSun.mDiffuse.xyz * fDotSun)) + (shadowContrib * (cb_mMoon.mDiffuse.xyz * fDotMoon)) + cb_mCombinedAmbient.rgb;" +
+                            $"\r\n        else" +
+                            $"\r\n    #endif\r\n" +
+                            $"\r\n    #if !defined(PS_NEEDS_TANSPACE)" +
+                            $"\r\n        if (cb_mObjectType ==19)" +
+                            $"\r\n            DiffuseAndAmbient = (shadowContrib * (cb_mSun.mDiffuse.xyz * {tweak.parameters[0].value} * fDotSun)) + (shadowContrib * (cb_mMoon.mDiffuse.xyz * fDotMoon)) + cb_mCombinedAmbient.rgb * {tweak.parameters[1].value};" +
+                            $"\r\n        else" +
+                            $"\r\n   #endif\r\n" +
+                            $"\r\n        if (cb_mObjectType !=19)" +
+                            $"\r\n            DiffuseAndAmbient = (shadowContrib * (cb_mSun.mDiffuse.xyz * fDotSun)) + (shadowContrib * (cb_mMoon.mDiffuse.xyz * fDotMoon)) + cb_mCombinedAmbient.rgb;" +
+                            $"\r\n        else" +
+                            $"\r\n            DiffuseAndAmbient = (shadowContrib * (cb_mSun.mDiffuse.xyz * fDotSun)) + (shadowContrib * (cb_mMoon.mDiffuse.xyz * fDotMoon)) + cb_mCombinedAmbient.rgb;" +
+                            $"\r\n    return DiffuseAndAmbient;" +
+                            "\r\n}");
+
+                            //replace the old directional lighting with our secondary one
+                            generalText = generalText.ReplaceAll(ref success, "directionalDiffuse = DirectionalLighting(vNormalWS, shadowContrib);", "directionalDiffuse = DirectionalLighting2(vNormalWS, shadowContrib, directionalDiffuse);");
+
+                            //add VC saturation
+                            generalText = generalText.AddBefore(ref success, "// Apply IR if active", "\r\n    #if !defined(PS_NEEDS_TANSPACE)" +
+                            "\r\n        if (cb_mObjectType == 19){" +
+                            $"\r\n            cColor.rgb = saturate(lerp(dot(cColor.rgb, float3(0.299f, 0.587f, 0.114f)), cColor.rgb, {tweak.parameters[2].value}));" +
+                            "\r\n        }" +
+                            "\r\n    #endif");
+
                             break;
                         #endregion
 
@@ -982,7 +1229,7 @@ namespace OpenShade
 
                             //reflectance
                             terrainText = terrainText.ReplaceAll(ref success, "    float reflectance = 0.25;", $"    float reflectance = {tweak.parameters[0].value} ;");
-                            break;
+                        break;
 
                         case "Terrain Lighting":
                             currentFile = FileIO.terrainFile;
@@ -996,61 +1243,167 @@ namespace OpenShade
                             //Moon 
                             terrainText = terrainText.ReplaceAll(ref success, "	color.rgb = (sunContrib + moonContrib)* shadowContrib;", $"	color.rgb = (sunContrib + moonContrib * {tweak.parameters[2].value})* shadowContrib;");
 
-                            break;
+                        break;
 
 
                         case "Terrain Saturation":
                             currentFile = FileIO.terrainFile;
                             //saturate 
                             terrainText = terrainText.AddBefore(ref success, "    //Apply emissive.", $"    color.rgb = saturate(lerp(dot(color.rgb, float3(0.299f, 0.587f, 0.114f)), color.rgb, {tweak.parameters[0].value}));\r\n");
-                            break;
-
-
+                        break;
                         #endregion
-
-
 
 
                         #region PBR
-                        case "Aircraft PBR brightness":
+                        //case "Aircraft PBR brightness":
+                        //    currentFile = FileIO.PBRFile;
+                        //    PBRText = PBRText.AddBefore(ref success, "        color.rgb += ambient;", "\r\n        if (cb_mObjectType == 19) " +
+                        //    $"\r\n			color.rgb += ambient*(2.2-(lerp( {tweak.parameters[0].value}, {tweak.parameters[1].value}, cb_mDayNightInterpolant)));" +
+                        //    "\r\n		else");
+                        //    break;
+
+                        //case "Enhanced Atmospherics Sun":
+                        //    currentFile = FileIO.PBRFile;
+
+
+                        //    PBRText = PBRText.AddAfter(ref success, "pbrValues.clearCoatNDotV = saturate(dot(clearCoatNormal, pbrValues.viewDir)) + 1e-5f;", "\r\nstatic const float3 normalized_ozone_coefficient = float3(0.61344749, 0.0, 1.0);\r\n");
+
+                        //    PBRText = PBRText.AddAfter(ref success, "        pbrValues.clearCoatNDotV = saturate(dot(clearCoatNormal, pbrValues.viewDir)) + 1e-5f;", "\r\n\r\n        DirectionalLight modified_sun = cb_mSun;" +
+                        //    $"\r\n        modified_sun.mDiffuse.rgb = lerp(modified_sun.mDiffuse.rgb, modified_sun.mDiffuse.rgb * normalized_ozone_coefficient, interpolate_two_values({tweak.parameters[0].value}, {tweak.parameters[1].value}, modified_sun.mDirection.y));" +
+                        //    $"\r\n        modified_sun.mDiffuse.rgb = lerp(get_luminance(modified_sun.mDiffuse.rgb), modified_sun.mDiffuse.rgb, interpolate_two_values({tweak.parameters[4].value}, {tweak.parameters[5].value}, modified_sun.mDirection.y));" +
+                        //    $"\r\n        modified_sun.mIntensity *= interpolate_two_values({tweak.parameters[2].value}, {tweak.parameters[3].value}, modified_sun.mDirection.y);");
+
+                        //    PBRText = PBRText.ReplaceAll(ref success, "        float3 sunContrib = DirectionalLightingPBR(cb_mSun, pbrValues);", $"        float3 sunContrib = DirectionalLightingPBR(modified_sun, pbrValues);");
+                        //    break;
+
+                        case "Advanced PBR":
                             currentFile = FileIO.PBRFile;
-                            PBRText = PBRText.AddBefore(ref success, "        color.rgb += ambient;", "\r\n        if (cb_mObjectType == 19) " +
-                            $"\r\n			color.rgb += ambient*(2.2-(lerp( {tweak.parameters[0].value}, {tweak.parameters[1].value}, cb_mDayNightInterpolant)));" +
-                            "\r\n		else");
+                            //Dont write helperfunctions that are already present in the funclib with specific shader tweaks active
+                            if (funclibText.IndexOf("float map") > 0)
+                            {
+                                
+
+                                PBRText = PBRText.AddBefore(ref success, "struct PS_OUTPUT", "	float4 SampleEnv(float3 txCoord, uint uTextureIndex)\r\n" +
+                                "\r\n	{" +
+                                "\r\n		return txBindlessCube(uTextureIndex).SampleLevel(samClamp, txCoord, 9);" +
+                                "\r\n	}" +
+                                "\r\n	float3 CalculateEnv( const float3 vNormal, uint uTextureIndex)" +
+                                "\r\n	{" +
+                                "\r\n		return SampleEnv(float3(vNormal.x, vNormal.y, vNormal.z), uTextureIndex).xyz;" +
+                                "\r\n    }");
+
+                            }
+                            else
+                            {
+                                PBRText = PBRText.AddBefore(ref success, "struct PS_OUTPUT", "	float4 SampleEnv(float3 txCoord, uint uTextureIndex)\r\n" +
+                             "\r\n	{" +
+                             "\r\n		return txBindlessCube(uTextureIndex).SampleLevel(samClamp, txCoord, 9);" +
+                             "\r\n	}" +
+                             "\r\n	float3 CalculateEnv( const float3 vNormal, uint uTextureIndex)" +
+                             "\r\n	{" +
+                             "\r\n		return SampleEnv(float3(vNormal.x, vNormal.y, vNormal.z), uTextureIndex).xyz;" +
+                             "\r\n	}" +
+                             "\r\n    float map(float input_value, float input_start, float input_end, float output_start, float output_end)" +
+                             "\r\n    {" +
+                             "\r\n    float slope = (output_end - output_start) / (input_end - input_start);" +
+                             "\r\n    return clamp(output_start + (slope * (input_value - input_start)), min(output_start, output_end), max(output_start, output_end));" +
+                             "\r\n    }" +
+                             "\r\n    float square(float value)" +
+                             "\r\n    {" +
+                             "\r\n        return value * value;" +
+                             "\r\n    }" +
+                             "\r\n    float interpolate_two_values(float value_1, float value_2, float sun_angle)" +
+                             "\r\n    {" +
+                             "\r\n    float output_value;" +
+                             "\r\n    if (sun_angle > 0.0) output_value = map(square(sun_angle), square(0.375), 0.0, value_1, value_2);" +
+                             "\r\n    else output_value = value_2;" +
+                             "\r\n    return output_value;" +
+                             "\r\n    }");
+                            }
+
+                            //Add Reflect Tweak
+                            PBRText = PBRText.AddAfter(ref success, "    float reflectance = 0.5;", "\r\n    if(cb_mObjectType == 19){\r\n" +
+                            $"         reflectance = {tweak.parameters[7].value};"+
+                            "\r\n    }");
+
+                            //Add Diffuse Twek
+                            PBRText = PBRText.ReplaceAll(ref success, "        pbrValues.albedo = LambertDiffuse(diffuseColor);", $"        pbrValues.albedo = LambertDiffuse(diffuseColor) * {tweak.parameters[0].value};");
+
+                            //Add Main Functions
+                            PBRText = PBRText.ReplaceAll(ref success, "        color.rgb = (sunContrib + moonContrib) * shadowContrib;", "        #if defined(SHD_VERTICAL_NORMAL)" +
+                            "\r\n            const float fDotSun = max(cb_mSun.mDirection.y, 0);" +
+                            "\r\n            const float fDotMoon = max(cb_mMoon.mDirection.y, 0);" +
+                            "\r\n        #else" +
+                            "\r\n            const float fDotSun = saturate(dot(Input.vNormalWS, normalize(cb_mSun.mDirection)));" +
+                            "\r\n            const float fDotMoon = saturate(dot(Input.vNormalWS, normalize(cb_mMoon.mDirection)));" +
+                            "\r\n        #endif" +
+                            "\r\n        float3 colorAmbientSun = cb_mCombinedAmbient.xyz;float3 colorAmbientMoon = cb_mCombinedAmbient.xyz;float3 colorDiffuseSun = cb_mSun.mDiffuse.xyz;float3 colorDiffuseMoon = cb_mMoon.mDiffuse.xyz;" +
+                            "\r\n        float3 AmbientLightingCalculation;{" +
+                            "\r\n            float3 DiffuseIrradianceApprox = CalculateEnv(Input.vNormalWS,pbrMaterial.uTextureIDs1[1]);" +
+                            $"\r\n            DiffuseIrradianceApprox.rgb = saturate(lerp(dot(DiffuseIrradianceApprox.rgb, float3(0.299f, 0.587f, 0.114f)), DiffuseIrradianceApprox.rgb, {tweak.parameters[1].value}));" +
+                            "\r\n            float3 kS = SpecularReflection(pbrValues.specColor, pbrValues.specColorF90,pbrValues.nDotV);" +
+                            "\r\n            float3 kD = 1.0 - kS;" +
+                            "\r\n            float3 diffuseIBL = diffuseColor * DiffuseIrradianceApprox;" +
+                            "\r\n            float3 specularIBL = GetIBLSpecular(specColor, specularColorF90, perceptualRoughness, pbrValues.viewDir, vNormal, pbrValues.nDotV, pbrMaterial.uTextureIDs1[1], pbrMaterial.uTextureIDs1[3]);" +
+                            $"\r\n            AmbientLightingCalculation = (kD * diffuseIBL + specularIBL * {tweak.parameters[2].value}) * occlusion;" +
+                            "\r\n        }" +
+                            "\r\n            float3 colorDiffuseTexture = CalculateEnv(Input.vNormalWS,pbrMaterial.uTextureIDs1[1]);" +
+                            "\r\n            float3 colorAmbientTexture = (colorDiffuseTexture +" +
+                            "\r\n                                            CalculateEnv(normalize(float3(Input.vNormalWS.x + 0.1, Input.vNormalWS.y, Input.vNormalWS.z)),pbrMaterial.uTextureIDs1[1]) +" +
+                            "\r\n                                            CalculateEnv(normalize(float3(Input.vNormalWS.x - 0.1, Input.vNormalWS.y, Input.vNormalWS.z)),pbrMaterial.uTextureIDs1[1]) +" +
+                            "\r\n                                            CalculateEnv(normalize(float3(Input.vNormalWS.x, Input.vNormalWS.y + 0.1, Input.vNormalWS.z)),pbrMaterial.uTextureIDs1[1]) +" +
+                            "\r\n                                            CalculateEnv(normalize(float3(Input.vNormalWS.x, Input.vNormalWS.y - 0.1, Input.vNormalWS.z)),pbrMaterial.uTextureIDs1[1]) +" +
+                            "\r\n                                            CalculateEnv(normalize(float3(Input.vNormalWS.x, Input.vNormalWS.y, Input.vNormalWS.z + 0.1)),pbrMaterial.uTextureIDs1[1]) +" +
+                            "\r\n                                            CalculateEnv(normalize(float3(Input.vNormalWS.x, Input.vNormalWS.y, Input.vNormalWS.z - 0.1)),pbrMaterial.uTextureIDs1[1])) * 0.142857142;" +
+                            "\r\n            float colorDiffuseMapFactor = 1.6;  " +
+                            "\r\n            colorAmbientTexture = (colorAmbientTexture * (1 - colorDiffuseMapFactor) + colorDiffuseTexture * colorDiffuseMapFactor);" +
+                            "\r\n            colorAmbientSun = colorAmbientSun * (0.2 * colorAmbientTexture + float3(1 - 0.2, 1 - 0.2, 1 - 0.2));" +
+                            "\r\n            colorAmbientMoon = colorAmbientMoon * (0.2 * colorAmbientTexture + float3(1 - 0.2, 1 - 0.2, 1 - 0.2));" +
+                            "\r\n            colorDiffuseSun = colorDiffuseSun * (1.15 * colorDiffuseTexture + float3(1 - 0.15, 1 - 0.15, 1 - 0.15));" +
+                            "\r\n        color.rgb = (sunContrib + moonContrib) * shadowContrib * lerp(colorDiffuseSun.xyz, colorDiffuseSun.xyz * 1.6 , interpolate_two_values(1.6, 6.5, cb_mSun.mDirection.y)) * fDotSun*0.8;");
+
+                            //Add Rest
+                            PBRText = PBRText.ReplaceAll(ref success, "        color.rgb += ambient;", "\r\n        if(cb_mObjectType == 19)" +
+                            $"\r\n            color.rgb += AmbientLightingCalculation * {tweak.parameters[3].value};" +
+                            "\r\n        else" +
+                            $"\r\n        color.rgb += ambient * {tweak.parameters[4].value} * saturate({tweak.parameters[5].value} + cb_mSun.mDiffuse.g/0.33);" +
+                            "\r\n        if(cb_mObjectType == 19){" +
+                            "\r\n            #if defined(SHD_NO_NEAR_CLIP)" +
+                            $"\r\n                color.rgb += AmbientLightingCalculation * {tweak.parameters[6].value};" +
+                            "\r\n            #endif" +
+                            "\r\n        }");
                             break;
                         #endregion
-
-
 
 
                         #region HDR
                         case "Alternate tonemap adjustment":
                             currentFile = FileIO.HDRFile;
-                            HDRText = HDRText.AddBefore(ref success, "shared cbuffer cbHDRData : REGISTER(b, POST_PROCESS_CB_REGISTER)", "\r\nstatic const float toneMapFactor2 = 0.001;");
-                            HDRText = HDRText.AddBefore(ref success, "shared cbuffer cbHDRData : REGISTER(b, POST_PROCESS_CB_REGISTER)", "\r\nstatic const float exposureKey2 = 0.8;\r\n");
+                            HDRText = HDRText.AddAfter(ref success, "// Copyright (c) 2021, Lockheed Martin Corporation", "\r\n// Tonemapper adapted from tomatoshade");
 
-                            HDRText = HDRText.AddAfter(ref success, "shared StructuredBuffer<float> exposureBuffer: register(t2);", "\r\n\r\nfloat GetAvgLuminance(Texture2D lumTex, float2 texCoord){" +
-                            "\r\n	return exp(lumTex.Sample(samClamp, texCoord).x);" +
+                            HDRText = HDRText.ReplaceAll(ref success, "//ACES based ToneMapping curve, takes and outputs linear values.", "\r\nfloat3 tonemap_uncharted2(in float3 x)" +
+                            "\r\n{" +
+                            "\r\n    float A = 0.15;" +
+                            "\r\n    float B = 0.50;" +
+                            "\r\n    float C = 0.10;" +
+                            "\r\n    float D = 0.20;" +
+                            "\r\n    float E = 0.02;" +
+                            "\r\n    float F = 0.30;" +
+                            "\r\n    return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;" +
                             "\r\n}");
 
-                            HDRText = HDRText.AddAfter(ref success, "shared StructuredBuffer<float> exposureBuffer: register(t2);", "\r\n\r\nfloat LinearExposure(float GetAvgLuminance){" +
-                            "\r\n    return (exposureKey2 + toneMapFactor2) / (GetAvgLuminance + toneMapFactor2);" +
-                            "\r\n}");
+                            HDRText = HDRText.ReplaceAll(ref success, "    const float A = 2.51;", "    color *= 1;");
+                            HDRText = HDRText.ReplaceAll(ref success, "    const float B = 0.03;", "    float exposure_bias = 2.0f;");
+                            HDRText = HDRText.ReplaceAll(ref success, "    const float C = 2.43;", "    float3 curr = tonemap_uncharted2(exposure_bias*color);");
+                            HDRText = HDRText.ReplaceAll(ref success, "    const float D = 0.59;", "    float W = 11.2;");
+                            HDRText = HDRText.ReplaceAll(ref success, "    const float E = 0.14;", "    float3 white_scale = 1.0f/tonemap_uncharted2(W);");
+                            HDRText = HDRText.ReplaceAll(ref success, "	return saturate((color * (A * color + B)) / (color * (C * color + D) + E));", "    float3 ccolor = curr*white_scale;" +
+                            "\r\n    color = pow(abs(ccolor), 1.0 * 0.454545);" +
+                            "\r\n    return saturate(pow(color, 2.5f) * 1.2f);");
 
-                            HDRText = HDRText.AddAfter(ref success, "shared StructuredBuffer<float> exposureBuffer: register(t2);", "\r\n\r\nfloat3 ToneMapExposure(float3 E) {" +
-                            $"\r\n	return pow(1 - exp(-E* {tweak.parameters[0].value}), {tweak.parameters[1].value});" +
-                            "\r\n}");
-
-                            HDRText = HDRText.ReplaceAll(ref success, "//ACES based ToneMapping curve, takes and outputs linear values.\r\nfloat3 ToneMap(float3 color)\r\n{  \r\n    const float A = 2.51;\r\n    const float B = 0.03;\r\n    const float C = 2.43;\r\n    const float D = 0.59;\r\n    const float E = 0.14;\r\n	return saturate((color * (A * color + B)) / (color * (C * color + D) + E));\r\n}\r\n", "float3 ToneMap(float3 color, float GetAvgLuminance){" +                          
-                            "\r\n	float3 linearColor = color * LinearExposure(GetAvgLuminance);" +
-                            "\r\n    float3 tonmappedColor = ToneMapExposure(linearColor);\r\n" +
-                            "\r\n    return tonmappedColor;" +
-                            "\r\n}\r\n\r\n\r\n\r\n");
-
-                            HDRText = HDRText.ReplaceAll(ref success, "	color.rgb = ToneMap(color.rgb);", "	color.rgb = ToneMap(color.rgb, 1.0);");
+                            HDRText = HDRText.ReplaceAll(ref success, "    color.rgb *= exposure;", $"    color.rgb *= exposure*{tweak.parameters[0].value};");
                             break;
                          #endregion
-
                     }
 
 
@@ -1122,6 +1475,20 @@ namespace OpenShade
             ClearChangesInfo(postProcesses);
         }
 
+
+
+
+        private void TerrainReflectanceCompare_Click(object sender, RoutedEventArgs e)
+        {
+            OpenShade.Pages.TerrainLightingCompare TerrainLighting = new OpenShade.Pages.TerrainLightingCompare();
+            TerrainLighting.Show();
+        }
+
+
+
+
+
+
         private void ResetShaderFiles(object sender, RoutedEventArgs e)
         {
             if (fileData.CopyShaderFiles(backupDirectory, shaderDirectory))
@@ -1155,6 +1522,19 @@ namespace OpenShade
             }
         }
 
+        private void BackupShaders_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("OpenShade will backup your Prepar3D shaders now.\r\nMake sure the files are the original ones or click 'Cancel' and manually select your backup folder in the application settings.", "Backup", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, MessageBoxResult.OK); // TODO: Localization
+            if (result == MessageBoxResult.OK)
+            {
+                Log(ErrorType.None, "Shaders backed up");
+            }
+            else
+            {
+                Log(ErrorType.Warning, "Shaders could not be backed up. OpenShade can not run.");
+                ChangeMenuBarState(false);
+            }
+        }
 
         private void ResetToPreset(object sender, RoutedEventArgs e)
         {

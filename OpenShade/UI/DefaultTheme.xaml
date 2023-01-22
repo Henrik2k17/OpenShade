@@ -33,7 +33,8 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Fill="{DynamicResource TextColor}"
-                    Data="M 0 0 L 4 4 L 8 0 Z"                />
+                    Data="M 0 0 L 4 4 L 8 0 Z"  />
+                    <!--Data="M7.41,18.41L6,17L12,11L18,17L16.59,18.41L12,13.83L7.41,18.41M7.41,12.41L6,11L12,5L18,11L16.59,12.41L12,7.83L7.41,12.41Z"-->
 
 
             <Path
@@ -43,9 +44,10 @@
                     VerticalAlignment="Center"
                     Fill="{DynamicResource TextColor}"
                     Data="M 0 0 L 4 4 L 8 0 Z"                />
-            
-            
-            
+                    <!--Data="M16.59,5.59L18,7L12,13L6,7L7.41,5.59L12,10.17L16.59,5.59M16.59,11.59L18,13L12,19L6,13L7.41,11.59L12,16.17L16.59,11.59Z"-->
+
+
+
         </Grid>
         <ControlTemplate.Triggers>
 
@@ -178,11 +180,13 @@
                             <RowDefinition Height="22"/>
                             <RowDefinition Height="*" x:Name="ContentRow"/>
                         </Grid.RowDefinitions>
-                        <Border  x:Name="Border" Grid.Row="0" BorderThickness="1" BorderBrush="#CECECE"  CornerRadius="0,0,3,3">
+                        <Border  x:Name="Border" Grid.Row="0" BorderThickness="1"  BorderBrush="#CECECE"  CornerRadius="0,0,0,0">
                             <Border.Background>
                                 <LinearGradientBrush EndPoint="0.9,0.9" StartPoint="0.5,1">
-                                    <GradientStop Color="#EAEAEA" Offset="3"/>
-                                    <GradientStop Color="#EFEFEF"/>
+                                    <GradientStop Color="#c0c0c0" Offset="2"/>
+                                    <GradientStop Color="#efefef"/>
+                                    <!--<GradientStop Color="#c0c0c0" Offset="2"/>
+                                    <GradientStop Color="#efefef"/>-->
                                 </LinearGradientBrush>
                             </Border.Background>
                             <Grid>

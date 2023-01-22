@@ -9,6 +9,8 @@ namespace OpenShade.Classes
     public enum Category
     {
         EnhancedAtmospherics,
+        Clouds,
+        Atmosphere,
         Lighting,
         Terrain,
         PBR,
@@ -224,43 +226,132 @@ namespace OpenShade.Classes
             // -----------------------
 
             newTweak = new Tweak("ENHANCED_ATMOSPHERICS_ATMOSPHERE", Category.EnhancedAtmospherics, "Enhanced Atmospherics Atmosphere", "");
-            newTweak.parameters.Add(new Parameter("SkyOzoneEffectDay", "Sky Ozone Effect Day", 0.125, 1, 0.01, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("SkyOzoneEffectTwilight", "Sky Ozone Effect Twilight", 0.325, 0, 0.01, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("SkyOzoneEffectNight", "Sky Ozone Effect Night", 0.125, 1, 0.01, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("SkyBrightnessDay", "Sky Brightness Day", 1, 1, 0.1, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("SkyBrightnessTwilight", "Sky Brightness Twilight", 3.25, 1, 0.01, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("SkyBrightnessNight", "Sky Brightness Night", 0.5, 1, 0.01, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("SkySaturationDay", "Sky Saturation Day", 1, 1, 0.1, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("SkySaturationtwilight", "Sky Saturation twilight", 0.875, 1, 0.01, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("SkySaturationNight", "Sky Saturation Night", 1, 1, 0.01, 5, UIType.TextBox));
+            newTweak.parameters.Add(new Parameter("SkyOzoneEffectDay", "Sky Ozone Effect Day", 0.125, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[0].value}
+            newTweak.parameters.Add(new Parameter("SkyOzoneEffectTwilight", "Sky Ozone Effect Twilight", 0.325, 0, 0.01, 5, UIType.TextBox)); //{tweak.parameters[1].value}
+            newTweak.parameters.Add(new Parameter("SkyOzoneEffectNight", "Sky Ozone Effect Night", 0.125, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[2].value}
+            newTweak.parameters.Add(new Parameter("SkyBrightnessDay", "Sky Brightness Day", 1, 1, 0.1, 5, UIType.TextBox)); //{tweak.parameters[3].value}
+            newTweak.parameters.Add(new Parameter("SkyBrightnessTwilight", "Sky Brightness Twilight", 3.25, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[4].value}
+            newTweak.parameters.Add(new Parameter("SkyBrightnessNight", "Sky Brightness Night", 0.5, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[5].value}
+            newTweak.parameters.Add(new Parameter("SkySaturationDay", "Sky Saturation Day", 1, 1, 0.1, 5, UIType.TextBox)); //{tweak.parameters[6].value}
+            newTweak.parameters.Add(new Parameter("SkySaturationtwilight", "Sky Saturation twilight", 0.875, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[7].value}
+            newTweak.parameters.Add(new Parameter("SkySaturationNight", "Sky Saturation Night", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[8].value}
             tweaks.Add(newTweak);
 
             newTweak = new Tweak("ENHANCED_ATMOSPHERICS_Clouds", Category.EnhancedAtmospherics, "Enhanced Atmospherics Clouds", "");
-            newTweak.parameters.Add(new Parameter("CloudOzoneEffectDay", "Cloud Ozone Effect Day", 0, 1, 0.01, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("CloudOzoneEffectTwilight", "Cloud Ozone Effect Twilight", 0.325, 1, 0.01, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("CloudOzoneEffectNight", "Cloud Ozone Effect Night", 0.125, 1, 0.01, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("CloudBrightnessDay", "Cloud Brightness Day", 1, 1, 0.01, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("CloudBrightnessTwilight", "Cloud Brightness Twilight", 1, 1, 0.01, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("CloudBrightnessNight", "Cloud Brightness Night", 0.5, 1, 0.01, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("CloudSaturationDay", "Cloud Saturation Day", 1, 1, 0.01, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("CloudSaturationTwilight", "Cloud Saturation Twilight", 0.325, 1, 0.01, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("CloudSaturationNight", "Cloud Saturation Night", 1, 1, 0.01, 51, UIType.TextBox));
+            newTweak.parameters.Add(new Parameter("CloudOzoneEffectDay", "Cloud Ozone Effect Day", 0, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[0].value}
+            newTweak.parameters.Add(new Parameter("CloudOzoneEffectTwilight", "Cloud Ozone Effect Twilight", 0.325, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[1].value}
+            newTweak.parameters.Add(new Parameter("CloudOzoneEffectNight", "Cloud Ozone Effect Night", 0.125, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[2].value}
+            newTweak.parameters.Add(new Parameter("CloudBrightnessDay", "Cloud Brightness Day", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[3].value}
+            newTweak.parameters.Add(new Parameter("CloudBrightnessTwilight", "Cloud Brightness Twilight", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[4].value}
+            newTweak.parameters.Add(new Parameter("CloudBrightnessNight", "Cloud Brightness Night", 0.5, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[5].value}
+            newTweak.parameters.Add(new Parameter("CloudSaturationDay", "Cloud Saturation Day", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[6].value}
+            newTweak.parameters.Add(new Parameter("CloudSaturationTwilight", "Cloud Saturation Twilight", 0.325, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[7].value}
+            newTweak.parameters.Add(new Parameter("CloudSaturationNight", "Cloud Saturation Night", 1, 1, 0.01, 51, UIType.TextBox)); //{tweak.parameters[8].value}
+            tweaks.Add(newTweak);
+
+            //newTweak = new Tweak("ENHANCED_ATMOSPHERICS_Sun", Category.EnhancedAtmospherics, "Enhanced Atmospherics Sun", "");
+            //newTweak.parameters.Add(new Parameter("SunOzoneEffectDay", "Sun Ozone Effect Day", 0, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[0].value}
+            //newTweak.parameters.Add(new Parameter("SunOzoneEffectTwilight", "Sun Ozone Effect Twilight", 0.325, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[1].value}
+            //newTweak.parameters.Add(new Parameter("SunBrightnessDay", "Sun Brightness Day", 2.75, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[2].value}
+            //newTweak.parameters.Add(new Parameter("SunBrightnessTwilight", "Sun Brightness Twilight", 3.75, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[3].value}
+            //newTweak.parameters.Add(new Parameter("SunSaturationDay", "Sun Saturation Day", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[4].value}
+            //newTweak.parameters.Add(new Parameter("SunSaturationTwilight", "Sun Saturation Twilight", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[5].value}
+            //tweaks.Add(newTweak);
+
+            // -----------------------
+            //  Clouds
+            // -----------------------
+
+            newTweak = new Tweak("CLOUDS_POPCORN_MODIFICATOR", Category.Clouds, "'No popcorn' clouds", "");
+            newTweak.parameters.Add(new Parameter("CloudDistanceFactor", "Distance factor", 0.0000000005, 0.0000000005, 0.0000000001, 0.0000000010, UIType.TextBox));
+            newTweak.parameters.Add(new Parameter("CloudOpacity", "Opacity at far range", 1, 1, 0.1, 1, UIType.TextBox));
+            tweaks.Add(newTweak);
+
+            newTweak = new Tweak("CLOUDS_CLOUD_ALTERNATE_LIGHTING", Category.Clouds, "Alternate lighting for cloud groups", "");
+            tweaks.Add(newTweak);
+
+            newTweak = new Tweak("CLOUDS_CIRRUS_LIGHTING", Category.Clouds, "Cirrus lighting", "");
+            newTweak.parameters.Add(new Parameter("LightingRatio", "Lighting", 1, 1, 0, 2, UIType.TextBox));
+            newTweak.parameters.Add(new Parameter("SaturateRatio", "Saturation", 1, 1, 0, 2, UIType.TextBox));
+            tweaks.Add(newTweak);
+
+            newTweak = new Tweak("CLOUDS_CLOUD_VOLUME", Category.Clouds, "Cloud light scattering", "");
+            newTweak.parameters.Add(new Parameter("ScatteringFactor", "Scattering factor", 0.5, 0.5, 0.1, 3, UIType.TextBox));
+            newTweak.parameters.Add(new Parameter("LightingFactor", "Lighting factor", 0.5, 0.5, 0.01, 2, UIType.TextBox));
+            newTweak.parameters.Add(new Parameter("NoPattern", "Don't use cloud lighting patterns", 0, 0, 0, 1, UIType.Checkbox));
+            tweaks.Add(newTweak);
+
+            newTweak = new Tweak("CLOUDS_CLOUDS_LIGHTING_TUNING", Category.Clouds, "Cloud lighting tuning", "");
+            newTweak.parameters.Add(new Parameter("CloudLightFactor", "Lighting factor", 0.85, 0.85, 0.1, 5, UIType.TextBox));
+            newTweak.parameters.Add(new Parameter("CloudSaturateFactor", "Saturation factor", 0.33, 0.33, 0.1, 5, UIType.TextBox));
+            tweaks.Add(newTweak);
+
+            newTweak = new Tweak("CLOUDS_CLOUD_SATURATION", Category.Clouds, "Cloud saturation", "");
+            newTweak.parameters.Add(new Parameter("ShadeFactor", "Saturation", 1, 1, 0, 3, UIType.TextBox));
+            tweaks.Add(newTweak);
+
+            newTweak = new Tweak("CLOUDS_CLOUD_SHADOWS_DEPTH_NEW", Category.Clouds, "Cloud shadow depth", "");
+            newTweak.parameters.Add(new Parameter("FDepthFactor", "Shadow depth", 0.15, 0.15, 0.01, 100, UIType.TextBox));
+            tweaks.Add(newTweak);
+
+            newTweak = new Tweak("CLOUDS_CLOUD_SHADOWS_SIZE", Category.Clouds, "Cloud shadow extended size", "");
+            tweaks.Add(newTweak);
+
+            newTweak = new Tweak("CLOUDS_CLOUD_BRIGHTNESS_TWILIGHT", Category.Clouds, "Reduce cloud brightness at dawn/dusk/night", "");
+            tweaks.Add(newTweak);
+
+            newTweak = new Tweak("CLOUDS_CLOUD_SIZE", Category.Clouds, "Cloud puffs width and height scaling", "");
+            newTweak.parameters.Add(new Parameter("CloudSizeHCoeff", "Horizontal", 0.5, 0.5, 0.3, 1, UIType.TextBox));
+            newTweak.parameters.Add(new Parameter("CloudSizeVCoeff", "Vertical", 0.5, 0.5, 0.3, 1, UIType.TextBox));
+            tweaks.Add(newTweak);
+
+            // -----------------------
+            //  Atmosphere
+            // -----------------------
+
+            newTweak = new Tweak("ATMOSPHERE_HAZE_EFFECT", Category.Atmosphere, "Atmospheres Haze Effect", "");
+            newTweak.parameters.Add(new Parameter("HazeEffectPower", "Power", 1.00, 1.00, 1.00, 1.00, UIType.TextBox)); //{tweak.parameters[0].value}
+            newTweak.parameters.Add(new Parameter("HazeEffectDensity", "Density", 0.00000000050, 0.00000000050, 0.00000000050, 0.00000000050, UIType.TextBox)); //{tweak.parameters[1].value}
+            newTweak.parameters.Add(new Parameter("HazeEffectColorRed", "Color Tone Red", 1.00, 1.00, 1.00, 1.00, UIType.TextBox)); //{tweak.parameters[2].value}
+            newTweak.parameters.Add(new Parameter("HazeEffectColorGreen", "Color Tone Green", 1.00, 1.00, 1.00, 1.00, UIType.TextBox)); //{tweak.parameters[3].value}
+            newTweak.parameters.Add(new Parameter("HazeEffectColorBlue", "Color Tone Blue", 1.00, 1.00, 1.00, 1.00, UIType.TextBox)); //{tweak.parameters[4].value}
+            newTweak.parameters.Add(new Parameter("HazeEffectDensityDependsOnAltitude", "Density depends on altitude", 1, 1, 0, 1, UIType.Checkbox));//{tweak.parameters[5].value}
+            newTweak.parameters.Add(new Parameter("HazeEffectAltitudeZero", "Altitude when density reaches zero", 15000, 15000, 15000, 15000, UIType.TextBox));//{tweak.parameters[6].value}
+            tweaks.Add(newTweak);
+
+            newTweak = new Tweak("ATMOSPHERE_RAYLEIGHT_SCATTERING", Category.Atmosphere, "Atmosphere Rayleight Scattering", "");
+            newTweak.parameters.Add(new Parameter("RayleightScatteringPower", "Power", 2.75, 2.75, 2.75, 2.75, UIType.TextBox)); //{tweak.parameters[0].value}
+            newTweak.parameters.Add(new Parameter("RayleightScatteringDensity", "Density", 0.0000000200, 0.0000000200, 0.0000000200, 0.0000000200, UIType.TextBox)); //{tweak.parameters[1].value}
+            newTweak.parameters.Add(new Parameter("RayleightScatteringColorGreen", "Color Green", 0.060, 0.060, 0.060, 0.060, UIType.TextBox)); //{tweak.parameters[2].value}
+            newTweak.parameters.Add(new Parameter("RayleightScatteringColorBlue", "Color Blue", 0.190, 0.190, 0.190, 0.190, UIType.TextBox)); //{tweak.parameters[3].value}
+            newTweak.parameters.Add(new Parameter("RayleightScatteringDependsOnAltitude", "Density depends on altitude", 1, 1, 0, 1, UIType.Checkbox)); //{tweak.parameters[4].value}
+            newTweak.parameters.Add(new Parameter("RayleightScatteringAltitudeDensityZero", "Altitude when density reaches zero", 15000, 15000, 15000, 15000, UIType.TextBox)); //{tweak.parameters[5].value}
+            tweaks.Add(newTweak);
+
+            newTweak = new Tweak("ATMOSPHERE_FOG_FIX", Category.Atmosphere, "Atmospheres Fog Fix", "");
+            newTweak.parameters.Add(new Parameter("FixP3DDefaultHaze", "Fix default haze", 1, 1, 0, 1, UIType.Checkbox));//{tweak.parameters[0].value}
+            tweaks.Add(newTweak);
+
+            newTweak = new Tweak("ATMOSPHERE_SKY_SATURATION", Category.Atmosphere, "Sky Saturation", "");
+            newTweak.parameters.Add(new Parameter("SkySaturaion", "Sky Saturation", 0, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[0].value}
             tweaks.Add(newTweak);
 
             //// -----------------------
             ////  Lighting
             //// -----------------------
 
-            //newTweak = new Tweak("LIGHTING_COCKPIT_LIGHTING", Category.Lighting, "Cockpit Lighting", "");
-            ////newTweak.parameters.Add(new Parameter("SkyOzoneEffectDay", "Sky Ozone Effect Day", 0.125, 1, 0.01, 5, UIType.TextBox));
-            //tweaks.Add(newTweak);
+            newTweak = new Tweak("LIGHTING_COCKPIT_LIGHTING", Category.Lighting, "Cockpit Lighting", "");
+            newTweak.parameters.Add(new Parameter("CockpitDiffuse", "Cockpit Diffuse", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[0].value}
+            newTweak.parameters.Add(new Parameter("CockpitAmbient", "Cockpit Ambient", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[1].value}
+            newTweak.parameters.Add(new Parameter("CockpitSaturation", "Cockpit Saturation", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[2].value}
+            tweaks.Add(newTweak);
 
             // -----------------------
             //  Terrain
             // -----------------------
 
             newTweak = new Tweak("TERRAIN_REFLECTANCE", Category.Terrain, "Terrain Reflectance", "Adjust how much the terrain reflects, 0.25 is the default p3d pbr terrain reflectance");
-            newTweak.parameters.Add(new Parameter("TerrainReflectance", "Terrain Reflectance", 0.02, 1, 0.001, 1, UIType.TextBox));
+            newTweak.parameters.Add(new Parameter("TerrainReflectance", "Terrain Reflectance", 0.02, 0.02, 0.001, 1, UIType.TextBox));
             tweaks.Add(newTweak);
                                                                                                                                                                                                                                                                                                                                                                                                                                 
             newTweak = new Tweak("TERRAIN_LIGHTING", Category.Terrain, "Terrain Lighting", "Terrain Lighting Diffuse - Diffuse Lighting Factor of the terrain\r\nTerrain Lighting Ambient - Ambient Lighting Factor of the terrain\r\nTerrain Lighting Moon - This value defines how much the moonlight affects the terrain at night\r\n\r\nPro Tip: Use Expressions to darken the ambient/diffuse only at a given time\r\n             Something like this  saturate(0.5 + cb_mSun.mDiffuse.g/0.33)");
@@ -273,21 +364,27 @@ namespace OpenShade.Classes
             newTweak.parameters.Add(new Parameter("TerrainSaturation", "Terrain Saturation", 1, 1, 0.01, 5, UIType.TextBox));
             tweaks.Add(newTweak);
 
+
             // -----------------------
             //  PBR
             // -----------------------
 
-            newTweak = new Tweak("AIRCRAFT_PBR_BRIGHTNESS", Category.PBR, "Aircraft PBR brightness", "Tweak the aircraft PBR brightness independed from day and night.\r\n Higher value means darker.\r\n A value of 2 means the aircraft brightness double as dark as default.");
-            newTweak.parameters.Add(new Parameter("AircraftBrightnessDay", "Aircraft PBR brightness day", 1.1, 1, 0.1, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("AircraftBrightnessNight", "Aircraft PBR brightness night", 2.2, 1, 0.1, 5, UIType.TextBox));
+            newTweak = new Tweak("ADVANCED_PBR", Category.PBR, "Advanced PBR", "A more advanced PBR approach implemented in P3D using Diffuse Image Based Lighting");
+            newTweak.parameters.Add(new Parameter("AdvancedPBRDiffuseColor", "Diffuse Color Brightness", 1.5, 1.5, 1.5, 1.5, UIType.TextBox));//{tweak.parameters[0].value}
+            newTweak.parameters.Add(new Parameter("AdvancedPBRIBLSaturation", "IBL Saturation", 0.9, 0.9, 0.9, 0.9, UIType.TextBox));//{tweak.parameters[1].value}
+            newTweak.parameters.Add(new Parameter("AdvancedPBRIBLSpecular", "IBL Specular Intensity", 0.7, 0.7, 0.7, 0.7, UIType.TextBox));//{tweak.parameters[2].value}
+            newTweak.parameters.Add(new Parameter("AdvancedPBRAircraftAmbientLighting", "Aircraft Ambient Lighting", 1.3, 1.3, 1.3, 1.3, UIType.TextBox));//{tweak.parameters[3].value}
+            newTweak.parameters.Add(new Parameter("AdvancedPBROverallAmbientDay", "Ambient Lighting Day", 0.3, 0.3, 0.3, 0.3, UIType.TextBox));//{tweak.parameters[4].value}
+            newTweak.parameters.Add(new Parameter("AdvancedPBROverallAmbientNight", "Ambient Lighting Night", 0.1, 0.1, 0.1, 0.1, UIType.TextBox));//{tweak.parameters[5].value}
+            newTweak.parameters.Add(new Parameter("AdvancedPBRCockpitAmbientLighting", "Cockpit Ambient Lighting", 2, 2, 2, 2, UIType.TextBox));//{tweak.parameters[6].value}
+            newTweak.parameters.Add(new Parameter("AdvancedPBRAircraftReflectance", "Aircrat Reflectance Intensity", 0.2, 0.2, 0.2, 0.2, UIType.TextBox));//{tweak.parameters[7].value}
             tweaks.Add(newTweak);
             // -----------------------
             //  HDR Section
             // -----------------------
 
             newTweak = new Tweak("HDR_TONEMAP", Category.HDR, "Alternate tonemap adjustment", "This tweak replaces the default P3D tonemapper with a new tonemapper.");
-            newTweak.parameters.Add(new Parameter("toneMapPower", "Tonemap Power", 1.3, 1, 0.01, 5, UIType.TextBox));
-            newTweak.parameters.Add(new Parameter("toneMapExposure", "Tonemap Exposure", 1.2, 1, 0.01, 5, UIType.TextBox));
+            newTweak.parameters.Add(new Parameter("toneMapExposure", "Tonemap Exposure", 1.2, 1.2, 1.2, 1.2, UIType.TextBox));//{tweak.parameters[0].value}
             tweaks.Add(newTweak);
         }
 
@@ -295,6 +392,8 @@ namespace OpenShade.Classes
         // So if you change it, it screws everything up in the list, unless you removed-add the item. Just don't do it
     
     }
+
+
 
     public class CustomTweak : INotifyPropertyChanged
     {

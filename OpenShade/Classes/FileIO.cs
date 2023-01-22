@@ -304,7 +304,7 @@ namespace OpenShade.Classes
             if (mainWindowHandle.loadedPresetPath != null && File.Exists(mainWindowHandle.loadedPresetPath)) { lines.Add("Loaded_Preset, " + mainWindowHandle.loadedPresetPath); }
 
             lines.Add("P3D_Version, " + mainWindowHandle.P3DVersion);
-            lines.Add("Theme, " + ((App)Application.Current).CurrentTheme.ToString());
+            //lines.Add("Theme, " + ((App)Application.Current).CurrentTheme.ToString());
             lines.Add("Backup_Directory, " + mainWindowHandle.backupDirectory);
             lines.Add("Main_Width, " + mainWindowHandle.Width.ToString());
             lines.Add("Main_Height, " + mainWindowHandle.Height.ToString());
