@@ -13,7 +13,7 @@ Make sure you have Microsoft .Net Framework 4.5.2 or later installed on your mac
 
 ## Acknowledgments
 
-Thanks to BiologicalNanobot for helping with the HLSL tweak code!
+Thanks to BiologicalNanobot for helping with the HLSL tweak code for Enhanced Atmospherics!
 
 Thanks to LB767 for creating the original tool and making it Open Source!
 
