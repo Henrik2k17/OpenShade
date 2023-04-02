@@ -26,7 +26,6 @@ namespace OpenShade
 
     public partial class MainWindow : Window
     {
-        public string Debug = "yes"; //Debug Options: yes/no 
         string tweaksHash;
         string customTweaksHash;
         string postProcessesHash;
@@ -47,6 +46,8 @@ namespace OpenShade
         string currentDirectory = Directory.GetCurrentDirectory();
         string P3DDirectory;
         public string P3DVersion = "5.3.17.28160";
+
+
 
         FileIO fileData;
         string shaderDirectory;
@@ -178,21 +179,17 @@ namespace OpenShade
             // Show P3D Version Info and some Debug stuff
             string currentP3DEXEVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
             Log(ErrorType.Info, "You currently running P3D Version: " + currentP3DEXEVersion);
-            CurrentP3DVersionText.Text = currentP3DEXEVersion;
-            if (Debug == "yes") {
-            Log(ErrorType.Info, "Application Hardcoded Version: " + P3DVersion);
-            Log(ErrorType.Info, "Current P3D EXE Version: " + currentP3DEXEVersion);
+            Log(ErrorType.Info, "Application Version: " + P3DVersion);
             Log(ErrorType.Info, "Current P3D Path: " + P3DDirectory);
             Log(ErrorType.Info, "Current Backup Directory: " + backupDirectory);
-            }
 
             //Handling Current P3D Version
             if (Directory.Exists(backupDirectory))
             {
                 string currentP3DVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
-                if (P3DVersion != currentP3DVersion)
+                if (currentP3DVersion != P3DVersion)
                 {
-                    MessageBoxResult result = MessageBox.Show("OpenShade has detected a new version of Prepar3D (" + currentP3DVersion + ").\r\n\r\nIt is STRONGLY recommended that you backup the default shader files again otherwise they will be overwritten by old shader files when applying a preset.", "New version detected", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, MessageBoxResult.OK); // TODO: Localization
+                    MessageBoxResult result = MessageBox.Show("OpenShade has detected a new version of Prepar3D (" + currentP3DVersion + ").\r\n\r\nIt is STRONGLY recommended that you backup the default shader files again otherwise they will be overwritten by old shader files when applying a preset.", "New version detected", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, MessageBoxResult.OK);
                     if (result == MessageBoxResult.OK)
                     {
                         if (fileData.CopyShaderFiles(shaderDirectory, backupDirectory))
@@ -297,16 +294,29 @@ namespace OpenShade
         {
             if (itemListview.SelectedItem != null)
             {
+
+
                 StackGrid.Children.Clear();
                 clearStack.Children.Clear();
 
-                BaseTweak selectedEffect = (BaseTweak)itemListview.SelectedItem;                
+                BaseTweak selectedEffect = (BaseTweak)itemListview.SelectedItem;
 
                 titleBlock.Content = selectedEffect.name;
                 descriptionBlock.Text = selectedEffect.description;
 
                 if (selectedEffect.parameters.Count > 0)
                 {
+                    Button TweakDescriptionButton = new Button();
+                    TweakDescriptionButton.Content = "Images";
+                    TweakDescriptionButton.ToolTip = "Show Images and detailed tweak description";
+                    TweakDescriptionButton.Width = 100;
+                    TweakDescriptionButton.Height = 25;
+                    TweakDescriptionButton.VerticalAlignment = VerticalAlignment.Top;
+                    TweakDescriptionButton.HorizontalAlignment = HorizontalAlignment.Right;
+                    TweakDescriptionButton.Margin = new Thickness(0, 0, 0, 10);
+                    TweakDescriptionButton.Click += new RoutedEventHandler(ShowDescriptionImage);
+                    clearStack.Children.Add(TweakDescriptionButton);
+
                     Button resetButton = new Button();
                     resetButton.Content = "Reset default";
                     resetButton.ToolTip = "Reset parameters to their default value";
@@ -316,7 +326,6 @@ namespace OpenShade
                     resetButton.HorizontalAlignment = HorizontalAlignment.Right;
                     resetButton.Margin = new Thickness(0, 0, 0, 10);
                     resetButton.Click += new RoutedEventHandler(ResetParameters_Click);
-
                     clearStack.Children.Add(resetButton);
 
                     Button clearButton = new Button();
@@ -327,8 +336,9 @@ namespace OpenShade
                     clearButton.VerticalAlignment = VerticalAlignment.Top;
                     clearButton.HorizontalAlignment = HorizontalAlignment.Right;
                     clearButton.Click += new RoutedEventHandler(ResetParametersPreset_Click);
-
                     clearStack.Children.Add(clearButton);
+
+
 
                     foreach (Parameter param in selectedEffect.parameters)
                     {
@@ -718,6 +728,32 @@ namespace OpenShade
             List_SelectionChanged(Tweak_List, TweakStack, TweakClearStack, TweakTitleTextblock, TweakDescriptionTextblock);
             //if (currentTab.Name == "Tweak_Tab") { List_SelectionChanged(Tweak_List, TweakStack, TweakClearStack, TweakTitleTextblock, TweakDescriptionTextblock); }            
         }
+
+        private void ShowDescriptionImage(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+            TabItem currentTab = HelperFunctions.FindAncestorOrSelf<TabItem>(btn);
+
+            ListView currentList = null;
+
+            currentList = Tweak_List;
+            BaseTweak selectedEffect = (BaseTweak)currentList.SelectedItem;
+
+
+
+
+            switch(selectedEffect.name)
+            {
+                case "Terrain Lighting":
+                    OpenShade.Pages.TerrainLightingCompare TerrainLighting = new OpenShade.Pages.TerrainLightingCompare();
+                    TerrainLighting.Show();
+                    break;
+
+            }
+        }
+
+
+
         #endregion
 
         #region Settings
@@ -904,7 +940,9 @@ namespace OpenShade
         }
 
 
-        private void ApplyPreset(object sender, RoutedEventArgs e)
+
+
+            private void ApplyPreset(object sender, RoutedEventArgs e)
         {
 
             fileData.LoadShaderFiles(backupDirectory); // Always load the unmodified files;
@@ -1296,29 +1334,29 @@ namespace OpenShade
                             else
                             {
                                 PBRText = PBRText.AddBefore(ref success, "struct PS_OUTPUT", "	float4 SampleEnv(float3 txCoord, uint uTextureIndex)\r\n" +
-                             "\r\n	{" +
-                             "\r\n		return txBindlessCube(uTextureIndex).SampleLevel(samClamp, txCoord, 9);" +
-                             "\r\n	}" +
-                             "\r\n	float3 CalculateEnv( const float3 vNormal, uint uTextureIndex)" +
-                             "\r\n	{" +
-                             "\r\n		return SampleEnv(float3(vNormal.x, vNormal.y, vNormal.z), uTextureIndex).xyz;" +
-                             "\r\n	}" +
-                             "\r\n    float map(float input_value, float input_start, float input_end, float output_start, float output_end)" +
-                             "\r\n    {" +
-                             "\r\n    float slope = (output_end - output_start) / (input_end - input_start);" +
-                             "\r\n    return clamp(output_start + (slope * (input_value - input_start)), min(output_start, output_end), max(output_start, output_end));" +
-                             "\r\n    }" +
-                             "\r\n    float square(float value)" +
-                             "\r\n    {" +
-                             "\r\n        return value * value;" +
-                             "\r\n    }" +
-                             "\r\n    float interpolate_two_values(float value_1, float value_2, float sun_angle)" +
-                             "\r\n    {" +
-                             "\r\n    float output_value;" +
-                             "\r\n    if (sun_angle > 0.0) output_value = map(square(sun_angle), square(0.375), 0.0, value_1, value_2);" +
-                             "\r\n    else output_value = value_2;" +
-                             "\r\n    return output_value;" +
-                             "\r\n    }");
+                                "\r\n	{" +
+                                "\r\n		return txBindlessCube(uTextureIndex).SampleLevel(samClamp, txCoord, 9);" +
+                                "\r\n	}" +
+                                "\r\n	float3 CalculateEnv( const float3 vNormal, uint uTextureIndex)" +
+                                "\r\n	{" +
+                                "\r\n		return SampleEnv(float3(vNormal.x, vNormal.y, vNormal.z), uTextureIndex).xyz;" +
+                                "\r\n	}" +
+                                "\r\n    float map(float input_value, float input_start, float input_end, float output_start, float output_end)" +
+                                "\r\n    {" +
+                                "\r\n    float slope = (output_end - output_start) / (input_end - input_start);" +
+                                "\r\n    return clamp(output_start + (slope * (input_value - input_start)), min(output_start, output_end), max(output_start, output_end));" +
+                                "\r\n    }" +
+                                "\r\n    float square(float value)" +
+                                "\r\n    {" +
+                                "\r\n        return value * value;" +
+                                "\r\n    }" +
+                                "\r\n    float interpolate_two_values(float value_1, float value_2, float sun_angle)" +
+                                "\r\n    {" +
+                                "\r\n    float output_value;" +
+                                "\r\n    if (sun_angle > 0.0) output_value = map(square(sun_angle), square(0.375), 0.0, value_1, value_2);" +
+                                "\r\n    else output_value = value_2;" +
+                                "\r\n    return output_value;" +
+                                "\r\n    }");
                             }
 
                             //Add Reflect Tweak
@@ -1362,16 +1400,29 @@ namespace OpenShade
                             "\r\n            colorDiffuseSun = colorDiffuseSun * (1.15 * colorDiffuseTexture + float3(1 - 0.15, 1 - 0.15, 1 - 0.15));" +
                             "\r\n        color.rgb = (sunContrib + moonContrib) * shadowContrib * lerp(colorDiffuseSun.xyz, colorDiffuseSun.xyz * 1.6 , interpolate_two_values(1.6, 6.5, cb_mSun.mDirection.y)) * fDotSun*0.8;");
 
-                            //Add Rest
+                            //Case 1 IBL for PBR VC's
+                            if (tweak.parameters[8].value == "1")
+                                PBRText = PBRText.ReplaceAll(ref success, "        color.rgb += ambient;", "\r\n        if(cb_mObjectType == 19)" +
+                                $"\r\n            color.rgb += AmbientLightingCalculation * {tweak.parameters[3].value};" +
+                                "\r\n        else" +
+                                $"\r\n        color.rgb += ambient * {tweak.parameters[4].value} * saturate({tweak.parameters[5].value} + cb_mSun.mDiffuse.g/0.33);" +
+                                "\r\n        if(cb_mObjectType == 19){" +
+                                "\r\n            #if defined(SHD_NO_NEAR_CLIP)" +
+                                $"\r\n                color.rgb += AmbientLightingCalculation * {tweak.parameters[6].value};" +
+                                "\r\n            #endif" +
+                                "\r\n        }");
+                            else
+                            //Case 2 no IBL for PBR VC's
                             PBRText = PBRText.ReplaceAll(ref success, "        color.rgb += ambient;", "\r\n        if(cb_mObjectType == 19)" +
                             $"\r\n            color.rgb += AmbientLightingCalculation * {tweak.parameters[3].value};" +
                             "\r\n        else" +
                             $"\r\n        color.rgb += ambient * {tweak.parameters[4].value} * saturate({tweak.parameters[5].value} + cb_mSun.mDiffuse.g/0.33);" +
                             "\r\n        if(cb_mObjectType == 19){" +
                             "\r\n            #if defined(SHD_NO_NEAR_CLIP)" +
-                            $"\r\n                color.rgb += AmbientLightingCalculation * {tweak.parameters[6].value};" +
+                            $"\r\n                color.rgb += ambient * {tweak.parameters[6].value};" +
                             "\r\n            #endif" +
                             "\r\n        }");
+
                             break;
                         #endregion
 
@@ -1474,20 +1525,6 @@ namespace OpenShade
             ClearChangesInfo(tweaks);
             ClearChangesInfo(postProcesses);
         }
-
-
-
-
-        private void TerrainReflectanceCompare_Click(object sender, RoutedEventArgs e)
-        {
-            OpenShade.Pages.TerrainLightingCompare TerrainLighting = new OpenShade.Pages.TerrainLightingCompare();
-            TerrainLighting.Show();
-        }
-
-
-
-
-
 
         private void ResetShaderFiles(object sender, RoutedEventArgs e)
         {

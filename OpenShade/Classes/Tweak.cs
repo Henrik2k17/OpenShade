@@ -333,7 +333,7 @@ namespace OpenShade.Classes
             tweaks.Add(newTweak);
 
             newTweak = new Tweak("ATMOSPHERE_SKY_SATURATION", Category.Atmosphere, "Sky Saturation", "");
-            newTweak.parameters.Add(new Parameter("SkySaturaion", "Sky Saturation", 0, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[0].value}
+            newTweak.parameters.Add(new Parameter("SkySaturaion", "Sky Saturation", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[0].value}
             tweaks.Add(newTweak);
 
             //// -----------------------
@@ -377,8 +377,10 @@ namespace OpenShade.Classes
             newTweak.parameters.Add(new Parameter("AdvancedPBROverallAmbientDay", "Ambient Lighting Day", 0.3, 0.3, 0.3, 0.3, UIType.TextBox));//{tweak.parameters[4].value}
             newTweak.parameters.Add(new Parameter("AdvancedPBROverallAmbientNight", "Ambient Lighting Night", 0.1, 0.1, 0.1, 0.1, UIType.TextBox));//{tweak.parameters[5].value}
             newTweak.parameters.Add(new Parameter("AdvancedPBRCockpitAmbientLighting", "Cockpit Ambient Lighting", 2, 2, 2, 2, UIType.TextBox));//{tweak.parameters[6].value}
-            newTweak.parameters.Add(new Parameter("AdvancedPBRAircraftReflectance", "Aircrat Reflectance Intensity", 0.2, 0.2, 0.2, 0.2, UIType.TextBox));//{tweak.parameters[7].value}
+            newTweak.parameters.Add(new Parameter("AdvancedPBRAircraftReflectance", "Aircraft Reflectance Intensity", 0.2, 0.2, 0.2, 0.2, UIType.TextBox));//{tweak.parameters[7].value}
+            newTweak.parameters.Add(new Parameter("VCIBL", "Cockpit IBL", 1, 1, 0, 1, UIType.Checkbox));//{tweak.parameters[8].value}
             tweaks.Add(newTweak);
+
             // -----------------------
             //  HDR Section
             // -----------------------

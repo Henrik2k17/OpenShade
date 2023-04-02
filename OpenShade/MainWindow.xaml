@@ -67,31 +67,17 @@
                     <MenuItem Header="Reset All Tweak Values To Defaults" Click="ResetToDefaults"  ></MenuItem>
                 </MenuItem>
 
-                <MenuItem Header="Tweak Details" FontSize="13"   >
-                    <MenuItem Header="Enhanced Atmospherics" FontSize="13"   >
-                        <MenuItem Header="Terrain Reflectance" Click="TerrainReflectanceCompare_Click"></MenuItem>
-                    </MenuItem>
-                </MenuItem>
-
                 <MenuItem Header="Info About" FontSize="13"   >
-                    <MenuItem Header="XX - Placehoplder - XX"></MenuItem>
+                    <MenuItem Header="XX - Placeholder - XX"></MenuItem>
                 </MenuItem>
-
-
             </Menu>
 
 
-
-
             <!--Loaded Preset-->
-
             <Label Grid.Column="2"  Grid.Row="0" VerticalAlignment="Bottom" Content="Loaded Preset:" Margin="0,0,210,3" FontSize="13"  Height="20" FontWeight="SemiBold" Visibility="Hidden"/>
             <TextBlock Grid.Column="2"  Grid.Row="0" VerticalAlignment="Bottom" Text="" x:Name="LoadedPreset_TextBlock" Width="Auto" FontSize="13"  Margin="90,0,0,3" Height="20" Visibility="Hidden"/>
             <Label  VerticalAlignment="Bottom" Content="Active Preset:" Margin="390,0,120,3" Height="20" FontSize="13" FontWeight="SemiBold" Visibility="Hidden" />
             <TextBlock  VerticalAlignment="Bottom"  Text="" x:Name="ActivePreset_TextBlock" Width="Auto"  Grid.ColumnSpan="2" Margin="482,0,0,3" Height="20" FontSize="13" Visibility="Hidden"/>
-
-
-
         </Grid>
 
 
@@ -108,7 +94,6 @@
 
 
             <!--NavigateButtons-->
-
             <ListView x:Name="Tweak_List" Background="White" SelectionChanged="TweakList_SelectionChanged" MaxHeight="565" Margin="-3,18,1091,-7" Grid.ColumnSpan="3">
 
                 <!--Expander-->
@@ -195,7 +180,6 @@
 
 
         <!--SettingsPanels TODO: Move into own place-->
-
         <GroupBox Header="Preset Comments" Margin="165,25,10,217" Visibility="Visible" Grid.Column="2" FontSize="13" FontFamily="Inter" FontWeight="Bold" Background="Transparent" BorderBrush="Gray" BorderThickness="1">
             <TextBox x:Name="PresetComments_TextBox" VerticalAlignment="Top"  Height="329" VerticalContentAlignment="Top" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
         </GroupBox>
@@ -233,25 +217,7 @@
             </Grid>
         </GroupBox>
 
-        <!--<GroupBox Header="User Interface"  Visibility="Visible" Grid.Column="2" Margin="178,447,327,49" Background="White">
-            <Grid Margin="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Label Grid.Row="0" Grid.Column="0">Theme:</Label>
-                <ComboBox x:Name="Theme_ComboBox" Foreground="{DynamicResource TextColor}" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Width="100" HorizontalAlignment="Left" SelectionChanged="Theme_SelectionChanged"/>
-            </Grid>
-        </GroupBox>-->
-
-        <!--<GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Margin="0,1"/>-->
-
-
         <!--Log Panel-->
-
         <DockPanel Margin="0,3,0,-176" Grid.Row="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Width="1400">
             <Label Content="Log" DockPanel.Dock="Top" Margin="0" FontWeight="Bold" FontFamily="Inter"  Background="Transparent" Height="15" Width="1398"/>
             <RichTextBox x:Name="Log_RichTextBox" IsReadOnly="True" VerticalScrollBarVisibility="Hidden" DockPanel.Dock="Top" VerticalAlignment="Top"  Height="160 " Width="Auto">
