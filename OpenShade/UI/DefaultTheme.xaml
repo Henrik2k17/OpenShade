@@ -18,7 +18,7 @@
     <SolidColorBrush x:Key="TextBlue" Color="#FF0C50C7"/>
     <SolidColorBrush x:Key="TextRed" Color="#FFCB1010"/>
 
-
+    
     <!--Expander Arrow-->
 
     <ControlTemplate x:Key="ToggleButtonControlTemplate" TargetType="{x:Type ToggleButton}">
@@ -227,6 +227,6 @@
     
     <!--Expander End-->
 
-
-
+    
+    
 </ResourceDictionary>

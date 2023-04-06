@@ -31,24 +31,24 @@ namespace OpenShade.Pages
             this.Close();
         }
 
-        private void PrevBTN_Click(object sender, RoutedEventArgs e)
-        {
-            i--;
-            if (i < 1)
-            {
-                i = 3;
-            }
-            picHolder.Source = new BitmapImage(new Uri(@"/Resources/Images/TerrainReflectance/Custom/" + i + ".png", UriKind.Relative));
-        }
+        //private void PrevBTN_Click(object sender, RoutedEventArgs e)
+        //{
+        //    i--;
+        //    if (i < 1)
+        //    {
+        //        i = 3;
+        //    }
+        //    picHolder.Source = new BitmapImage(new Uri(@"/Resources/Images/TerrainReflectance/Custom/" + i + ".png", UriKind.Relative));
+        //}
 
-        private void XextBTN_Click(object sender, RoutedEventArgs e)
-        {
-            i++;
-            if (i > 3)
-            {
-                i = 1;
-            }
-            picHolder.Source = new BitmapImage(new Uri(@"/Resources/Images/TerrainReflectance/Custom/" + i + ".png", UriKind.Relative));
-        }
+        //private void XextBTN_Click(object sender, RoutedEventArgs e)
+        //{
+        //    i++;
+        //    if (i > 3)
+        //    {
+        //        i = 1;
+        //    }
+        //    picHolder.Source = new BitmapImage(new Uri(@"/Resources/Images/TerrainReflectance/Custom/" + i + ".png", UriKind.Relative));
+        //}
     }
 }

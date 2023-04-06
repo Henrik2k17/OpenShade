@@ -1076,7 +1076,7 @@ namespace OpenShade
                             currentFile = FileIO.generalFile;
                             generalText = generalText.AddBefore(ref success, "// Apply IR if active", "if (cb_mObjectType == (uint)3)\r\n    {\r\n        cColor.rgb = " + tweak.parameters[0].value.ToString() + " * saturate(lerp(dot(cColor.rgb, float3(0.299f, 0.587f, 0.114f)), cColor.rgb, " + tweak.parameters[1].value.ToString() + "));\r\n   }\r\n\r\n");
                         break;
-
+                            
                         case "Cloud light scattering":
                             currentFile = FileIO.cloudFile;
                             cloudText = cloudText.CommentOut(ref success, "if (fIntensity < -cb_mMedianLine)", "    fIntensity = clamp(fIntensity, 0, 1);", false);
@@ -1114,6 +1114,7 @@ namespace OpenShade
                         case "Reduce cloud brightness at dawn/dusk/night":
                             currentFile = FileIO.cloudFile;
                             cloudText = cloudText.AddAfter(ref success, "float3 fColor = fIntensity * cb_mCombinedDiffuse.rgb + cb_mCombinedAmbient.rgb;", "\r\n    float fCumulusDusk = 1 + saturate(fColor.g/(cb_View.mFogColor.g + 0.00001) - 2);\r\n    fColor /= fCumulusDusk;\r\n if (cb_mDayNightInterpolant > 0.9){ \r\n        fColor = fColor*0.1;\r\n    }\r\n ");
+                            generalText = generalText.AddAfter(ref success, "#endif //SHD_ALPHA_TEST", "\r\nif (cb_mObjectType == (uint)3)\r\n {\r\n      float fCirrusDusk = 1 + saturate(cColor.g / (cb_View.mFogColor.g + 0.00001) - 2);\r\n     cColor.rgb /= fCirrusDusk;\r\n     if (cb_mDayNightInterpolant > 0.9){ \r\n         cColor.rgb = cColor.rgb*0.1;\r\n     }\r\n  }\r\n");
                         break;
 
                         case "Cloud puffs width and height scaling":
@@ -1386,17 +1387,6 @@ namespace OpenShade
                             $"\r\n            AmbientLightingCalculation = (kD * diffuseIBL + specularIBL * {tweak.parameters[2].value}) * occlusion;" +
                             "\r\n        }" +
                             "\r\n            float3 colorDiffuseTexture = CalculateEnv(Input.vNormalWS,pbrMaterial.uTextureIDs1[1]);" +
-                            "\r\n            float3 colorAmbientTexture = (colorDiffuseTexture +" +
-                            "\r\n                                            CalculateEnv(normalize(float3(Input.vNormalWS.x + 0.1, Input.vNormalWS.y, Input.vNormalWS.z)),pbrMaterial.uTextureIDs1[1]) +" +
-                            "\r\n                                            CalculateEnv(normalize(float3(Input.vNormalWS.x - 0.1, Input.vNormalWS.y, Input.vNormalWS.z)),pbrMaterial.uTextureIDs1[1]) +" +
-                            "\r\n                                            CalculateEnv(normalize(float3(Input.vNormalWS.x, Input.vNormalWS.y + 0.1, Input.vNormalWS.z)),pbrMaterial.uTextureIDs1[1]) +" +
-                            "\r\n                                            CalculateEnv(normalize(float3(Input.vNormalWS.x, Input.vNormalWS.y - 0.1, Input.vNormalWS.z)),pbrMaterial.uTextureIDs1[1]) +" +
-                            "\r\n                                            CalculateEnv(normalize(float3(Input.vNormalWS.x, Input.vNormalWS.y, Input.vNormalWS.z + 0.1)),pbrMaterial.uTextureIDs1[1]) +" +
-                            "\r\n                                            CalculateEnv(normalize(float3(Input.vNormalWS.x, Input.vNormalWS.y, Input.vNormalWS.z - 0.1)),pbrMaterial.uTextureIDs1[1])) * 0.142857142;" +
-                            "\r\n            float colorDiffuseMapFactor = 1.6;  " +
-                            "\r\n            colorAmbientTexture = (colorAmbientTexture * (1 - colorDiffuseMapFactor) + colorDiffuseTexture * colorDiffuseMapFactor);" +
-                            "\r\n            colorAmbientSun = colorAmbientSun * (0.2 * colorAmbientTexture + float3(1 - 0.2, 1 - 0.2, 1 - 0.2));" +
-                            "\r\n            colorAmbientMoon = colorAmbientMoon * (0.2 * colorAmbientTexture + float3(1 - 0.2, 1 - 0.2, 1 - 0.2));" +
                             "\r\n            colorDiffuseSun = colorDiffuseSun * (1.15 * colorDiffuseTexture + float3(1 - 0.15, 1 - 0.15, 1 - 0.15));" +
                             "\r\n        color.rgb = (sunContrib + moonContrib) * shadowContrib * lerp(colorDiffuseSun.xyz, colorDiffuseSun.xyz * 1.6 , interpolate_two_values(1.6, 6.5, cb_mSun.mDirection.y)) * fDotSun*0.8;");
 
