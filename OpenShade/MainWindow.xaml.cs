@@ -749,6 +749,16 @@ namespace OpenShade
                     TerrainLighting.Show();
                     break;
 
+                case "Terrain Saturation":
+                    OpenShade.Pages.TerrainSaturationCompare TerrainSaturation = new OpenShade.Pages.TerrainSaturationCompare();
+                    TerrainSaturation.Show();
+                    break;
+
+                case "Terrain Reflectance":
+                    OpenShade.Pages.TerrainReflectanceCompare TerrainReflectance = new OpenShade.Pages.TerrainReflectanceCompare();
+                    TerrainReflectance.Show();
+                    break;
+
             }
         }
 
