@@ -1,0 +1,311 @@
+﻿<Window x:Class="OpenShade.Pages.AdvancedPBRCompare"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OpenShade.Pages"
+        mc:Ignorable="d"
+        Title="AdvancedPBRCompare" WindowStartupLocation="CenterScreen" Height="500" MaxHeight="500" Width="600" MaxWidth="600" MinHeight="450" MinWidth="800" ResizeMode="NoResize">
+    <Window.Resources>
+        <ControlTemplate x:Key="CustomSplitter69" TargetType="{x:Type GridSplitter}">
+            <Grid>
+                <Rectangle IsHitTestVisible="False" Fill="Black"/>
+                <Border Background="White" Width="25" Height="25" CornerRadius="50" Margin="-13 0">
+                    <Path Stroke="Black" StrokeThickness="0.6" Width="17" Height="7" Data="m 4.4549201,1048.4664 -4.33056515,1.9095 4.33056515,1.9094 0,-3.8189 z m 3.0901599,0 0,3.8189 4.330565,-1.9094 -4.330565,-1.9095 z m -3.2239449,0.2053 0,3.4083 -3.86518514,-1.7041 3.86518514,-1.7042 z m 3.3577349,0 3.865185,1.7042 -3.865185,1.7041 0,-3.4083 z" Stretch="Fill"/>
+                </Border>
+            </Grid>
+        </ControlTemplate>
+    </Window.Resources>
+
+
+
+    <Grid Margin="0,0,0,1">
+        <!--Tweak Overview None -> Tweaked-->
+        <Grid x:Name="Grid1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Image x:Name="After1" Source="/Resources/Images/AdvancedPBR/AdvancedPBRTweaked.jpg" HorizontalAlignment="Left"
+                Grid.ColumnSpan="3" />
+            <Image x:Name="Before1" Source="/Resources/Images/AdvancedPBR/AdvancedPBRDefault.jpg"  HorizontalAlignment="Left"
+                Width="{Binding ActualWidth, ElementName=After1}"
+                Height="{Binding ActualHeight, ElementName=After1}" />
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"  ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Panel.ZIndex="2" Width="2.5" Background="White">
+            </GridSplitter>
+            <GridSplitter Template="{DynamicResource CustomSplitter69}"  Grid.Column="1" Height="Auto" Width="1" HorizontalAlignment="Center"/>
+        </Grid>
+
+        <!--Tweaked Default -> Edited Diffuse Value-->
+        <Grid x:Name="Grid2">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected,ElementName=BoxItemDiffuseColor}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Image x:Name="After2" Source="/Resources/Images/AdvancedPBR/AdvancedPBRDiffuseZeroNine.jpg" HorizontalAlignment="Left"
+                Grid.ColumnSpan="3" />
+            <Image x:Name="Before2" Source="/Resources/Images/AdvancedPBR/AdvancedPBRDiffuseOneFive.jpg"  HorizontalAlignment="Left"
+                Width="{Binding ActualWidth, ElementName=After2}"
+                Height="{Binding ActualHeight, ElementName=After2}" />
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"  ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Panel.ZIndex="2" Width="2.5" Background="White">
+            </GridSplitter>
+            <GridSplitter Template="{DynamicResource CustomSplitter69}"  Grid.Column="1" Height="Auto" Width="1" HorizontalAlignment="Center"/>
+        </Grid>
+
+        <!--Tweaked Default -> Edited Saturation Value-->
+        <Grid x:Name="Grid3">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected,ElementName=BoxItemIBLSaturation}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Image x:Name="After3" Source="/Resources/Images/AdvancedPBR/AdvancedPBRSaturationZeroTwo.jpg" HorizontalAlignment="Left"
+                Grid.ColumnSpan="3" />
+            <Image x:Name="Before3" Source="/Resources/Images/AdvancedPBR/AdvancedPBRSaturationZeroNine.jpg"  HorizontalAlignment="Left"
+                Width="{Binding ActualWidth, ElementName=After3}"
+                Height="{Binding ActualHeight, ElementName=After3}" />
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"  ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Panel.ZIndex="2" Width="2.5" Background="White">
+            </GridSplitter>
+            <GridSplitter Template="{DynamicResource CustomSplitter69}"  Grid.Column="1" Height="Auto" Width="1" HorizontalAlignment="Center"/>
+        </Grid>
+
+        <!--Tweaked Default -> Edited Specular Value-->
+        <Grid x:Name="Grid4">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected,ElementName=BoxItemIBLSpecular}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Image x:Name="After4" Source="/Resources/Images/AdvancedPBR/AdvancedPBRSpecularOneFive.jpg" HorizontalAlignment="Left"
+                Grid.ColumnSpan="3" />
+            <Image x:Name="Before4" Source="/Resources/Images/AdvancedPBR/AdvancedPBRSpecularZeroSeven.jpg"  HorizontalAlignment="Left"
+                Width="{Binding ActualWidth, ElementName=After4}"
+                Height="{Binding ActualHeight, ElementName=After4}" />
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"  ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Panel.ZIndex="2" Width="2.5" Background="White">
+            </GridSplitter>
+            <GridSplitter Template="{DynamicResource CustomSplitter69}"  Grid.Column="1" Height="Auto" Width="1" HorizontalAlignment="Center"/>
+        </Grid>
+
+        <!--Tweaked Default -> Edited Aircraft Ambient-->
+        <Grid x:Name="Grid5">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected,ElementName=BoxItemAmbientLighting}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Image x:Name="After5" Source="/Resources/Images/AdvancedPBR/AdvancedPBRAircraftAmbientZeroTwo.jpg" HorizontalAlignment="Left"
+                Grid.ColumnSpan="3" />
+            <Image x:Name="Before5" Source="/Resources/Images/AdvancedPBR/AdvancedPBRAircraftAmbientOneThree.jpg"  HorizontalAlignment="Left"
+                Width="{Binding ActualWidth, ElementName=After5}"
+                Height="{Binding ActualHeight, ElementName=After5}" />
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"  ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Panel.ZIndex="2" Width="2.5" Background="White">
+            </GridSplitter>
+            <GridSplitter Template="{DynamicResource CustomSplitter69}"  Grid.Column="1" Height="Auto" Width="1" HorizontalAlignment="Center"/>
+        </Grid>
+
+        <!--Tweaked Default -> Edited Aircraft Reflectance-->
+        <Grid x:Name="Grid6">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected,ElementName=BoxItemAircraftReflectance}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Image x:Name="After6" Source="/Resources/Images/AdvancedPBR/AdvancedPBRReflectanceZeroNine.jpg" HorizontalAlignment="Left"
+                Grid.ColumnSpan="3" />
+            <Image x:Name="Before6" Source="/Resources/Images/AdvancedPBR/AdvancedPBRReflectanceZeroTwo.jpg"  HorizontalAlignment="Left"
+                Width="{Binding ActualWidth, ElementName=After6}"
+                Height="{Binding ActualHeight, ElementName=After6}" />
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"  ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Panel.ZIndex="2" Width="2.5" Background="White">
+            </GridSplitter>
+            <GridSplitter Template="{DynamicResource CustomSplitter69}"  Grid.Column="1" Height="Auto" Width="1" HorizontalAlignment="Center"/>
+        </Grid>
+
+        <!--Tweaked Default -> Edited Aircraft VC Ambient-->
+        <Grid x:Name="Grid7">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected,ElementName=BoxItemVCAmbient}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Image x:Name="After7" Source="/Resources/Images/AdvancedPBR/AdvancedPBRVCAmbientOneSeven.jpg" HorizontalAlignment="Left"
+                Grid.ColumnSpan="3" />
+            <Image x:Name="Before7" Source="/Resources/Images/AdvancedPBR/AdvancedPBRVCAmbientOneZero.jpg"  HorizontalAlignment="Left"
+                Width="{Binding ActualWidth, ElementName=After7}"
+                Height="{Binding ActualHeight, ElementName=After7}" />
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"  ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Panel.ZIndex="2" Width="2.5" Background="White">
+            </GridSplitter>
+            <GridSplitter Template="{DynamicResource CustomSplitter69}"  Grid.Column="1" Height="Auto" Width="1" HorizontalAlignment="Center"/>
+        </Grid>
+
+        <!--Tweaked Default -> Edited Day Ambient-->
+        <Grid x:Name="Grid8">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected,ElementName=BoxItemAmbientDay}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Image x:Name="After8" Source="/Resources/Images/AdvancedPBR/AdvancedPBRAmbientDayOneZero.jpg" HorizontalAlignment="Left"
+                Grid.ColumnSpan="3" />
+            <Image x:Name="Before8" Source="/Resources/Images/AdvancedPBR/AdvancedPBRAmbientDayZeroThree.jpg"  HorizontalAlignment="Left"
+                Width="{Binding ActualWidth, ElementName=After8}"
+                Height="{Binding ActualHeight, ElementName=After8}" />
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"  ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Panel.ZIndex="2" Width="2.5" Background="White">
+            </GridSplitter>
+            <GridSplitter Template="{DynamicResource CustomSplitter69}"  Grid.Column="1" Height="Auto" Width="1" HorizontalAlignment="Center"/>
+        </Grid>
+
+        <!--Tweaked Default -> Edited Night Ambient-->
+        <Grid x:Name="Grid9">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected,ElementName=BoxItemAmbientNight}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Image x:Name="After9" Source="/Resources/Images/AdvancedPBR/AdvancedPBRAmbientNightOneZero.jpg" HorizontalAlignment="Left"
+                Grid.ColumnSpan="3" />
+            <Image x:Name="Before9" Source="/Resources/Images/AdvancedPBR/AdvancedPBRAmbientNightZeroOne.jpg"  HorizontalAlignment="Left"
+                Width="{Binding ActualWidth, ElementName=After9}"
+                Height="{Binding ActualHeight, ElementName=After9}" />
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"  ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Panel.ZIndex="2" Width="2.5" Background="White">
+            </GridSplitter>
+            <GridSplitter Template="{DynamicResource CustomSplitter69}"  Grid.Column="1" Height="Auto" Width="1" HorizontalAlignment="Center"/>
+        </Grid>
+
+
+
+
+        <Button Content="Close" Click="CloseBTN_Click" HorizontalAlignment="Center" Height="29" Margin="0,0,0,09" Grid.Row="1" VerticalAlignment="Bottom" Grid.ColumnSpan="3" Width="150"/>
+        <ComboBox HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="29"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,0,-600,09" Width="138">
+            <ComboBoxItem x:Name="Default" IsSelected="True">Default</ComboBoxItem>
+            <ComboBoxItem x:Name="BoxItemDiffuseColor">Diffuse Color</ComboBoxItem>
+            <ComboBoxItem x:Name="BoxItemIBLSaturation">IBL Saturation</ComboBoxItem>
+            <ComboBoxItem x:Name="BoxItemIBLSpecular">IBL Specular</ComboBoxItem>
+            <ComboBoxItem x:Name="BoxItemAmbientLighting">Ambient Lighting</ComboBoxItem>
+            <ComboBoxItem x:Name="BoxItemAmbientDay">Ambient Day</ComboBoxItem>
+            <ComboBoxItem x:Name="BoxItemAmbientNight">Ambient Night</ComboBoxItem>
+            <ComboBoxItem x:Name="BoxItemVCAmbient">Cockpit Ambient</ComboBoxItem>
+            <ComboBoxItem x:Name="BoxItemAircraftReflectance">Reflectance Intensity</ComboBoxItem>
+        </ComboBox>
+
+
+    </Grid>
+
+</Window>

@@ -15,10 +15,16 @@ using System.Windows.Shapes;
 namespace OpenShade.Pages
 {
     /// <summary>
-    /// Interaktionslogik für MultiParamTemplate.xaml
+    /// Interaktionslogik für AdvancedPBRCompare.xaml
     /// </summary>
-    public partial class MultiParamTemplate : Window
+    public partial class AdvancedPBRCompare : Window
     {
+
+        int i = 1;
+        public AdvancedPBRCompare()
+        {
+            InitializeComponent();
+        }
 
         private void CloseBTN_Click(object sender, RoutedEventArgs e)
         {

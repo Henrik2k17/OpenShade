@@ -13,6 +13,7 @@ namespace OpenShade.Classes
 
         public const string settingsFile = "config.txt";
 
+        public const string PrecipParticleFile = "PrecipParticle.fx";
         public const string cloudFile = "Cloud.fx";
         public const string generalFile = "General.fx";
         public const string terrainFile = "Terrain.fx";
@@ -22,6 +23,7 @@ namespace OpenShade.Classes
         public const string HDRFile = "HDR.hlsl";
         public const string PBRFile = "PBRBase.fx";
         public const string compositeFile = "DeferredComposite.fx";
+
 
         public FileIO(MainWindow handle)
         {
@@ -41,6 +43,7 @@ namespace OpenShade.Classes
                 MainWindow.HDRText = File.ReadAllText(dir + HDRFile);
                 MainWindow.PBRText = File.ReadAllText(dir + PBRFile);
                 MainWindow.compositeText = File.ReadAllText(dir + compositeFile);
+                MainWindow.PrecipParticleText = File.ReadAllText(dir + PrecipParticleFile);
 
                 return true;
 
@@ -62,6 +65,7 @@ namespace OpenShade.Classes
             if (File.Exists(dir + HDRFile) == false) { return false; }
             if (File.Exists(dir + PBRFile) == false) { return false; }
             if (File.Exists(dir + compositeFile) == false) { return false; }
+            if (File.Exists(dir + PrecipParticleFile) == false) { return false; }
 
             return true;
         }
@@ -78,6 +82,7 @@ namespace OpenShade.Classes
                 File.Copy(origin + shadowFile, destination + shadowFile, true);
                 File.Copy(origin + PBRFile, destination + PBRFile, true);
                 File.Copy(origin + compositeFile, destination + compositeFile, true);
+                File.Copy(origin + PrecipParticleFile, destination + PrecipParticleFile, true);
 
                 if (origin.Contains("ShadersHLSL"))
                 {

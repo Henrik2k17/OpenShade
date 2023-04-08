@@ -59,7 +59,7 @@ namespace OpenShade
         IniFile loadedPreset;
 
         // TODO: put this in a struct somewhere
-        public static string cloudText, generalText, terrainText, funclibText, terrainFXHText, shadowText, HDRText, PBRText, compositeText;
+        public static string cloudText, generalText, terrainText, funclibText, terrainFXHText, shadowText, HDRText, PBRText, compositeText, PrecipParticleText;
 
         public MainWindow()
         {
@@ -182,6 +182,7 @@ namespace OpenShade
             Log(ErrorType.Info, "Application Version: " + P3DVersion);
             Log(ErrorType.Info, "Current P3D Path: " + P3DDirectory);
             Log(ErrorType.Info, "Current Backup Directory: " + backupDirectory);
+            CurrentP3DVersionText.Text = currentP3DEXEVersion;
 
             //Handling Current P3D Version
             if (Directory.Exists(backupDirectory))
@@ -759,6 +760,12 @@ namespace OpenShade
                     TerrainReflectance.Show();
                     break;
 
+                case "Advanced PBR":
+                    OpenShade.Pages.AdvancedPBRCompare AdvancedPBR = new OpenShade.Pages.AdvancedPBRCompare();
+                    AdvancedPBR.Show();
+                    break;
+
+
             }
         }
 
@@ -1227,6 +1234,14 @@ namespace OpenShade
                             $"\r\n        cColor.rgb = saturate(lerp(dot(cColor.rgb, float3(0.299f, 0.587f, 0.114f)), cColor.rgb, {tweak.parameters[0].value}));" +
                             "\r\n\r\n    }");
                         break;
+
+                        case "Precipitation Opacity":
+                            currentFile = FileIO.PrecipParticleFile;
+                            PrecipParticleText = PrecipParticleText.ReplaceAll(ref success, "    finalColor.a = texAlpha.a * input.intensity * nearClipFade;", $"\r\n\r\n    finalColor.a = texAlpha.a * input.intensity * nearClipFade*{tweak.parameters[1].value};\r\n" +
+                            "\r\n    if(cb_uPrecipType == 1){" +
+                            $"\r\n    finalColor.a = texAlpha.a * input.intensity * nearClipFade*{tweak.parameters[0].value};" +
+                            "\r\n\r\n    }");
+                        break;
                         #endregion
 
                         #region Lighting
@@ -1486,6 +1501,7 @@ namespace OpenShade
                 File.WriteAllText(shaderDirectory + FileIO.shadowFile, shadowText);
                 File.WriteAllText(shaderDirectory + FileIO.PBRFile, PBRText);
                 File.WriteAllText(shaderDirectory + FileIO.compositeFile, compositeText);
+                File.WriteAllText(shaderDirectory + FileIO.PrecipParticleFile, PrecipParticleText);
                 File.WriteAllText(shaderDirectory + "PostProcess\\" + FileIO.HDRFile, HDRText);
             }
             catch

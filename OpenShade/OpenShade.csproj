@@ -257,6 +257,9 @@
     <Compile Include="Pages\TerrainReflectance.xaml.cs">
       <DependentUpon>TerrainReflectance.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\AdvancedPBRCompare.xaml.cs">
+      <DependentUpon>AdvancedPBRCompare.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\TerrainSaturationCompare.xaml.cs">
       <DependentUpon>TerrainSaturationCompare.xaml</DependentUpon>
     </Compile>
@@ -297,6 +300,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\TerrainReflectance.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\AdvancedPBRCompare.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -399,6 +406,38 @@
   <ItemGroup>
     <Resource Include="Resources\Images\TerrainReflectance\TerrainReflectanceDefault.jpg" />
     <Resource Include="Resources\Images\TerrainReflectance\TerrainReflectanceEdited.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRDefault.jpg" />
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRTweaked.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRDiffuseOneFive.jpg" />
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRDiffuseZeroNine.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRSaturationZeroNine.jpg" />
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRSaturationZeroTwo.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRSpecularOneFive.jpg" />
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRSpecularZeroSeven.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRAircraftAmbientOneThree.jpg" />
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRAircraftAmbientZeroTwo.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRReflectanceZeroNine.jpg" />
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRReflectanceZeroTwo.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRAmbientDayOneZero.jpg" />
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRAmbientDayZeroThree.jpg" />
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRAmbientNightOneZero.jpg" />
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRAmbientNightZeroOne.jpg" />
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRVCAmbientOneSeven.jpg" />
+    <Resource Include="Resources\Images\AdvancedPBR\AdvancedPBRVCAmbientOneZero.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.6.6.4\build\Fody.targets" Condition="Exists('..\packages\Fody.6.6.4\build\Fody.targets')" />

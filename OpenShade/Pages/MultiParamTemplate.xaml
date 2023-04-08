@@ -68,7 +68,6 @@
             <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"  ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Panel.ZIndex="2" Width="2.5" Background="White">
             </GridSplitter>
             <GridSplitter Template="{DynamicResource CustomSplitter69}"  Grid.Column="1" Height="Auto" Width="1" HorizontalAlignment="Center"/>
-            
         </Grid>
 
 

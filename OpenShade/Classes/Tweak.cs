@@ -336,6 +336,11 @@ namespace OpenShade.Classes
             newTweak.parameters.Add(new Parameter("SkySaturaion", "Sky Saturation", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[0].value}
             tweaks.Add(newTweak);
 
+            newTweak = new Tweak("ATMOSPHERE_PRECIP_OPACITY", Category.Atmosphere, "Precipitation Opacity", "");
+            newTweak.parameters.Add(new Parameter("SnowOpacity", "Snow Opacity", 1, 1, 1, 1, UIType.TextBox)); //{tweak.parameters[0].value}
+            newTweak.parameters.Add(new Parameter("RainOpacity", "Rain Opacity", 1, 1, 1, 1, UIType.TextBox)); //{tweak.parameters[1].value}
+            tweaks.Add(newTweak);
+
             //// -----------------------
             ////  Lighting
             //// -----------------------

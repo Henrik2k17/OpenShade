@@ -61,14 +61,10 @@
                 </MenuItem>
 
                 <MenuItem Header="Actions" FontSize="13"   >
-                    <MenuItem Header="Apply Preset" Click="ApplyPreset" InputGestureText="Ctrl+F"></MenuItem>
+                    <MenuItem Header="Apply Preset" Click="ApplyPreset"></MenuItem>
                     <MenuItem Header="Restore Original Shaders" Click="ResetShaderFiles"  ></MenuItem>
                     <MenuItem Header="Clear Shader Cache" Click="ClearShaders_Click"  ></MenuItem>
                     <MenuItem Header="Reset All Tweak Values To Defaults" Click="ResetToDefaults"  ></MenuItem>
-                </MenuItem>
-
-                <MenuItem Header="Info About" FontSize="13"   >
-                    <MenuItem Header="XX - Placeholder - XX"></MenuItem>
                 </MenuItem>
             </Menu>
 
