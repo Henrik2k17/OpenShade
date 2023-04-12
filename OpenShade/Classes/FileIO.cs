@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
+using System.Security.Cryptography;
 using System.Windows;
 
 namespace OpenShade.Classes
@@ -198,6 +200,17 @@ namespace OpenShade.Classes
                 return result;
             }
             return "";            
+        }
+
+        public string MD5IntegrityCheck(string fileName) {
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = File.OpenRead(fileName))
+                {
+                    var hash = md5.ComputeHash(stream);
+                    return BitConverter.ToString(hash).Replace("-", string.Empty);
+                }
+            }
         }
 
         public void SavePreset(List<Tweak> tweaks, string comment, IniFile preset)

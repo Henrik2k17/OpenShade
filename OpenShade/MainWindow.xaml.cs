@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Windows.Controls.Primitives;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using System.Security.Policy;
 
 namespace OpenShade
 {
@@ -46,7 +47,7 @@ namespace OpenShade
         string currentDirectory = Directory.GetCurrentDirectory();
         string P3DDirectory;
         public string P3DVersion = "5.3.17.28160";
-
+        public string GeneralShaderMD5HashHardCode = "73F32C32CFDC62E60F3ADCDBBE0FF8A2";
 
 
         FileIO fileData;
@@ -125,6 +126,9 @@ namespace OpenShade
             ShaderCache_TextBox.Text = cacheDirectory;
         }
 
+
+
+        
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // Load settings first
@@ -169,6 +173,11 @@ namespace OpenShade
                 }
             }
 
+
+            
+
+            
+
             // Load Theme
             //Theme_ComboBox.ItemsSource = Enum.GetValues(typeof(Themes)).Cast<Themes>();
             //Theme_ComboBox.SelectedItem = ((App)Application.Current).CurrentTheme;
@@ -178,10 +187,12 @@ namespace OpenShade
 
             // Show P3D Version Info and some Debug stuff
             string currentP3DEXEVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
+            string hashGeneral = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.generalFile);
             Log(ErrorType.Info, "You currently running P3D Version: " + currentP3DEXEVersion);
             Log(ErrorType.Info, "Application Version: " + P3DVersion);
             Log(ErrorType.Info, "Current P3D Path: " + P3DDirectory);
             Log(ErrorType.Info, "Current Backup Directory: " + backupDirectory);
+            Log(ErrorType.Warning, hashGeneral);
             CurrentP3DVersionText.Text = currentP3DEXEVersion;
 
             //Handling Current P3D Version
@@ -217,27 +228,48 @@ namespace OpenShade
                 }
             }
             else {
-
-                if (Directory.Exists(shaderDirectory)) // This better be true
+            //Check if current P3D Version is supported only if no shader backup folder exist -> First install check
+            if (hashGeneral != GeneralShaderMD5HashHardCode)
+            {
+                MessageBoxResult result = MessageBox.Show("Non default P3D Shaders detected, please restore the original shaders before trying again!", "Integrity Check", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+                Log(ErrorType.Warning, "Hash Match");
+                if (result == MessageBoxResult.OK)
                 {
-                    MessageBoxResult result = MessageBox.Show("OpenShade will backup your Prepar3D shaders now.\r\nMake sure the files are the original ones or click 'Cancel' and manually select your backup folder in the application settings.", "Backup", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, MessageBoxResult.OK); // TODO: Localization
-                    if (result == MessageBoxResult.OK)
+                    Close();
+                }
+            }
+            if (currentP3DEXEVersion != P3DVersion)
+            {
+                MessageBoxResult result = MessageBox.Show("You have an old P3D Version installed, please update to the latest version!", "Unsupported Version", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+                Log(ErrorType.Warning, "Unsupported P3D Version OpenShade can not run.");
+                if (result == MessageBoxResult.OK)
+                {
+                    Close();
+                }
+            }
+                else
+                {
+                    if (Directory.Exists(shaderDirectory) && hashGeneral == GeneralShaderMD5HashHardCode) // This better be true
                     {
-                        Directory.CreateDirectory("Backup Shaders");
-                        if (fileData.CopyShaderFiles(shaderDirectory, backupDirectory))
+                        MessageBoxResult result = MessageBox.Show("OpenShade will backup your Prepar3D shaders now.\r\nMake sure the files are the original ones or click 'Cancel' and manually select your backup folder in the application settings.", "Backup", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, MessageBoxResult.OK); // TODO: Localization
+                        if (result == MessageBoxResult.OK)
                         {
-                            Log(ErrorType.None, "Shaders backed up");                            
+                            Directory.CreateDirectory("Backup Shaders");
+                            if (fileData.CopyShaderFiles(shaderDirectory, backupDirectory))
+                            {
+                                Log(ErrorType.None, "Shaders backed up");
+                            }
+                            else
+                            {
+                                Log(ErrorType.Warning, "Shaders could not be backed up. OpenShade can not run.");
+                                ChangeMenuBarState(false);
+                            }
                         }
                         else
                         {
-                            Log(ErrorType.Warning, "Shaders could not be backed up. OpenShade can not run.");
+                            Log(ErrorType.Warning, "Shaders were not backed up. OpenShade can not run.");
                             ChangeMenuBarState(false);
                         }
-                    }
-                    else
-                    {
-                        Log(ErrorType.Warning, "Shaders were not backed up. OpenShade can not run.");
-                        ChangeMenuBarState(false);
                     }
                 }
             }        
