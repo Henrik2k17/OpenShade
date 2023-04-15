@@ -251,9 +251,6 @@
     <Compile Include="Classes\HelperFunctions.cs" />
     <Compile Include="Classes\IniFile.cs" />
     <Compile Include="Classes\Tweak.cs" />
-    <Compile Include="Pages\MultiParamTemplate.xaml.cs">
-      <DependentUpon>MultiParamTemplate.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\TerrainReflectance.xaml.cs">
       <DependentUpon>TerrainReflectance.xaml</DependentUpon>
     </Compile>
@@ -295,10 +292,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Pages\MultiParamTemplate.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Pages\TerrainReflectance.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

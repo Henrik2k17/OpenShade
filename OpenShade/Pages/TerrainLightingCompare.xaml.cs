@@ -20,7 +20,7 @@ namespace OpenShade.Pages
     public partial class TerrainLightingCompare : Window
     {
 
-        int i = 1;
+        //int i = 1;
         public TerrainLightingCompare()
         {
             InitializeComponent();

@@ -219,25 +219,20 @@ namespace OpenShade
             ShaderBackup_TextBox.Text = backupDirectory;
 
             // Show P3D Version Info and some Debug stuff
+            //string currentP3DEXEVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
             Log(ErrorType.Info, "You currently running P3D Version: " + currentP3DEXEVersion);
             Log(ErrorType.Info, "Application Version: " + P3DVersion);
             Log(ErrorType.Info, "Current P3D Path: " + P3DDirectory);
             Log(ErrorType.Info, "Current Backup Directory: " + backupDirectory);
-            //Log(ErrorType.Warning, "General: " + hashGeneral);
-            //Log(ErrorType.Warning, "FuncLib: " + hashFuncLib);
-            //Log(ErrorType.Warning, "Terrain: " + hashTerrain);
-            //Log(ErrorType.Warning, "HDR: " + hashHDR);
             CurrentP3DVersionText.Text = currentP3DEXEVersion;
 
-
-
+            //Handling Current P3D Version
             if (Directory.Exists(backupDirectory))
             {
                 string currentP3DVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
-
-                if (P3DVersion != currentP3DVersion)
+                if (currentP3DVersion != P3DVersion)
                 {
-                    MessageBoxResult result = MessageBox.Show("OpenShade has detected a new version of Prepar3D (" + currentP3DVersion + ").\r\n\r\nIt is STRONGLY recommended that you backup the default shader files again otherwise they will be overwritten by old shader files when applying a preset.", "New version detected", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, MessageBoxResult.OK); // TODO: Localization
+                    MessageBoxResult result = MessageBox.Show("OpenShade has detected a new version of Prepar3D (" + currentP3DVersion + ").\r\n\r\nIt is STRONGLY recommended that you backup the default shader files again otherwise they will be overwritten by old shader files when applying a preset.", "New version detected", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, MessageBoxResult.OK);
                     if (result == MessageBoxResult.OK)
                     {
                         if (fileData.CopyShaderFiles(shaderDirectory, backupDirectory))
@@ -252,7 +247,6 @@ namespace OpenShade
                         }
                     }
                 }
-
 
                 if (fileData.CheckShaderBackup(backupDirectory))
                 {
@@ -295,10 +289,6 @@ namespace OpenShade
         private void Window_Closed(object sender, EventArgs e) // important to use Closed() and not Closing() because this has to happen after any LostFocus() event to have all up-to-date parameters
         {
             string currentP3DEXEVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
-            string hashGeneral = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.generalFile);
-            string hashFuncLib = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.funclibFile);
-            string hashTerrain = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.terrainFile);
-            string hashHDR = fileData.MD5IntegrityCheck(shaderDirectory + "PostProcess\\" + FileIO.HDRFile);
             if (HelperFunctions.GetDictHashCode(tweaks) != tweaksHash ||
                 HelperFunctions.GetDictHashCode(customTweaks) != customTweaksHash || 
                 HelperFunctions.GetDictHashCode(postProcesses) != postProcessesHash || 
@@ -323,7 +313,7 @@ namespace OpenShade
                     }
 
                     loadedPreset = new IniFile(loadedPresetPath);
-                    if (currentP3DEXEVersion == P3DVersion && hashGeneral == GeneralShaderMD5HashHardCode && hashFuncLib == FuncLibShaderMD5HashHardCode && hashTerrain == TerrainShaderMD5HashHardCode && hashHDR == HDRShaderMD5HashHardCode){
+                    if (currentP3DEXEVersion == P3DVersion){
                         MessageBoxResult result = MessageBox.Show("Some changes were not saved.\r\nWould you like to save them now as a new preset [" + loadedPreset.filename + "] ?", "Save", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
                         if (result == MessageBoxResult.Yes)
                         {
@@ -820,8 +810,6 @@ namespace OpenShade
                     OpenShade.Pages.AdvancedPBRCompare AdvancedPBR = new OpenShade.Pages.AdvancedPBRCompare();
                     AdvancedPBR.Show();
                     break;
-
-
             }
         }
 

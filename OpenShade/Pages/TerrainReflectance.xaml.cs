@@ -20,7 +20,7 @@ namespace OpenShade.Pages
     public partial class TerrainReflectanceCompare : Window
     {
 
-        int i = 1;
+        //int i = 1;
         public TerrainReflectanceCompare()
         {
             InitializeComponent();
