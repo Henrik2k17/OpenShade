@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
@@ -320,7 +321,6 @@ namespace OpenShade.Classes
 
             if (mainWindowHandle.activePresetPath != null && File.Exists(mainWindowHandle.activePresetPath)) { lines.Add("Active_Preset, " + mainWindowHandle.activePresetPath); }
             if (mainWindowHandle.loadedPresetPath != null && File.Exists(mainWindowHandle.loadedPresetPath)) { lines.Add("Loaded_Preset, " + mainWindowHandle.loadedPresetPath); }
-
             lines.Add("P3D_Version, " + mainWindowHandle.P3DVersion);
             //lines.Add("Theme, " + ((App)Application.Current).CurrentTheme.ToString());
             lines.Add("Backup_Directory, " + mainWindowHandle.backupDirectory);

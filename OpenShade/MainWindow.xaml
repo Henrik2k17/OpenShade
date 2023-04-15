@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:OpenShade"
         xmlns:ap="clr-namespace:OpenShade.Classes"
         mc:Ignorable="d"
-        Title="Open Shade V5 Next Generation" WindowStartupLocation="CenterScreen" Icon="Assets\icon.ico" Loaded="Window_Loaded" Closed="Window_Closed" Style="{DynamicResource WindowStyle}" HorizontalAlignment="Right"  Background="#d9d9d9" ResizeMode="CanResize" Height="800" Width="1400"  MinHeight="800" MinWidth="1400" MaxHeight="800" MaxWidth="1400">
+        Title="Open Shade V5 Next Generation HF1" WindowStartupLocation="CenterScreen" Icon="Assets\icon.ico" Loaded="Window_Loaded" Closed="Window_Closed" Style="{DynamicResource WindowStyle}" HorizontalAlignment="Right"  Background="#d9d9d9" ResizeMode="CanResize" Height="800" Width="1400"  MinHeight="800" MinWidth="1400" MaxHeight="800" MaxWidth="1400">
 
     <Window.Resources>
         <Thickness x:Key="Thickness1">-2,-2,-2,0</Thickness>
