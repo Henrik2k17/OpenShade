@@ -20,7 +20,7 @@ namespace OpenShade.Pages
     public partial class AdvancedPBRCompare : Window
     {
 
-        int i = 1;
+        //int i = 1;
         public AdvancedPBRCompare()
         {
             InitializeComponent();

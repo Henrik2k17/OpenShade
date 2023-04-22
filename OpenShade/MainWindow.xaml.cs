@@ -14,7 +14,6 @@ using System.Diagnostics;
 using System.Windows.Controls.Primitives;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using System.Security.Policy;
 
 namespace OpenShade
 {
@@ -219,25 +218,20 @@ namespace OpenShade
             ShaderBackup_TextBox.Text = backupDirectory;
 
             // Show P3D Version Info and some Debug stuff
+            //string currentP3DEXEVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
             Log(ErrorType.Info, "You currently running P3D Version: " + currentP3DEXEVersion);
             Log(ErrorType.Info, "Application Version: " + P3DVersion);
             Log(ErrorType.Info, "Current P3D Path: " + P3DDirectory);
             Log(ErrorType.Info, "Current Backup Directory: " + backupDirectory);
-            //Log(ErrorType.Warning, "General: " + hashGeneral);
-            //Log(ErrorType.Warning, "FuncLib: " + hashFuncLib);
-            //Log(ErrorType.Warning, "Terrain: " + hashTerrain);
-            //Log(ErrorType.Warning, "HDR: " + hashHDR);
             CurrentP3DVersionText.Text = currentP3DEXEVersion;
 
-
-
+            //Handling Current P3D Version
             if (Directory.Exists(backupDirectory))
             {
                 string currentP3DVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
-
-                if (P3DVersion != currentP3DVersion)
+                if (currentP3DVersion != P3DVersion)
                 {
-                    MessageBoxResult result = MessageBox.Show("OpenShade has detected a new version of Prepar3D (" + currentP3DVersion + ").\r\n\r\nIt is STRONGLY recommended that you backup the default shader files again otherwise they will be overwritten by old shader files when applying a preset.", "New version detected", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, MessageBoxResult.OK); // TODO: Localization
+                    MessageBoxResult result = MessageBox.Show("OpenShade has detected a new version of Prepar3D (" + currentP3DVersion + ").\r\n\r\nIt is STRONGLY recommended that you backup the default shader files again otherwise they will be overwritten by old shader files when applying a preset.", "New version detected", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, MessageBoxResult.OK);
                     if (result == MessageBoxResult.OK)
                     {
                         if (fileData.CopyShaderFiles(shaderDirectory, backupDirectory))
@@ -252,7 +246,6 @@ namespace OpenShade
                         }
                     }
                 }
-
 
                 if (fileData.CheckShaderBackup(backupDirectory))
                 {
@@ -295,10 +288,6 @@ namespace OpenShade
         private void Window_Closed(object sender, EventArgs e) // important to use Closed() and not Closing() because this has to happen after any LostFocus() event to have all up-to-date parameters
         {
             string currentP3DEXEVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
-            string hashGeneral = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.generalFile);
-            string hashFuncLib = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.funclibFile);
-            string hashTerrain = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.terrainFile);
-            string hashHDR = fileData.MD5IntegrityCheck(shaderDirectory + "PostProcess\\" + FileIO.HDRFile);
             if (HelperFunctions.GetDictHashCode(tweaks) != tweaksHash ||
                 HelperFunctions.GetDictHashCode(customTweaks) != customTweaksHash || 
                 HelperFunctions.GetDictHashCode(postProcesses) != postProcessesHash || 
@@ -323,7 +312,7 @@ namespace OpenShade
                     }
 
                     loadedPreset = new IniFile(loadedPresetPath);
-                    if (currentP3DEXEVersion == P3DVersion && hashGeneral == GeneralShaderMD5HashHardCode && hashFuncLib == FuncLibShaderMD5HashHardCode && hashTerrain == TerrainShaderMD5HashHardCode && hashHDR == HDRShaderMD5HashHardCode){
+                    if (currentP3DEXEVersion == P3DVersion){
                         MessageBoxResult result = MessageBox.Show("Some changes were not saved.\r\nWould you like to save them now as a new preset [" + loadedPreset.filename + "] ?", "Save", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
                         if (result == MessageBoxResult.Yes)
                         {
@@ -820,8 +809,6 @@ namespace OpenShade
                     OpenShade.Pages.AdvancedPBRCompare AdvancedPBR = new OpenShade.Pages.AdvancedPBRCompare();
                     AdvancedPBR.Show();
                     break;
-
-
             }
         }
 
@@ -1011,8 +998,6 @@ namespace OpenShade
                 }
             }
         }
-
-
 
 
         private void ApplyPreset(object sender, RoutedEventArgs e)
@@ -1246,7 +1231,7 @@ namespace OpenShade
                             break;
 
 
-                     case "Atmosphere Rayleight Scattering":
+                     case "Atmosphere Rayleigh Scattering":
                             currentFile = FileIO.funclibFile;
 
 
@@ -1264,7 +1249,7 @@ namespace OpenShade
                             "\r\n        if ((cb_mObjectType != (uint)1) && (cb_mObjectType != (uint)3) && (cb_mObjectType != (uint)21) && (cb_mObjectType != (uint)19))" +
                             "\r\n        {" +
                             $"\r\n            const float DensFactor = {tweak.parameters[1].value};" +
-                            "\r\n            const float DistK = 2 * (1 - saturate(exp(-fDistance * fDistance * DensFactor))) * saturate(cb_mSun.mDiffuse.g - 0.15);" +
+                            $"\r\n            const float DistK = {tweak.parameters[0].value} * (1 - saturate(exp(-fDistance * fDistance * DensFactor))) * saturate(cb_mSun.mDiffuse.g - 0.15);" +
                             $"\r\n            FinalColor.rgb = FinalColor.rgb * (1 - float3(0.00, {tweak.parameters[2].value}, {tweak.parameters[3].value}) * DistK) + float3(0.00, {tweak.parameters[2].value}, {tweak.parameters[3].value}) * DistK;" +
                             "\r\n        }" +
                             "\r\n    #endif" +

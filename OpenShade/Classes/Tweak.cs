@@ -319,7 +319,7 @@ namespace OpenShade.Classes
             newTweak.parameters.Add(new Parameter("HazeEffectAltitudeZero", "Altitude when density reaches zero", 15000, 15000, 15000, 15000, UIType.TextBox));//{tweak.parameters[6].value}
             tweaks.Add(newTweak);
 
-            newTweak = new Tweak("ATMOSPHERE_RAYLEIGHT_SCATTERING", Category.Atmosphere, "Atmosphere Rayleight Scattering", "");
+            newTweak = new Tweak("ATMOSPHERE_RAYLEIGH_SCATTERING", Category.Atmosphere, "Atmosphere Rayleigh Scattering", "");
             newTweak.parameters.Add(new Parameter("RayleightScatteringPower", "Power", 2.75, 2.75, 2.75, 2.75, UIType.TextBox)); //{tweak.parameters[0].value}
             newTweak.parameters.Add(new Parameter("RayleightScatteringDensity", "Density", 0.0000000200, 0.0000000200, 0.0000000200, 0.0000000200, UIType.TextBox)); //{tweak.parameters[1].value}
             newTweak.parameters.Add(new Parameter("RayleightScatteringColorGreen", "Color Green", 0.060, 0.060, 0.060, 0.060, UIType.TextBox)); //{tweak.parameters[2].value}
