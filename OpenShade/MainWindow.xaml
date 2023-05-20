@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:OpenShade"
         xmlns:ap="clr-namespace:OpenShade.Classes"
         mc:Ignorable="d"
-        Title="Open Shade V5 Next Generation" WindowStartupLocation="CenterScreen" Icon="Assets\icon.ico" Loaded="Window_Loaded" Closed="Window_Closed" Style="{DynamicResource WindowStyle}" HorizontalAlignment="Right"  Background="#d9d9d9" ResizeMode="CanResize" Height="800" Width="1400"  MinHeight="800" MinWidth="1400" MaxHeight="800" MaxWidth="1400">
+        Title="Open Shade V5 Next Generation V1"  WindowStartupLocation="CenterScreen" Icon="Assets\icon.ico" Loaded="Window_Loaded" Closed="Window_Closed" Style="{DynamicResource WindowStyle}" HorizontalAlignment="Right"  Background="#d9d9d9" ResizeMode="CanResize" Height="800" Width="1400"  MinHeight="800" MinWidth="1400" MaxHeight="800" MaxWidth="1400">
 
     <Window.Resources>
         <Thickness x:Key="Thickness1">-2,-2,-2,0</Thickness>
@@ -71,10 +71,13 @@
 
 
             <!--Loaded Preset-->
-            <Label Grid.Column="2"  Grid.Row="0" VerticalAlignment="Bottom" Content="Loaded Preset:" Margin="0,0,210,3" FontSize="13"  Height="20" FontWeight="SemiBold" Visibility="Hidden"/>
-            <TextBlock Grid.Column="2"  Grid.Row="0" VerticalAlignment="Bottom" Text="" x:Name="LoadedPreset_TextBlock" Width="Auto" FontSize="13"  Margin="90,0,0,3" Height="20" Visibility="Hidden"/>
-            <Label  VerticalAlignment="Bottom" Content="Active Preset:" Margin="390,0,120,3" Height="20" FontSize="13" FontWeight="SemiBold" Visibility="Hidden" />
-            <TextBlock  VerticalAlignment="Bottom"  Text="" x:Name="ActivePreset_TextBlock" Width="Auto"  Grid.ColumnSpan="2" Margin="482,0,0,3" Height="20" FontSize="13" Visibility="Hidden"/>
+            <Label Grid.Column="2"  Grid.Row="0" VerticalAlignment="Bottom" Content="Loaded Preset:" Margin="000,0,0,3" FontSize="13"  Height="20" FontWeight="SemiBold" />
+            <TextBlock Grid.Column="2"  Grid.Row="0" VerticalAlignment="Bottom" Text="" x:Name="LoadedPreset_TextBlock" Width="Auto" FontSize="13"  Margin="095,0,0,3" Height="20" />
+
+
+
+            <Label Grid.Column="2" Grid.Row="0"   VerticalAlignment="Bottom" Content="Active Preset:" Margin="-228,0,0,3" Height="20" FontSize="13" FontWeight="SemiBold" Visibility="Hidden"  />
+            <TextBlock Grid.Column="2"  Grid.Row="0" VerticalAlignment="Bottom"  Text="" x:Name="ActivePreset_TextBlock" Width="Auto"  Grid.ColumnSpan="2" Margin="-150,0,0,3" Height="20" FontSize="13" Visibility="Hidden" />
         </Grid>
 
 
@@ -180,8 +183,6 @@
         <GroupBox Header="Preset Comments" Margin="165,25,10,217" Visibility="Visible" Grid.Column="2" FontSize="13" FontFamily="Inter" FontWeight="Bold" Background="Transparent" BorderBrush="Gray" BorderThickness="1">
             <TextBox x:Name="PresetComments_TextBox" VerticalAlignment="Top"  Height="329" VerticalContentAlignment="Top" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
         </GroupBox>
-
-
 
         <GroupBox Header="DIRECTORIES" Margin="165,384,10,0" VerticalAlignment="Top" FontSize="13" FontWeight="Bold" FontFamily="Inter" Height="202" Visibility="Visible" Grid.Column="2" Background="Transparent" BorderBrush="Gray" BorderThickness="1" >
             <Grid Margin="10">

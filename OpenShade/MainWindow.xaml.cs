@@ -46,10 +46,15 @@ namespace OpenShade
         string currentDirectory = Directory.GetCurrentDirectory();
         string P3DDirectory;
         public string P3DVersion = "5.3.17.28160";
+        public string CloudShaderMD5HashHardCode = "21517197BDAE7BBB2DEE50CE481AB6F8";
+        public string CompositeShaderMD5HashHardCode = "0B58B8EB15105A3EE3C039BF1B5275F5";
+        public string FuncLibShaderMD5HashHardCode = "37958922787C777B575FB06C4F9A7DF9";
         public string GeneralShaderMD5HashHardCode = "73F32C32CFDC62E60F3ADCDBBE0FF8A2";
-        public string FuncLibShaderMD5HashHardCode = "FF7BF76D7D73DDC65383F6928A79B113";
-        public string TerrainShaderMD5HashHardCode = "9E1CB526E2E166CC628DCBECE4118698";
         public string HDRShaderMD5HashHardCode = "9EDF0627E6ABB3180EBA83A3FDF210BE";
+        public string PBRShaderMD5HashHardCode = "6D87ECDC9D2BC5CFC9078F1D08B62C52";
+        public string PrecipParticleShaderMD5HashHardCode = "6416B48E1479118EAF132C64EA6F9E32";
+        public string ShadowParticleShaderMD5HashHardCode = "49923C92882E90A395D7EA5E70C26555";
+        public string TerrainShaderMD5HashHardCode = "9E1CB526E2E166CC628DCBECE4118698";
 
 
         FileIO fileData;
@@ -136,21 +141,35 @@ namespace OpenShade
 
 
             string currentP3DEXEVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
-            string hashGeneral = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.generalFile);
-            string hashFuncLib = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.funclibFile);
-            string hashTerrain = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.terrainFile);
-            string hashHDR = fileData.MD5IntegrityCheck(shaderDirectory + "PostProcess\\" + FileIO.HDRFile);
-            Log(ErrorType.Info, "You currently running P3D Version: " + currentP3DEXEVersion);
 
+            string hashCloud = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.cloudFile);
+            string hashComposite = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.compositeFile);
+            string hashFuncLib = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.funclibFile);
+            string hashGeneral = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.generalFile);
+            string hashHDR = fileData.MD5IntegrityCheck(shaderDirectory + "PostProcess\\" + FileIO.HDRFile);
+            string hashPBR = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.PBRFile);
+            string hashPrecipParticle = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.PrecipParticleFile);
+            string hashShadow = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.shadowFile);
+            string hashTerrain = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.terrainFile);
+            //Log(ErrorType.Info, "You currently running P3D Version: " + currentP3DEXEVersion);
+            //Log(ErrorType.Info, "Cloud:" + hashCloud);
+            //Log(ErrorType.Info, "Composite:" + hashComposite);
+            //Log(ErrorType.Info, "FuncLib:" + hashFuncLib);
+            //Log(ErrorType.Info, "General:" + hashGeneral);
+            //Log(ErrorType.Info, "HDR:" + hashHDR);
+            //Log(ErrorType.Info, "PBR:" + hashPBR);
+            //Log(ErrorType.Info, "PrecipParticle:" + hashPrecipParticle);
+            //Log(ErrorType.Info, "Shadow:" + hashShadow);
+            //Log(ErrorType.Info, "Terrain:" + hashTerrain);
 
 
 
             if (!Directory.Exists(backupDirectory))
             {
                 //Check installed shaders and p3d version
-                if (hashGeneral != GeneralShaderMD5HashHardCode && hashFuncLib != FuncLibShaderMD5HashHardCode && hashTerrain != TerrainShaderMD5HashHardCode && hashHDR != HDRShaderMD5HashHardCode)
+                if (hashCloud != CloudShaderMD5HashHardCode || hashComposite != CompositeShaderMD5HashHardCode || hashFuncLib != FuncLibShaderMD5HashHardCode || hashGeneral != GeneralShaderMD5HashHardCode || hashHDR != HDRShaderMD5HashHardCode || hashPBR != PBRShaderMD5HashHardCode || hashPrecipParticle != PrecipParticleShaderMD5HashHardCode || hashShadow != ShadowParticleShaderMD5HashHardCode || hashTerrain != TerrainShaderMD5HashHardCode)
                 {
-                    MessageBoxResult result = MessageBox.Show("Non default P3D Shaders detected, please restore the original shaders before trying again!", "Integrity Check", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+                    MessageBoxResult result = MessageBox.Show("Non default P3D Shaders detected, please restore the original shaders before trying again!", "Integrity Check", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
                     Log(ErrorType.Error, "Non default Shaders detected, Openshade can not run!");
                     if (result == MessageBoxResult.OK)
                     {
@@ -160,7 +179,7 @@ namespace OpenShade
 
                 if (currentP3DEXEVersion != P3DVersion)
                 {
-                    MessageBoxResult result = MessageBox.Show("You have an old P3D Version installed, please update to the latest version!", "Unsupported Version", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+                    MessageBoxResult result = MessageBox.Show("You have an old P3D Version installed, please update to the latest version!", "Unsupported Version", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
                     Log(ErrorType.Warning, "Unsupported P3D Version OpenShade can not run.");
                     if (result == MessageBoxResult.OK)
                     {
@@ -219,8 +238,8 @@ namespace OpenShade
 
             // Show P3D Version Info and some Debug stuff
             //string currentP3DEXEVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
-            Log(ErrorType.Info, "You currently running P3D Version: " + currentP3DEXEVersion);
-            Log(ErrorType.Info, "Application Version: " + P3DVersion);
+            //Log(ErrorType.Info, "Your currently running P3D Version: " + currentP3DEXEVersion);
+            //Log(ErrorType.Info, "Application Version: " + P3DVersion);
             Log(ErrorType.Info, "Current P3D Path: " + P3DDirectory);
             Log(ErrorType.Info, "Current Backup Directory: " + backupDirectory);
             CurrentP3DVersionText.Text = currentP3DEXEVersion;
@@ -231,7 +250,7 @@ namespace OpenShade
                 string currentP3DVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
                 if (currentP3DVersion != P3DVersion)
                 {
-                    MessageBoxResult result = MessageBox.Show("OpenShade has detected a new version of Prepar3D (" + currentP3DVersion + ").\r\n\r\nIt is STRONGLY recommended that you backup the default shader files again otherwise they will be overwritten by old shader files when applying a preset.", "New version detected", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+                    MessageBoxResult result = MessageBox.Show("OpenShade has detected a new version of Prepar3D (" + currentP3DVersion + ").\r\n\r\nIt is STRONGLY recommended that you backup the default shader files again otherwise they will be overwritten by old shader files when applying a preset.", "New version detected", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
                     if (result == MessageBoxResult.OK)
                     {
                         if (fileData.CopyShaderFiles(shaderDirectory, backupDirectory))
@@ -809,6 +828,16 @@ namespace OpenShade
                     OpenShade.Pages.AdvancedPBRCompare AdvancedPBR = new OpenShade.Pages.AdvancedPBRCompare();
                     AdvancedPBR.Show();
                     break;
+
+                case "Atmosphere Rayleigh Scattering":
+                    OpenShade.Pages.RayleighScatteringCompare RayleighScattering = new OpenShade.Pages.RayleighScatteringCompare();
+                    RayleighScattering.Show();
+                    break;
+
+                case "Atmospheres Haze Effect":
+                    OpenShade.Pages.HazeEffectCompare HazeEffect = new OpenShade.Pages.HazeEffectCompare();
+                    HazeEffect.Show();
+                    break;
             }
         }
 
@@ -1286,37 +1315,58 @@ namespace OpenShade
                         #endregion
 
                         #region Lighting
-                        case "Cockpit Lighting":
+                        case "Object Lighting":
                             currentFile = FileIO.generalFile;
-                            //add the secondary DirectionalLighting in the fragment shader
-                            generalText = generalText.AddBefore(ref success, "VS_OUTPUT VS( VS_INPUT Input )", "\r\nfloat3 DirectionalLighting2(const float3 vNormalWS, const float shadowContrib, out float3 DiffuseAndAmbient)" +
-                            "\r\n{" +
-                            $"\r\n#if defined(SHD_VERTICAL_NORMAL)" +
-                            $"\r\n    const float fDotSun = max(cb_mSun.mDirection.y, 0);" +
-                            $"\r\n    const float fDotMoon = max(cb_mMoon.mDirection.y, 0);" +
-                            $"\r\n#else" +
-                            $"\r\n    const float fDotSun = saturate(dot(vNormalWS, normalize(cb_mSun.mDirection)));" +
-                            $"\r\n    const float fDotMoon = saturate(dot(vNormalWS, normalize(cb_mMoon.mDirection)));" +
-                            $"\r\n#endif\r\n" +
-                            $"\r\n    #if defined(PS_NEEDS_TANSPACE)" +
-                            $"\r\n        if (cb_mObjectType ==19)" +
-                            $"\r\n            DiffuseAndAmbient = (shadowContrib * (cb_mSun.mDiffuse.xyz * fDotSun)) + (shadowContrib * (cb_mMoon.mDiffuse.xyz * fDotMoon)) + cb_mCombinedAmbient.rgb;" +
-                            $"\r\n        else" +
-                            $"\r\n    #endif\r\n" +
-                            $"\r\n    #if !defined(PS_NEEDS_TANSPACE)" +
-                            $"\r\n        if (cb_mObjectType ==19)" +
-                            $"\r\n            DiffuseAndAmbient = (shadowContrib * (cb_mSun.mDiffuse.xyz * {tweak.parameters[0].value} * fDotSun)) + (shadowContrib * (cb_mMoon.mDiffuse.xyz * fDotMoon)) + cb_mCombinedAmbient.rgb * {tweak.parameters[1].value};" +
-                            $"\r\n        else" +
-                            $"\r\n   #endif\r\n" +
-                            $"\r\n        if (cb_mObjectType !=19)" +
-                            $"\r\n            DiffuseAndAmbient = (shadowContrib * (cb_mSun.mDiffuse.xyz * fDotSun)) + (shadowContrib * (cb_mMoon.mDiffuse.xyz * fDotMoon)) + cb_mCombinedAmbient.rgb;" +
-                            $"\r\n        else" +
-                            $"\r\n            DiffuseAndAmbient = (shadowContrib * (cb_mSun.mDiffuse.xyz * fDotSun)) + (shadowContrib * (cb_mMoon.mDiffuse.xyz * fDotMoon)) + cb_mCombinedAmbient.rgb;" +
-                            $"\r\n    return DiffuseAndAmbient;" +
-                            "\r\n}");
 
+
+                            string aircraftLighting = "";
+                            Tweak aircraft = tweaks.First(p => p.name == "Cockpit Lighting");
+                            if (aircraft.isEnabled)
+                            {
+                                aircraftLighting = "&&& ADD THE AIRCRAFT LIGHTING TWEAK HERE &&&";
+                            }
+
+                            generalText = generalText.AddBefore(ref success, "VS_OUTPUT VS( VS_INPUT Input )", "\r\nfloat3 DirectionalLighting2(const float3 vNormalWS, const float shadowContrib, out float3 DiffuseAndAmbient)" +
+                                "\r\n{" +
+                                $"\r\n#if defined(SHD_VERTICAL_NORMAL)" +
+                                $"\r\n    const float fDotSun = max(cb_mSun.mDirection.y, 0);" +
+                                $"\r\n    const float fDotMoon = max(cb_mMoon.mDirection.y, 0);" +
+                                $"\r\n#else" +
+                                $"\r\n    const float fDotSun = saturate(dot(vNormalWS, normalize(cb_mSun.mDirection)));" +
+                                $"\r\n    const float fDotMoon = saturate(dot(vNormalWS, normalize(cb_mMoon.mDirection)));" +
+                                $"\r\n#endif\r\n" +
+                                $"\r\n{aircraftLighting}" +
+                                $"\r\n            DiffuseAndAmbient = (shadowContrib * (cb_mSun.mDiffuse.xyz * {tweak.parameters[0].value} * fDotSun)) + (shadowContrib * (cb_mMoon.mDiffuse.xyz * {tweak.parameters[2].value} * fDotMoon)) + cb_mCombinedAmbient.rgb * {tweak.parameters[1].value};" +
+                                $"\r\n    return DiffuseAndAmbient;" +
+                                "\r\n}");
                             //replace the old directional lighting with our secondary one
                             generalText = generalText.ReplaceAll(ref success, "directionalDiffuse = DirectionalLighting(vNormalWS, shadowContrib);", "directionalDiffuse = DirectionalLighting2(vNormalWS, shadowContrib, directionalDiffuse);");
+                            break;
+
+
+
+
+                        case "Cockpit Lighting":
+
+                            Tweak ObjectLighting = tweaks.First(p => p.name == "Object Lighting");
+                            if (ObjectLighting.isEnabled == false)
+                            {
+                                Log(ErrorType.Error, "Please activate the 'Object Lighting' tweak first!");
+                                break;
+                            }
+
+                            string replaceText = "DirectionalLighting2(const float3 vNormalWS, const float shadowContrib, out float3 DiffuseAndAmbient)";
+
+                            if (generalText.IndexOf("&&& ADD THE AIRCRAFT LIGHTING TWEAK HERE &&&") >= 0)
+                            {
+                                replaceText = "&&& ADD THE AIRCRAFT LIGHTING TWEAK HERE &&&";
+                            }
+
+                            generalText = generalText.ReplaceAll(ref success, replaceText, @"    #if defined(SHD_NO_NEAR_CLIP)" +
+                            $"\r\n        if (cb_mObjectType == 19)" +
+                            $"\r\n            DiffuseAndAmbient = (shadowContrib * (cb_mSun.mDiffuse.xyz * {tweak.parameters[0].value} * fDotSun)) + (shadowContrib * (cb_mMoon.mDiffuse.xyz * fDotMoon)) + cb_mCombinedAmbient.rgb * {tweak.parameters[1].value};" +
+                            $"\r\n        else" +
+                            "\r\n    #endif");
 
                             //add VC saturation
                             generalText = generalText.AddBefore(ref success, "// Apply IR if active", "\r\n    #if !defined(PS_NEEDS_TANSPACE)" +
@@ -1324,8 +1374,22 @@ namespace OpenShade
                             $"\r\n            cColor.rgb = saturate(lerp(dot(cColor.rgb, float3(0.299f, 0.587f, 0.114f)), cColor.rgb, {tweak.parameters[2].value}));" +
                             "\r\n        }" +
                             "\r\n    #endif");
-
                             break;
+
+                        case "Autogen Lighting":
+                            currentFile = FileIO.generalFile;
+                            generalText = generalText.ReplaceAll(ref success, "                cColor += float4(fEmissiveScale * cEmissive.rgb, 0);", "\r\n                float4 EmissiveLights = float4(fEmissiveScale * cEmissive.rgb, 0);" +
+                            $"\r\n                EmissiveLights.rgb = lerp(dot(EmissiveLights.rgb, float3(0.299f, 0.587f, 0.114f)), EmissiveLights.rgb, {tweak.parameters[1].value});" +
+                            "\r\n                if ((cb_mObjectType == 10) || (cb_mObjectType == 28)) {" +
+                            $"\r\n                    EmissiveLights *= {tweak.parameters[0].value};" +
+                            "\r\n                }" +
+                            "\r\n                cColor += EmissiveLights;");
+                            break;
+
+
+
+
+
                         #endregion
 
                         #region Terrain
@@ -1356,6 +1420,12 @@ namespace OpenShade
                             //saturate 
                             terrainText = terrainText.AddBefore(ref success, "    //Apply emissive.", $"    color.rgb = saturate(lerp(dot(color.rgb, float3(0.299f, 0.587f, 0.114f)), color.rgb, {tweak.parameters[0].value}));\r\n");
                         break;
+
+                        case "Terrain Emissive Lighting":
+                            currentFile = FileIO.terrainFile;
+                            terrainText = terrainText.AddAfter(ref success, "        emissiveColor *= cb_mDayNightInterpolant;", $"\r\n        emissiveColor *= saturate(lerp(dot(emissiveColor, float3(0.299f, 0.587f, 0.114f)), emissiveColor, {tweak.parameters[1].value}));");
+                            terrainText = terrainText.ReplaceAll(ref success, "    color.rgb += (emissiveColor * diffuseColor);", $"    color.rgb += (emissiveColor *{tweak.parameters[0].value} * diffuseColor);");
+                            break;
                         #endregion
 
 
@@ -1431,7 +1501,7 @@ namespace OpenShade
                             $"         reflectance = {tweak.parameters[7].value};"+
                             "\r\n    }");
 
-                            //Add Diffuse Twek
+                            //Add Diffuse Tweak
                             PBRText = PBRText.ReplaceAll(ref success, "        pbrValues.albedo = LambertDiffuse(diffuseColor);", $"        pbrValues.albedo = LambertDiffuse(diffuseColor) * {tweak.parameters[0].value};");
 
                             //Add Main Functions
@@ -1446,15 +1516,19 @@ namespace OpenShade
                             "\r\n        float3 AmbientLightingCalculation;{" +
                             "\r\n            float3 DiffuseIrradianceApprox = CalculateEnv(Input.vNormalWS,pbrMaterial.uTextureIDs1[1]);" +
                             $"\r\n            DiffuseIrradianceApprox.rgb = saturate(lerp(dot(DiffuseIrradianceApprox.rgb, float3(0.299f, 0.587f, 0.114f)), DiffuseIrradianceApprox.rgb, {tweak.parameters[1].value}));" +
+                            $"\r\n            DiffuseIrradianceApprox.rgb = saturate(lerp(DiffuseIrradianceApprox.rgb, GetIBLDiffuse(diffuseColor)*{tweak.parameters[9].value},  cb_mDayNightInterpolant ));" +
                             "\r\n            float3 kS = SpecularReflection(pbrValues.specColor, pbrValues.specColorF90,pbrValues.nDotV);" +
                             "\r\n            float3 kD = 1.0 - kS;" +
                             "\r\n            float3 diffuseIBL = diffuseColor * DiffuseIrradianceApprox;" +
                             "\r\n            float3 specularIBL = GetIBLSpecular(specColor, specularColorF90, perceptualRoughness, pbrValues.viewDir, vNormal, pbrValues.nDotV, pbrMaterial.uTextureIDs1[1], pbrMaterial.uTextureIDs1[3]);" +
-                            $"\r\n            AmbientLightingCalculation = (kD * diffuseIBL + specularIBL * {tweak.parameters[2].value}) * occlusion;" +
+                            $"\r\n            AmbientLightingCalculation = (kD * diffuseIBL + specularIBL * {tweak.parameters[2].value}) * (occlusion * {tweak.parameters[12].value});" +
                             "\r\n        }" +
                             "\r\n            float3 colorDiffuseTexture = CalculateEnv(Input.vNormalWS,pbrMaterial.uTextureIDs1[1]);" +
                             "\r\n            colorDiffuseSun = colorDiffuseSun * (1.15 * colorDiffuseTexture + float3(1 - 0.15, 1 - 0.15, 1 - 0.15));" +
-                            "\r\n        color.rgb = (sunContrib + moonContrib) * shadowContrib * lerp(colorDiffuseSun.xyz, colorDiffuseSun.xyz * 1.6 , interpolate_two_values(1.6, 6.5, cb_mSun.mDirection.y)) * fDotSun*0.8;");
+                            $"\r\n        color.rgb = (sunContrib + moonContrib) * shadowContrib * lerp(colorDiffuseSun.xyz, colorDiffuseSun.xyz * 1.6 , interpolate_two_values(1.6, {tweak.parameters[11].value}, cb_mSun.mDirection.y)) * fDotSun*0.8;");
+
+                            //Dynamic Lighting at night
+                            PBRText = PBRText.ReplaceAll(ref success, "color.rgb += directLighting;", $"color.rgb += saturate(lerp(directLighting, directLighting*{tweak.parameters[10].value}, cb_mDayNightInterpolant));");
 
                             //Case 1 IBL for PBR VC's
                             if (tweak.parameters[8].value == "1")
@@ -1487,6 +1561,27 @@ namespace OpenShade
                         case "Alternate tonemap adjustment":
                             currentFile = FileIO.HDRFile;
                             HDRText = HDRText.AddAfter(ref success, "// Copyright (c) 2021, Lockheed Martin Corporation", "\r\n// Tonemapper adapted from tomatoshade");
+                            HDRText = HDRText.AddAfter(ref success, "#include <FuncLibrary.fxh>", "\r\n#include <ConstantBuffers.fxh>");
+
+
+                            HDRText = HDRText.AddAfter(ref success, "shared StructuredBuffer<float> exposureBuffer: register(t2);", "\r\nfloat CalcLuminance(float3 color)" +
+                            "\r\n{" +
+                            "\r\n    return max(dot(color, float3(0.299f, 0.587f, 0.114f)), 0.001f);" +
+                            "\r\n}" +
+                            "\r\nfloat GetAvgLuminance( Texture2D lumTex, float2 texCoord )" +
+                            "\r\n{" +
+                            "\r\n    return max((1-cb_mDayNightInterpolant) * 0.35, 0.1);" +
+                            "\r\n}" +
+                            "\r\nfloat3 CalcExposedColor(float3 color, float avgLuminance, float threshold)" +
+                            "\r\n{" +
+                            "\r\n    avgLuminance = max(avgLuminance, 0.001f);" +
+                            "\r\n    float exposureKeyValue = 0.580000;" +
+                            "\r\n    float linearExposure = (exposureKeyValue / avgLuminance);" +
+                            "\r\n    float exposure = log2(max(linearExposure, 0.0001f));" +
+                            "\r\n    exposure -= threshold;" +
+                            "\r\n    return exp2(exposure) * color;" +
+                            "\r\n}");
+
 
                             HDRText = HDRText.ReplaceAll(ref success, "//ACES based ToneMapping curve, takes and outputs linear values.", "\r\nfloat3 tonemap_uncharted2(in float3 x)" +
                             "\r\n{" +
@@ -1499,7 +1594,10 @@ namespace OpenShade
                             "\r\n    return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;" +
                             "\r\n}");
 
-                            HDRText = HDRText.ReplaceAll(ref success, "    const float A = 2.51;", "    color *= 1;");
+                            HDRText = HDRText.ReplaceAll(ref success, "float3 ToneMap(float3 color)", "float3 ToneMap( float3 color, float avgLuminance, float threshold )");
+
+                            HDRText = HDRText.ReplaceAll(ref success, "    const float A = 2.51;", "    color = CalcExposedColor(color, avgLuminance, threshold);" +
+                            "\r\n    color *= 2;");
                             HDRText = HDRText.ReplaceAll(ref success, "    const float B = 0.03;", "    float exposure_bias = 2.0f;");
                             HDRText = HDRText.ReplaceAll(ref success, "    const float C = 2.43;", "    float3 curr = tonemap_uncharted2(exposure_bias*color);");
                             HDRText = HDRText.ReplaceAll(ref success, "    const float D = 0.59;", "    float W = 11.2;");
@@ -1508,7 +1606,9 @@ namespace OpenShade
                             "\r\n    color = pow(abs(ccolor), 1.0 * 0.454545);" +
                             "\r\n    return saturate(pow(color, 2.5f) * 1.2f);");
 
-                            HDRText = HDRText.ReplaceAll(ref success, "    color.rgb *= exposure;", $"    color.rgb *= exposure*{tweak.parameters[0].value};");
+                            HDRText = HDRText.ReplaceAll(ref success, "    color.rgb *= exposure;", $"    color.rgb *= exposure;");
+                            HDRText = HDRText.AddAfter(ref success, "    color.rgb *= exposure;", "\r\n    float avgLuminance = GetAvgLuminance( inputTexture, vert.texcoord );");
+                            HDRText = HDRText.ReplaceAll(ref success, "\tcolor.rgb = ToneMap(color.rgb);", $"    color.rgb = ToneMap( color.rgb, avgLuminance, 0 );");
                             break;
                          #endregion
                     }

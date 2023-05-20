@@ -149,7 +149,7 @@ namespace OpenShade.Classes
                 else if (!pref.KeyExists("IsActive", tweak.key))
                 {
                     mainWindowHandle.Log(ErrorType.Warning, "Missing entry 'IsActive' for tweak [" + tweak.key + "]");
-                    break;
+                    //break;
                 }
                 else
                 {

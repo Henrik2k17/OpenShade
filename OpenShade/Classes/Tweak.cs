@@ -320,12 +320,12 @@ namespace OpenShade.Classes
             tweaks.Add(newTweak);
 
             newTweak = new Tweak("ATMOSPHERE_RAYLEIGH_SCATTERING", Category.Atmosphere, "Atmosphere Rayleigh Scattering", "");
-            newTweak.parameters.Add(new Parameter("RayleightScatteringPower", "Power", 2.75, 2.75, 2.75, 2.75, UIType.TextBox)); //{tweak.parameters[0].value}
-            newTweak.parameters.Add(new Parameter("RayleightScatteringDensity", "Density", 0.0000000200, 0.0000000200, 0.0000000200, 0.0000000200, UIType.TextBox)); //{tweak.parameters[1].value}
-            newTweak.parameters.Add(new Parameter("RayleightScatteringColorGreen", "Color Green", 0.060, 0.060, 0.060, 0.060, UIType.TextBox)); //{tweak.parameters[2].value}
-            newTweak.parameters.Add(new Parameter("RayleightScatteringColorBlue", "Color Blue", 0.190, 0.190, 0.190, 0.190, UIType.TextBox)); //{tweak.parameters[3].value}
-            newTweak.parameters.Add(new Parameter("RayleightScatteringDependsOnAltitude", "Density depends on altitude", 1, 1, 0, 1, UIType.Checkbox)); //{tweak.parameters[4].value}
-            newTweak.parameters.Add(new Parameter("RayleightScatteringAltitudeDensityZero", "Altitude when density reaches zero", 15000, 15000, 15000, 15000, UIType.TextBox)); //{tweak.parameters[5].value}
+            newTweak.parameters.Add(new Parameter("RayleighScatteringPower", "Power", 2.75, 2.75, 2.75, 2.75, UIType.TextBox)); //{tweak.parameters[0].value}
+            newTweak.parameters.Add(new Parameter("RayleighScatteringDensity", "Density", 0.0000000200, 0.0000000200, 0.0000000200, 0.0000000200, UIType.TextBox)); //{tweak.parameters[1].value}
+            newTweak.parameters.Add(new Parameter("RayleighScatteringColorGreen", "Color Green", 0.060, 0.060, 0.060, 0.060, UIType.TextBox)); //{tweak.parameters[2].value}
+            newTweak.parameters.Add(new Parameter("RayleighScatteringColorBlue", "Color Blue", 0.190, 0.190, 0.190, 0.190, UIType.TextBox)); //{tweak.parameters[3].value}
+            newTweak.parameters.Add(new Parameter("RayleighScatteringDependsOnAltitude", "Density depends on altitude", 1, 1, 0, 1, UIType.Checkbox)); //{tweak.parameters[4].value}
+            newTweak.parameters.Add(new Parameter("RayleighScatteringAltitudeDensityZero", "Altitude when density reaches zero", 15000, 15000, 15000, 15000, UIType.TextBox)); //{tweak.parameters[5].value}
             tweaks.Add(newTweak);
 
             newTweak = new Tweak("ATMOSPHERE_FOG_FIX", Category.Atmosphere, "Atmospheres Fog Fix", "");
@@ -345,10 +345,21 @@ namespace OpenShade.Classes
             ////  Lighting
             //// -----------------------
 
+            newTweak = new Tweak("LIGHTING_OBJECT_LIGHTING", Category.Lighting, "Object Lighting", "");
+            newTweak.parameters.Add(new Parameter("ObjectDiffuse", "Object Diffuse", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[0].value}
+            newTweak.parameters.Add(new Parameter("ObjectAmbient", "Object Ambient", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[1].value}
+            newTweak.parameters.Add(new Parameter("ObjectDiffuseMoon", "Object Diffuse Moon", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[2].value}
+            tweaks.Add(newTweak);
+
             newTweak = new Tweak("LIGHTING_COCKPIT_LIGHTING", Category.Lighting, "Cockpit Lighting", "");
             newTweak.parameters.Add(new Parameter("CockpitDiffuse", "Cockpit Diffuse", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[0].value}
             newTweak.parameters.Add(new Parameter("CockpitAmbient", "Cockpit Ambient", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[1].value}
             newTweak.parameters.Add(new Parameter("CockpitSaturation", "Cockpit Saturation", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[2].value}
+            tweaks.Add(newTweak);
+
+            newTweak = new Tweak("LIGHTING_AUTOGEN_LIGHTING", Category.Lighting, "Autogen Lighting", "");
+            newTweak.parameters.Add(new Parameter("AutogenLightsBrightness", "Autogen Lights Brightness", 1, 1, 1, 1, UIType.TextBox)); //{tweak.parameters[0].value}
+            newTweak.parameters.Add(new Parameter("AutogenLightsSaturation", "Autogen Lights Saturation", 1, 1, 1, 1, UIType.TextBox)); //{tweak.parameters[1].value}
             tweaks.Add(newTweak);
 
             // -----------------------
@@ -369,6 +380,11 @@ namespace OpenShade.Classes
             newTweak.parameters.Add(new Parameter("TerrainSaturation", "Terrain Saturation", 1, 1, 0.01, 5, UIType.TextBox));
             tweaks.Add(newTweak);
 
+            newTweak = new Tweak("TERRAIN_EMISSIVE_LIGHTING", Category.Terrain, "Terrain Emissive Lighting", "Changes the terrain emissive lighting");
+            newTweak.parameters.Add(new Parameter("TerrainEmissiveBrightness", "Terrain Emissive Brightness", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[0].value}
+            newTweak.parameters.Add(new Parameter("TerrainEmissiveSaturation", "Terrain Emissive Saturation", 1, 1, 0.01, 5, UIType.TextBox)); //{tweak.parameters[1].value}
+            tweaks.Add(newTweak);
+
 
             // -----------------------
             //  PBR
@@ -384,6 +400,10 @@ namespace OpenShade.Classes
             newTweak.parameters.Add(new Parameter("AdvancedPBRCockpitAmbientLighting", "Cockpit Ambient Lighting", 2, 2, 2, 2, UIType.TextBox));//{tweak.parameters[6].value}
             newTweak.parameters.Add(new Parameter("AdvancedPBRAircraftReflectance", "Aircraft Reflectance Intensity", 0.2, 0.2, 0.2, 0.2, UIType.TextBox));//{tweak.parameters[7].value}
             newTweak.parameters.Add(new Parameter("VCIBL", "Cockpit IBL", 1, 1, 0, 1, UIType.Checkbox));//{tweak.parameters[8].value}
+            newTweak.parameters.Add(new Parameter("AdvancedPBRAircraftAmbientLightingNight", "Aircraft Ambient Lighting Night", 0.5, 0.5, 0.5, 0.5, UIType.TextBox));//{tweak.parameters[9].value}
+            newTweak.parameters.Add(new Parameter("DynamicLightIntensityNight", "Dynamic Lighting Intensity", 1, 1, 1, 1, UIType.TextBox));//{tweak.parameters[10].value}
+            newTweak.parameters.Add(new Parameter("AdvancedPBRAircraftDirectLightingDuskDawn", "Dusk/Dawn Highlights", 6.5, 6.5, 6.5, 6.5, UIType.TextBox));//{tweak.parameters[11].value}
+            newTweak.parameters.Add(new Parameter("AdvancedPBRAircraftOcclusionFactor", "PBR Aircraft Occlusion Factor", 1, 1, 1, 1, UIType.TextBox));//{tweak.parameters[12].value}
             tweaks.Add(newTweak);
 
             // -----------------------
