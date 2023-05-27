@@ -30,7 +30,6 @@ namespace OpenShade
         string customTweaksHash;
         string postProcessesHash;
         string commentHash; // that's just the original comments
-
         /*
          * If a list contains the same items for their whole lifetime, but the individual objects within that list change, 
          * then it's enough for just the objects to raise change notifications (typically through INotifyPropertyChanged) and List<T> is sufficient. 
@@ -46,15 +45,7 @@ namespace OpenShade
         string currentDirectory = Directory.GetCurrentDirectory();
         string P3DDirectory;
         public string P3DVersion = "5.3.17.28160";
-        public string CloudShaderMD5HashHardCode = "21517197BDAE7BBB2DEE50CE481AB6F8";
-        public string CompositeShaderMD5HashHardCode = "0B58B8EB15105A3EE3C039BF1B5275F5";
-        public string FuncLibShaderMD5HashHardCode = "37958922787C777B575FB06C4F9A7DF9";
-        public string GeneralShaderMD5HashHardCode = "73F32C32CFDC62E60F3ADCDBBE0FF8A2";
-        public string HDRShaderMD5HashHardCode = "9EDF0627E6ABB3180EBA83A3FDF210BE";
-        public string PBRShaderMD5HashHardCode = "6D87ECDC9D2BC5CFC9078F1D08B62C52";
-        public string PrecipParticleShaderMD5HashHardCode = "6416B48E1479118EAF132C64EA6F9E32";
-        public string ShadowParticleShaderMD5HashHardCode = "49923C92882E90A395D7EA5E70C26555";
-        public string TerrainShaderMD5HashHardCode = "9E1CB526E2E166CC628DCBECE4118698";
+        public string P3DVersion2 = "5.4.9.28482";
 
 
         FileIO fileData;
@@ -133,14 +124,37 @@ namespace OpenShade
             ShaderCache_TextBox.Text = cacheDirectory;
         }
 
+        //public string CloudShaderMD5HashHardCode = "21517197BDAE7BBB2DEE50CE481AB6F8";
+        //public string CompositeShaderMD5HashHardCode = "0B58B8EB15105A3EE3C039BF1B5275F5";
+        //public string GeneralShaderMD5HashHardCode = "73F32C32CFDC62E60F3ADCDBBE0FF8A2";
+        //public string HDRShaderMD5HashHardCode = "9EDF0627E6ABB3180EBA83A3FDF210BE";
+        //public string PBRShaderMD5HashHardCode = "6D87ECDC9D2BC5CFC9078F1D08B62C52";
+        //public string PrecipParticleShaderMD5HashHardCode = "6416B48E1479118EAF132C64EA6F9E32";
+        //public string ShadowParticleShaderMD5HashHardCode = "49923C92882E90A395D7EA5E70C26555";
+        //public string TerrainShaderMD5HashHardCode = "9E1CB526E2E166CC628DCBECE4118698";
 
 
-        
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
 
 
             string currentP3DEXEVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
+
+
+
+            string CloudShaderMD5HashHardCode = "21517197BDAE7BBB2DEE50CE481AB6F8";
+            string CompositeShaderMD5HashHardCode = "0B58B8EB15105A3EE3C039BF1B5275F5";
+            string GeneralShaderMD5HashHardCode = "73F32C32CFDC62E60F3ADCDBBE0FF8A2";
+            string HDRShaderMD5HashHardCode = "9EDF0627E6ABB3180EBA83A3FDF210BE";
+            string PBRShaderMD5HashHardCode = "6D87ECDC9D2BC5CFC9078F1D08B62C52";
+            string PrecipParticleShaderMD5HashHardCode = "6416B48E1479118EAF132C64EA6F9E32";
+            string ShadowParticleShaderMD5HashHardCode = "49923C92882E90A395D7EA5E70C26555";
+            string TerrainShaderMD5HashHardCode = "9E1CB526E2E166CC628DCBECE4118698";
+            string FuncLibShaderMD5HashHardCode = "37958922787C777B575FB06C4F9A7DF9";
+            string FuncLibShaderMD5HashHardCode2 = "4EEC27C8A7BFB23ACE2BA10BE257ABA6";
+
+
+
 
             string hashCloud = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.cloudFile);
             string hashComposite = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.compositeFile);
@@ -162,32 +176,61 @@ namespace OpenShade
             //Log(ErrorType.Info, "Shadow:" + hashShadow);
             //Log(ErrorType.Info, "Terrain:" + hashTerrain);
 
-
-
-            if (!Directory.Exists(backupDirectory))
+            // 5.3
+            if (currentP3DEXEVersion == P3DVersion)
             {
-                //Check installed shaders and p3d version
-                if (hashCloud != CloudShaderMD5HashHardCode || hashComposite != CompositeShaderMD5HashHardCode || hashFuncLib != FuncLibShaderMD5HashHardCode || hashGeneral != GeneralShaderMD5HashHardCode || hashHDR != HDRShaderMD5HashHardCode || hashPBR != PBRShaderMD5HashHardCode || hashPrecipParticle != PrecipParticleShaderMD5HashHardCode || hashShadow != ShadowParticleShaderMD5HashHardCode || hashTerrain != TerrainShaderMD5HashHardCode)
+                if (!Directory.Exists(backupDirectory))
                 {
-                    MessageBoxResult result = MessageBox.Show("Non default P3D Shaders detected, please restore the original shaders before trying again!", "Integrity Check", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
-                    Log(ErrorType.Error, "Non default Shaders detected, Openshade can not run!");
-                    if (result == MessageBoxResult.OK)
+                    //Check installed shaders and p3d version
+                    if (hashCloud != CloudShaderMD5HashHardCode || hashComposite != CompositeShaderMD5HashHardCode || hashFuncLib != FuncLibShaderMD5HashHardCode || hashGeneral != GeneralShaderMD5HashHardCode || hashHDR != HDRShaderMD5HashHardCode || hashPBR != PBRShaderMD5HashHardCode || hashPrecipParticle != PrecipParticleShaderMD5HashHardCode || hashShadow != ShadowParticleShaderMD5HashHardCode || hashTerrain != TerrainShaderMD5HashHardCode)
                     {
-                        System.Environment.Exit(0);
+                        MessageBoxResult result = MessageBox.Show("Non default P3D Shaders detected, please restore the original shaders before trying again!", "Integrity Check", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+                        Log(ErrorType.Error, "Non default Shaders detected, Openshade can not run!");
+                        if (result == MessageBoxResult.OK)
+                        {
+                            System.Environment.Exit(0);
+                        }
                     }
-                }
 
-                if (currentP3DEXEVersion != P3DVersion)
-                {
-                    MessageBoxResult result = MessageBox.Show("You have an old P3D Version installed, please update to the latest version!", "Unsupported Version", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
-                    Log(ErrorType.Warning, "Unsupported P3D Version OpenShade can not run.");
-                    if (result == MessageBoxResult.OK)
+                    if (currentP3DEXEVersion != P3DVersion)
                     {
-                        System.Environment.Exit(0);
+                        MessageBoxResult result = MessageBox.Show("You have an old P3D Version installed, please update to the latest version!", "Unsupported Version", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+                        Log(ErrorType.Warning, "Unsupported P3D Version OpenShade can not run.");
+                        if (result == MessageBoxResult.OK)
+                        {
+                            System.Environment.Exit(0);
+                        }
                     }
                 }
             }
 
+            //5.4
+            if (currentP3DEXEVersion == P3DVersion2)
+            {
+                if (!Directory.Exists(backupDirectory))
+                {
+                    //Check installed shaders and p3d version
+                    if (hashCloud != CloudShaderMD5HashHardCode || hashComposite != CompositeShaderMD5HashHardCode || hashFuncLib != FuncLibShaderMD5HashHardCode2 || hashGeneral != GeneralShaderMD5HashHardCode || hashHDR != HDRShaderMD5HashHardCode || hashPBR != PBRShaderMD5HashHardCode || hashPrecipParticle != PrecipParticleShaderMD5HashHardCode || hashShadow != ShadowParticleShaderMD5HashHardCode || hashTerrain != TerrainShaderMD5HashHardCode)
+                    {
+                        MessageBoxResult result = MessageBox.Show("Non default P3D Shaders detected, please restore the original shaders before trying again!", "Integrity Check", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+                        Log(ErrorType.Error, "Non default Shaders detected, Openshade can not run!");
+                        if (result == MessageBoxResult.OK)
+                        {
+                            System.Environment.Exit(0);
+                        }
+                    }
+
+                    if (currentP3DEXEVersion != P3DVersion2)
+                    {
+                        MessageBoxResult result = MessageBox.Show("You have an old P3D Version installed, please update to the latest version!", "Unsupported Version", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+                        Log(ErrorType.Warning, "Unsupported P3D Version OpenShade can not run.");
+                        if (result == MessageBoxResult.OK)
+                        {
+                            System.Environment.Exit(0);
+                        }
+                    }
+                }
+            }
 
 
 
@@ -248,7 +291,7 @@ namespace OpenShade
             if (Directory.Exists(backupDirectory))
             {
                 string currentP3DVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
-                if (currentP3DVersion != P3DVersion)
+                if (currentP3DVersion != P3DVersion && currentP3DVersion != P3DVersion2)
                 {
                     MessageBoxResult result = MessageBox.Show("OpenShade has detected a new version of Prepar3D (" + currentP3DVersion + ").\r\n\r\nIt is STRONGLY recommended that you backup the default shader files again otherwise they will be overwritten by old shader files when applying a preset.", "New version detected", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
                     if (result == MessageBoxResult.OK)
@@ -331,7 +374,8 @@ namespace OpenShade
                     }
 
                     loadedPreset = new IniFile(loadedPresetPath);
-                    if (currentP3DEXEVersion == P3DVersion){
+                    if (currentP3DEXEVersion == P3DVersion && currentP3DEXEVersion == P3DVersion2)
+                    {
                         MessageBoxResult result = MessageBox.Show("Some changes were not saved.\r\nWould you like to save them now as a new preset [" + loadedPreset.filename + "] ?", "Save", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
                         if (result == MessageBoxResult.Yes)
                         {
@@ -1217,12 +1261,22 @@ namespace OpenShade
                         case "Atmospheres Fog Fix":
                             currentFile = FileIO.funclibFile;
 
-                            if (tweak.parameters[0].value == "1")
+                            string currentP3DEXEVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
+
+                            if (currentP3DEXEVersion == P3DVersion)
                             {
                                 funclibText = funclibText.ReplaceAll(ref success, "#if !defined(SHD_ENHANCED_ATMOSPHERICS_BLEND) && !defined(SHD_TO_FAR_CLIP) && !defined(SHD_SKY_STARS)", "#if !defined(SHD_ENHANCED_ATMOSPHERICS_BLEND) && !defined(SHD_TO_FAR_CLIP)");
                                 PBRText = PBRText.AddAfter(ref success, "    #elif !defined(SHD_NO_FOG) && !defined(INPUT_SCREENSPACE_POSITION)", "\r\n        const float pixelDistance = distance(float3(0, 0, 0), Input.vPositionWS);");
                             }
-                        break;
+                            else
+                            {
+                                funclibText = funclibText.ReplaceAll(ref success, "#if !defined(SHD_ENHANCED_ATMOSPHERICS_BLEND) && !defined(SHD_TO_FAR_CLIP) && !defined(SHD_SKY)", "#if !defined(SHD_ENHANCED_ATMOSPHERICS_BLEND) && !defined(SHD_TO_FAR_CLIP)");
+                                PBRText = PBRText.AddAfter(ref success, "    #elif !defined(SHD_NO_FOG) && !defined(INPUT_SCREENSPACE_POSITION)", "\r\n        const float pixelDistance = distance(float3(0, 0, 0), Input.vPositionWS);");
+                            }
+
+
+
+                            break;
 
                         case "Atmospheres Haze Effect":
                             currentFile = FileIO.funclibFile;

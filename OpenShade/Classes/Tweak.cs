@@ -329,7 +329,6 @@ namespace OpenShade.Classes
             tweaks.Add(newTweak);
 
             newTweak = new Tweak("ATMOSPHERE_FOG_FIX", Category.Atmosphere, "Atmospheres Fog Fix", "");
-            newTweak.parameters.Add(new Parameter("FixP3DDefaultHaze", "Fix default haze", 1, 1, 0, 1, UIType.Checkbox));//{tweak.parameters[0].value}
             tweaks.Add(newTweak);
 
             newTweak = new Tweak("ATMOSPHERE_SKY_SATURATION", Category.Atmosphere, "Sky Saturation", "");
