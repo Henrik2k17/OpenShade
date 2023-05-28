@@ -137,10 +137,7 @@ namespace OpenShade
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
 
-
             string currentP3DEXEVersion = FileVersionInfo.GetVersionInfo(P3DDirectory + "Prepar3D.exe").FileVersion;
-
-
 
             string CloudShaderMD5HashHardCode = "21517197BDAE7BBB2DEE50CE481AB6F8";
             string CompositeShaderMD5HashHardCode = "0B58B8EB15105A3EE3C039BF1B5275F5";
@@ -153,9 +150,6 @@ namespace OpenShade
             string FuncLibShaderMD5HashHardCode = "37958922787C777B575FB06C4F9A7DF9";
             string FuncLibShaderMD5HashHardCode2 = "4EEC27C8A7BFB23ACE2BA10BE257ABA6";
 
-
-
-
             string hashCloud = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.cloudFile);
             string hashComposite = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.compositeFile);
             string hashFuncLib = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.funclibFile);
@@ -165,6 +159,7 @@ namespace OpenShade
             string hashPrecipParticle = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.PrecipParticleFile);
             string hashShadow = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.shadowFile);
             string hashTerrain = fileData.MD5IntegrityCheck(shaderDirectory + FileIO.terrainFile);
+
             //Log(ErrorType.Info, "You currently running P3D Version: " + currentP3DEXEVersion);
             //Log(ErrorType.Info, "Cloud:" + hashCloud);
             //Log(ErrorType.Info, "Composite:" + hashComposite);
@@ -1273,10 +1268,10 @@ namespace OpenShade
                                 funclibText = funclibText.ReplaceAll(ref success, "#if !defined(SHD_ENHANCED_ATMOSPHERICS_BLEND) && !defined(SHD_TO_FAR_CLIP) && !defined(SHD_SKY)", "#if !defined(SHD_ENHANCED_ATMOSPHERICS_BLEND) && !defined(SHD_TO_FAR_CLIP)");
                                 PBRText = PBRText.AddAfter(ref success, "    #elif !defined(SHD_NO_FOG) && !defined(INPUT_SCREENSPACE_POSITION)", "\r\n        const float pixelDistance = distance(float3(0, 0, 0), Input.vPositionWS);");
                             }
+                        break;
 
 
 
-                            break;
 
                         case "Atmospheres Haze Effect":
                             currentFile = FileIO.funclibFile;
@@ -1314,42 +1309,120 @@ namespace OpenShade
                             break;
 
 
-                     case "Atmosphere Rayleigh Scattering":
+                            case "Atmosphere Rayleigh Scattering":
+                                currentFile = FileIO.funclibFile;
+
+
+                                Tweak HazeEffect = tweaks.First(p => p.name == "Atmospheres Haze Effect");
+                                if (HazeEffect.isEnabled == false)
+                                {
+                                    Log(ErrorType.Error, "Please activate the 'Atmospheres Haze Effect' tweak first!");
+                                    break;
+                                }
+
+                                //Rayleigh
+                                funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\nfloat4 CalculateRayleightScatteringFog(const float fPositonY, const float4 fColor, const float fDistance){" +
+                                "\r\n    float4 FinalColor = fColor;" +
+                                "\r\n    #if !defined(SHD_ADDITIVE) && !defined(SHD_MULTIPLICATIVE)" +
+                                "\r\n        if ((cb_mObjectType != (uint)1) && (cb_mObjectType != (uint)3) && (cb_mObjectType != (uint)21) && (cb_mObjectType != (uint)19))" +
+                                "\r\n        {" +
+                                $"\r\n            const float DensFactor = {tweak.parameters[1].value};" +
+                                $"\r\n            const float DistK = {tweak.parameters[0].value} * (1 - saturate(exp(-fDistance * fDistance * DensFactor))) * saturate(cb_mSun.mDiffuse.g - 0.15);" +
+                                $"\r\n            FinalColor.rgb = FinalColor.rgb * (1 - float3(0.00, {tweak.parameters[2].value}, {tweak.parameters[3].value}) * DistK) + float3(0.00, {tweak.parameters[2].value}, {tweak.parameters[3].value}) * DistK;" +
+                                "\r\n        }" +
+                                "\r\n    #endif" +
+                                "\r\n    return FinalColor;" +
+                                "\r\n}\r\n");
+
+                                if (tweak.parameters[4].value == "1")
+                                {
+                                    funclibText = funclibText.ReplaceAll(ref success, $"            const float DensFactor = {tweak.parameters[1].value};", $"            const float DensFactor = 0.0000000002 * saturate(1.0f - cb_mView.mAltitude/{tweak.parameters[5].value});");
+                                }
+
+
+                                generalText = generalText.AddAfter(ref success, "    #elif !defined(SHD_NO_FOG) && !defined(INPUT_SCREENSPACE_POSITION)", "\r\n        cColor = CalculateRayleightScatteringFog(Input.vPositionWS.y - cb_View.mViewInstanceOffset.y, cColor, pixelDistance);");
+                                terrainText = terrainText.AddAfter(ref success, "        #if !defined(SHD_NO_FOG)", "\r\n            color = CalculateRayleightScatteringFog(Input.vPosWS.y, color, eyeDist); //Draw Rayleigh");
+                                PBRText = PBRText.AddAfter(ref success, "    #elif !defined(SHD_NO_FOG) && !defined(INPUT_SCREENSPACE_POSITION)", "\r\n        color = CalculateRayleightScatteringFog(Input.vPositionWS.y - cb_View.mViewInstanceOffset.y, color, pixelDistance);");
+                                //PBRText = PBRText.AddAfter(ref success, "    #elif !defined(SHD_NO_FOG) && !defined(INPUT_SCREENSPACE_POSITION)", "\r\n        const float pixelDistance = distance(float3(0, 0, 0), Input.vPositionWS);");
+                            break;
+
+                        case "Cloud Fog":
                             currentFile = FileIO.funclibFile;
 
+                            funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\nfloat3 FogPS(const float3 cColor, const float fDistance, const float fFogDensitySquared, const float3 cFog){" +
+                            "\r\n    #if defined(SHD_ADDITIVE) || defined(SHD_MULTIPLICATIVE)" +
+                            "\r\n        return lerp(float3( 0, 0, 0 ), cColor, saturate(exp(-fDistance*fDistance*fFogDensitySquared))); " +
+                            "\r\n    #else" +
+                            "\r\n    return lerp(cFog, cColor, exp(-fDistance*fDistance*fFogDensitySquared)); " +
+                            $"\r\n   #endif" +
+                            "\r\n}\r\n");
 
-                            Tweak HazeEffect = tweaks.First(p => p.name == "Atmospheres Haze Effect");
-                            if (HazeEffect.isEnabled == false)
-                            {
-                                Log(ErrorType.Error, "Please activate the 'Atmospheres Haze Effect' tweak first!");
-                                break;
-                            }
+                            funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\nfloat3 FogPSSquaredDist(const float3 cColor, const float fDistanceSquared, const float fFogDensitySquared, const float3 cFog){" +
+                            "\r\n    return lerp(cFog, cColor, saturate(exp(-fDistanceSquared*fFogDensitySquared))); " +
+                            "\r\n}\r\n");
 
-                            //Rayleigh
-                            funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\nfloat4 CalculateRayleightScatteringFog(const float fPositonY, const float4 fColor, const float fDistance){" +
-                            "\r\n    float4 FinalColor = fColor;" +
-                            "\r\n    #if !defined(SHD_ADDITIVE) && !defined(SHD_MULTIPLICATIVE)" +
-                            "\r\n        if ((cb_mObjectType != (uint)1) && (cb_mObjectType != (uint)3) && (cb_mObjectType != (uint)21) && (cb_mObjectType != (uint)19))" +
+                            funclibText = funclibText.AddBefore(ref success, "float4 EnhancedAtmosphericsBlend(float4 color, float3 screenPos, float3 worldPos, uint InstanceID)", "\r\nfloat4 VolumetricFogPS(const float fPositionY, const float4 cColor, const float fDistance, const float fFogDensity, const float3 cFog){" +
+                            "\r\n    const float distQuared = fDistance*fDistance;" +
+                            "\r\n    const float signOfY =  ceil(saturate(fPositionY)) - ceil(saturate(-fPositionY));" +
+                            "\r\n    const float oneOverY = 1/fPositionY;" +
+                            "\r\n    float4 FinalColor = cColor;" +
+                            "\r\n    float horizonFogDensity = fFogDensity;" +
+                            "\r\n    float3 layerEnableFade = float3(1, 1, 1);" +
+                            "\r\n    #if defined(SHD_NO_HORIZON_FOG)" +
+                            "\r\n		horizonFogDensity = 0;" +
+                            "\r\n		layerEnableFade = float3(cb_mFog[0].cb_mFogNoHorizonLayerEnable," +
+                            "\r\n			cb_mFog[1].cb_mFogNoHorizonLayerEnable," +
+                            "\r\n			cb_mFog[2].cb_mFogNoHorizonLayerEnable);" +
+                            "\r\n	#endif" +
+                            "\r\n    const float layer[3] = { layerEnableFade[0] * cb_mFog[0].mFogEnable," +
+                            "\r\n					         layerEnableFade[1] * cb_mFog[1].mFogEnable," +
+                            "\r\n                             layerEnableFade[2] * cb_mFog[2].mFogEnable };" +
+                            "\r\n    const uint belowBottomLayer = ceil(saturate(-fPositionY - cb_mFog[0].mFogBase));" +
+                            "\r\n	#if defined(SHD_ADDITIVE) || defined(SHD_MULTIPLICATIVE)" +
+                            "\r\n		float3 horizonFog = float3(0.0f, 0.0f, 0.0f);" +
+                            "\r\n	#else" +
+                            "\r\n		float3 horizonFog = cFog;" +
+                            "\r\n	#endif" +
+                            "\r\n	#if !defined(SHD_NO_HORIZON_FOG)" +
+                            "\r\n		FinalColor.xyz = (FinalColor.xyz * belowBottomLayer) +" +
+                            "\r\n			(FogPSSquaredDist(FinalColor.xyz, distQuared, horizonFogDensity, horizonFog) * !belowBottomLayer);" +
+                            "\r\n	#endif" +
+                            "\r\n    [unroll]for(int i = 0; i < NUM_FOG_LAYERS; i++)" +
+                            "\r\n    {" +
+                            "\r\n        [branch]if(layer[i] > 0.0f)" +
                             "\r\n        {" +
-                            $"\r\n            const float DensFactor = {tweak.parameters[1].value};" +
-                            $"\r\n            const float DistK = {tweak.parameters[0].value} * (1 - saturate(exp(-fDistance * fDistance * DensFactor))) * saturate(cb_mSun.mDiffuse.g - 0.15);" +
-                            $"\r\n            FinalColor.rgb = FinalColor.rgb * (1 - float3(0.00, {tweak.parameters[2].value}, {tweak.parameters[3].value}) * DistK) + float3(0.00, {tweak.parameters[2].value}, {tweak.parameters[3].value}) * DistK;" +
+                            "\r\n            const Fog fog = cb_mFog[i];" +
+                            "\r\n            const float yMinusBase = fPositionY - fog.mFogBase;" +
+                            "\r\n            const float yMinusTop = fPositionY - fog.mFogTop;" +
+                            "\r\n            const float signOfBase = ceil(saturate(fog.mFogBase)) - ceil(saturate(-fog.mFogBase));" +
+                            "\r\n            const float signOfTop = ceil(saturate(fog.mFogTop)) - ceil(saturate(-fog.mFogTop));" +
+                            "\r\n            const float cameraInLayer = saturate(-signOfBase*signOfTop);" +
+                            "\r\n            const float pixelInLayer = saturate(-1 + ceil(saturate(yMinusBase)) + ceil(saturate(-yMinusTop)));" +
+                            "\r\n            float ratio = abs(saturate(oneOverY * saturate(signOfY * signOfBase) * yMinusBase) -" +
+                            "\r\n                              saturate(oneOverY * saturate(signOfY * signOfTop) * yMinusTop));" +
+                            "\r\n            ratio = saturate(ratio + saturate(cameraInLayer + pixelInLayer - 1));" +
+                            "\r\n            ratio = lerp(ratio, 1 - ratio, cameraInLayer * (1 - pixelInLayer));" +
+                            "\r\n			#if defined(SHD_ADDITIVE) || defined(SHD_MULTIPLICATIVE)" +
+                            "\r\n				float3 fogColor = float3(0.0f, 0.0f, 0.0f);" +
+                            "\r\n			#else" +
+                            "\r\n				float3 fogColor = cb_View.mFogColor.xyz;" +
+                            "\r\n			#endif" +
+                            "\r\n			FinalColor.xyz = FogPS(FinalColor.xyz, ratio * fDistance, cb_View.mFogDensity, fogColor);" +
+                            "\r\n            #if !defined(SHD_ADDITIVE) && !defined(SHD_MULTIPLICATIVE)" +
+                            "\r\n			    horizonFog = lerp(horizonFog, cb_View.mFogColor.xyz, cameraInLayer);" +
+                            "\r\n			#endif" +
                             "\r\n        }" +
-                            "\r\n    #endif" +
+                            "\r\n    }" +
+                            "\r\n	#if !defined(SHD_NO_HORIZON_FOG)" +
+                            "\r\n		FinalColor.xyz = (FinalColor.xyz * !belowBottomLayer) +" +
+                            "\r\n			(FogPSSquaredDist(FinalColor.xyz, distQuared, horizonFogDensity, horizonFog) * belowBottomLayer);" +
+                            "\r\n	#endif" +
                             "\r\n    return FinalColor;" +
                             "\r\n}\r\n");
 
-                            if (tweak.parameters[4].value == "1")
-                            {
-                                funclibText = funclibText.ReplaceAll(ref success, $"            const float DensFactor = {tweak.parameters[1].value};", $"            const float DensFactor = 0.0000000002 * saturate(1.0f - cb_mView.mAltitude/{tweak.parameters[5].value});");
-                            }
-
-
-                            generalText = generalText.AddAfter(ref success, "    #elif !defined(SHD_NO_FOG) && !defined(INPUT_SCREENSPACE_POSITION)", "\r\n        cColor = CalculateRayleightScatteringFog(Input.vPositionWS.y - cb_View.mViewInstanceOffset.y, cColor, pixelDistance);");
-                            terrainText = terrainText.AddAfter(ref success, "        #if !defined(SHD_NO_FOG)", "\r\n            color = CalculateRayleightScatteringFog(Input.vPosWS.y, color, eyeDist); //Draw Rayleigh");
-                            PBRText = PBRText.AddAfter(ref success, "    #elif !defined(SHD_NO_FOG) && !defined(INPUT_SCREENSPACE_POSITION)", "\r\n        color = CalculateRayleightScatteringFog(Input.vPositionWS.y - cb_View.mViewInstanceOffset.y, color, pixelDistance);");
-                            //PBRText = PBRText.AddAfter(ref success, "    #elif !defined(SHD_NO_FOG) && !defined(INPUT_SCREENSPACE_POSITION)", "\r\n        const float pixelDistance = distance(float3(0, 0, 0), Input.vPositionWS);");
-                     break;
+                            currentFile = FileIO.cloudFile;
+                            cloudText = cloudText.ReplaceAll(ref success, "        cColor = CalculateFog(cColor, viewInstanceWS, InstanceID);", $"cColor = VolumetricFogPS( In.mAlt, cColor, In.fFogDistance * {tweak.parameters[0].value}, cb_View.mFogDensity, cb_View.mFogColor.xyz);");
+                        break;
 
 
                         case "Sky Saturation":

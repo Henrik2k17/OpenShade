@@ -328,6 +328,10 @@ namespace OpenShade.Classes
             newTweak.parameters.Add(new Parameter("RayleighScatteringAltitudeDensityZero", "Altitude when density reaches zero", 15000, 15000, 15000, 15000, UIType.TextBox)); //{tweak.parameters[5].value}
             tweaks.Add(newTweak);
 
+            newTweak = new Tweak("ATMOSPHERE_CLOUD_FOG", Category.Atmosphere, "Cloud Fog", "");
+            newTweak.parameters.Add(new Parameter("Fog Influence", "Power", 1.00, 1.00, 1.00, 1.00, UIType.TextBox)); //{tweak.parameters[0].value}
+            tweaks.Add(newTweak);
+
             newTweak = new Tweak("ATMOSPHERE_FOG_FIX", Category.Atmosphere, "Atmospheres Fog Fix", "");
             tweaks.Add(newTweak);
 
