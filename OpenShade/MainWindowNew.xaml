@@ -1,0 +1,523 @@
+﻿<Window x:Class="OpenShade.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OpenShade"
+        xmlns:ap="clr-namespace:OpenShade.Classes"
+        mc:Ignorable="d"
+        Title="Open Shade" WindowStartupLocation="CenterScreen" Width="1000" Height="800" Icon="Assets\icon.ico" Loaded="Window_Loaded" Closed="Window_Closed" Style="{DynamicResource WindowStyle}">
+    <Window.Resources>
+        <Thickness x:Key="Thickness1">-2,-2,-2,0</Thickness>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="300*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="200" MinHeight="50"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100*"/>
+                <ColumnDefinition Width="90"/>
+                <ColumnDefinition Width="300"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Column="0" Grid.RowSpan="2" Margin="0,0,0,0" Orientation="Horizontal" Background="{DynamicResource BackgroundColor1}">
+                <Button x:Name="NewPreset_btn" HorizontalAlignment="Left" Height="20" Margin="10" Click="NewPreset_Click" ToolTip="New Preset" ContentTemplate="{DynamicResource NewFileIcon}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource MouseOverColor1}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button x:Name="OpenPreset_btn" HorizontalAlignment="Left" Height="20" Margin="10" Click="OpenPreset_Click" ToolTip="Open Preset..." ContentTemplate="{DynamicResource OpenFileIcon}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource MouseOverColor1}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button x:Name="SavePreset_btn" HorizontalAlignment="Left" Height="20" Margin="10" Click="SavePreset_Click" ToolTip="Save Preset" ContentTemplate="{DynamicResource SaveFileIcon}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource MouseOverColor1}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button x:Name="SavePresetAs_btn" HorizontalAlignment="Left" Height="20" Margin="10" Click="SavePresetAs_Click" ToolTip="Save Preset As..." ContentTemplate="{DynamicResource SaveFileAsIcon}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource MouseOverColor1}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <Border Style="{StaticResource SeparatorStyle}" Margin="5,5,5,5"/>
+
+                <Button x:Name="ApplyPreset_btn" HorizontalAlignment="Left" Height="20" Margin="10" Click="ApplyPreset" ToolTip="Apply Preset" ContentTemplate="{DynamicResource ApplyPresetIcon}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource MouseOverColor1}"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="False">
+                                    <Setter Property="Foreground" Value="Green"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Foreground" Value="{DynamicResource DisabledColor}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button x:Name="ResetShaderFiles_btn" HorizontalAlignment="Left" Height="20" Margin="10" Click="ResetShaderFiles" ToolTip="Restore default shader files" ContentTemplate="{DynamicResource ResetShadersIcon}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource MouseOverColor1}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button x:Name="ClearShaders_btn" HorizontalAlignment="Left" Height="20" Margin="10" ToolTip="Clear shader cache" Click="ClearShaders_Click" ContentTemplate="{DynamicResource ClearShadersIcon}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource MouseOverColor1}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <Border Style="{StaticResource SeparatorStyle}" Margin="5,5,5,5"/>
+
+                <Button x:Name="ResetToPreset_btn" HorizontalAlignment="Left" Height="20" Margin="10" Click="ResetToPreset" ToolTip="Reset all tweaks to the active preset" ContentTemplate="{DynamicResource ResetToPresetIcon}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource MouseOverColor1}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button x:Name="ResetToDefaults_btn" HorizontalAlignment="Left" Height="20" Margin="10" Click="ResetToDefaults" ToolTip="Reset all tweaks to their default value" ContentTemplate="{DynamicResource ResetToDefaultsIcon}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource MouseOverColor1}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+            </StackPanel>
+
+            <Label Grid.Column="1" Grid.Row="0" VerticalAlignment="Bottom" Content="Loaded Preset:"/>
+            <TextBlock Grid.Column="2" Grid.Row="0" VerticalAlignment="Bottom" Text="" x:Name="LoadedPreset_TextBlock" Width="Auto" Foreground="{DynamicResource TextColor}"/>
+
+            <Label Grid.Column="1" Grid.Row="1" VerticalAlignment="Bottom" Content="Active Preset:"/>
+            <TextBlock Grid.Column="2" Grid.Row="1" VerticalAlignment="Bottom" Text="" x:Name="ActivePreset_TextBlock" Width="Auto" Foreground="{DynamicResource TextColor}"/>
+
+        </Grid>
+
+        <TabControl Background="{DynamicResource WindowBackground}" Grid.Row="1" BorderThickness="0" x:Name="TabMain">
+            <TabItem x:Name="Tweak_Tab" Header="Tweaks">
+                <Grid x:Name="Tweaks_Grid" Margin="3,3,3,3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="300" MinWidth="100"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="400*" MinWidth="100"/>
+                    </Grid.ColumnDefinitions>
+                    <ListView x:Name="Tweak_List" Grid.Column="0" Width="Auto" SelectionChanged="TweakList_SelectionChanged">
+                        <ListView.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.ContainerStyle>
+                                    <Style TargetType="{x:Type GroupItem}">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate>
+                                                    <Expander IsExpanded="True" Margin="0,0,0,10">
+                                                        <Expander.Header>
+                                                            <Label Content="{Binding Name}" FontWeight="Bold"/>
+                                                        </Expander.Header>
+                                                        <ItemsPresenter />
+                                                    </Expander>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </GroupStyle.ContainerStyle>
+                            </GroupStyle>
+                        </ListView.GroupStyle>
+
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox IsChecked="{Binding isEnabled}" Margin="0,0,5,0" ap:DynamicStyle.BaseStyle="{DynamicResource {x:Type CheckBox}}">
+                                        <ap:DynamicStyle.DerivedStyle>
+                                            <Style TargetType="CheckBox">
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding stateChanged}" Value="True"/>
+                                                            <Condition Binding="{Binding isEnabled}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Foreground" Value="Green" />
+                                                    </MultiDataTrigger>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding stateChanged}" Value="True"/>
+                                                            <Condition Binding="{Binding isEnabled}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="BorderBrush" Value="Orange" />
+                                                    </MultiDataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ap:DynamicStyle.DerivedStyle>
+                                    </CheckBox>
+                                    <Label Content="{Binding name}">
+                                        <Label.Style>
+                                            <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding containsChanges}" Value="True">
+                                                        <Setter Property="Foreground" Value="Green" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Label.Style>
+                                    </Label>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+
+                    </ListView>
+
+                    <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Width="2"/>
+
+                    <StackPanel Grid.Column="2" VerticalAlignment="Top" Margin="10,10,10,10" Width="Auto" Height="Auto">
+                        <Label x:Name="TweakTitleTextblock" Content="" FontWeight="Bold"/>
+                        <Separator/>
+                        <TextBlock x:Name="TweakDescriptionTextblock" TextWrapping="Wrap" Height="100" Foreground="{DynamicResource TextColor}"/>
+                        <Label Content="Parameters"/>
+                        <Separator/>
+                        <Grid Margin="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="500"/>
+                                <ColumnDefinition Width="100*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel x:Name="TweakStack" Grid.Column="0"/>
+                            <StackPanel x:Name="TweakClearStack" Grid.Column="1"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="Post_Tab" Header="Post Process">
+                <Grid x:Name="Post_Grid" Margin="3,3,3,3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="300" MinWidth="100"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="400*" MinWidth="100"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ListView x:Name="PostProcess_List" Grid.Column="0" Width="Auto" SelectionChanged="PostProcessList_SelectionChanged" >
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox IsChecked="{Binding isEnabled}" Margin="0,0,5,0" ap:DynamicStyle.BaseStyle="{DynamicResource {x:Type CheckBox}}">
+                                        <ap:DynamicStyle.DerivedStyle>
+                                            <Style TargetType="CheckBox">
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding stateChanged}" Value="True"/>
+                                                            <Condition Binding="{Binding isEnabled}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Foreground" Value="Green" />
+                                                    </MultiDataTrigger>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding stateChanged}" Value="True"/>
+                                                            <Condition Binding="{Binding isEnabled}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="BorderBrush" Value="Orange" />
+                                                    </MultiDataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ap:DynamicStyle.DerivedStyle>
+                                    </CheckBox>
+                                    <Label Content="{Binding name}">
+                                        <Label.Style>
+                                            <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding containsChanges}" Value="True">
+                                                        <Setter Property="Foreground" Value="Green" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Label.Style>
+                                    </Label>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="AllowDrop" Value="True"/>
+                                <EventSetter Event="MouseMove" Handler="MouseMoveEventHandler"/>
+                                <EventSetter Event="Drop" Handler="DropEventHandler"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+
+                    <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Width="2"/>
+
+                    <!--<Grid DockPanel.Dock="Bottom">
+                        <Button Content="Save" Click="SaveCustomTweaks" Padding="5,5,5,5" Margin="0,0,120,0" Width="110" HorizontalAlignment="Right" Height="25"/>
+                        <Button Content="Cancel" Click="Cancel" Padding="5,5,5,5" Width="110" HorizontalAlignment="Right" Height="25"/>
+                    </Grid>-->
+
+                    <StackPanel Grid.Column="2" VerticalAlignment="Top" Margin="10,10,10,10" Width="Auto" Height="Auto">
+                        <Label x:Name="PostTitleTextblock" Content="" FontWeight="Bold"/>
+                        <Separator/>
+                        <TextBlock x:Name="PostDescriptionTextblock" TextWrapping="Wrap" Height="100" Foreground="{DynamicResource TextColor}"/>
+                        <Label Content="Parameters"/>
+                        <Separator/>
+                        <Grid Margin="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="500"/>
+                                <ColumnDefinition Width="100*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel x:Name="PostProcessStack" Grid.Column="0"/>
+                            <StackPanel x:Name="PostClearStack" Grid.Column="1"/>
+                        </Grid>
+                    </StackPanel>
+
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="Custom_Tab"  Header="Custom">
+                <Grid x:Name="Custom_Grid" Margin="3,3,3,3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="300" MinWidth="100"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="400*" MinWidth="100"/>
+                    </Grid.ColumnDefinitions>
+
+                    <DockPanel Grid.Column="0">
+                        <Grid DockPanel.Dock="Bottom" Margin="0,5,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200*"/>
+                                <ColumnDefinition Width="50"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" x:Name="AddCustomTweak_TextBox" Padding="0,5,0,5" />
+
+                            <Button Grid.Column="1" x:Name="AddCustomTweak_Button" Margin="5,0,0,0" Click="AddCustomTweak" Height="30">
+                                <ContentControl ContentTemplate="{DynamicResource AddIcon}"/>
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource MouseOverColor1}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </Grid>
+
+                        <ListView x:Name="CustomTweak_List" SelectionChanged="CustomTweakList_SelectionChanged" Width="Auto">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox IsChecked="{Binding isEnabled}" Margin="0,0,5,0"/>
+                                        <TextBlock Text="{Binding name}">
+                                            <TextBlock.ContextMenu>
+                                                <ContextMenu DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.DataContext}">
+                                                    <MenuItem Header="Delete" Click="DeleteCustomTweak"/>
+                                                </ContextMenu>
+                                            </TextBlock.ContextMenu>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </DockPanel>
+
+                    <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Width="2"/>
+                    <!--<Grid DockPanel.Dock="Bottom">
+                        <Button Content="Save" Click="SaveCustomTweaks" Padding="5,5,5,5" Margin="0,0,120,0" Width="110" HorizontalAlignment="Right" Height="25"/>
+                        <Button Content="Cancel" Click="Cancel" Padding="5,5,5,5" Width="110" HorizontalAlignment="Right" Height="25"/>
+                    </Grid>-->
+                    <Grid Margin="5" Grid.Column="2" x:Name="CustomTweaks_Grid" Visibility="Collapsed">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Labels -->
+                        <Label Grid.Row="0" Grid.Column="0" Margin="0,5,0,5">Tweak name:</Label>
+                        <Label Grid.Row="1" Grid.Column="0" Margin="0,5,0,5">Modified file:</Label>
+                        <Label Grid.Row="2" Grid.Column="0" Margin="0,5,0,5">Old code block:</Label>
+                        <Label Grid.Row="3" Grid.Column="0" Margin="0,5,0,5">New code block:</Label>
+
+                        <!-- Input -->
+                        <TextBox x:Name="CustomTweakName_TextBox" KeyUp="ParameterText_KeyUp" Grid.Row="0" Grid.Column="1" Width="250" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="0,5,0,5"/>
+                        <ComboBox x:Name="CustomTweakShaderFile_ComboBox" SelectionChanged="ShaderFile_SelectionChanged"  Foreground="{DynamicResource TextColor}" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Width="250" HorizontalAlignment="Left" Margin="0,5,0,5"/>
+                        <RichTextBox x:Name="CustomTweakOldCode_RichTextBox" LostFocus="RichTextBox_LostFocus"  Grid.Row="2" Grid.Column="1" Height="170" Margin="0,5,0,5" VerticalScrollBarVisibility="Auto"/>
+                        <RichTextBox x:Name="CustomTweakNewCode_RichTextBox" LostFocus="RichTextBox_LostFocus"  Grid.Row="3" Grid.Column="1" Height="170" Margin="0,5,0,5" VerticalScrollBarVisibility="Auto"/>
+
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Settings">
+                <DockPanel Margin="3,3,3,3">
+
+                    <GroupBox Header="Preset comments" Margin="5" DockPanel.Dock="Top" VerticalAlignment="Top">
+                        <TextBox x:Name="PresetComments_TextBox" VerticalAlignment="Bottom"  Height="180" Margin="20,10,0,10" VerticalContentAlignment="Top" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                    </GroupBox>
+
+                    <GroupBox Header="Directories" Margin="5" DockPanel.Dock="Top" VerticalAlignment="Top" Height="168">
+                        <Grid Margin="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="200*"/>
+                                <ColumnDefinition Width="50"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Grid.Column="0" Margin="0,5,0,5">Prepar3D v5 main:</Label>
+                            <Label Grid.Row="1" Grid.Column="0" Margin="0,5,0,5">Prepar3D v5 shaders:</Label>
+                            <Label Grid.Row="2" Grid.Column="0" Margin="0,5,0,5">Shader cache:</Label>
+                            <Label Grid.Row="3" Grid.Column="0" Margin="0,5,0,5">Shader backup:</Label>
+
+                            <TextBox Grid.Row="0" Grid.Column="1" x:Name="P3DMain_TextBox" VerticalAlignment="Bottom"  Height="20" Margin="20,5,0,5" TextWrapping="NoWrap" IsReadOnly="True"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" x:Name="P3DShaders_TextBox" VerticalAlignment="Bottom" Height="20" Margin="20,5,0,5" TextWrapping="NoWrap" IsReadOnly="True"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" x:Name="ShaderCache_TextBox" VerticalAlignment="Bottom" Height="20" Margin="20,5,0,5" TextWrapping="NoWrap" IsReadOnly="True"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" x:Name="ShaderBackup_TextBox" VerticalAlignment="Bottom" Height="20" Margin="20,5,0,5" TextWrapping="NoWrap" IsReadOnly="True"/>
+
+                            <Button Grid.Row="0" Grid.Column="2" x:Name="P3DMain_Button" Height="20" Width="25" Content="..." HorizontalAlignment="Left" Margin="10,0,0,0" Visibility="Collapsed"/>
+                            <Button Grid.Row="1" Grid.Column="2" x:Name="P3DShaders_Button" Height="20" Width="25" Content="..." HorizontalAlignment="Left" Margin="10,0,0,0" Visibility="Collapsed"/>
+                            <Button Grid.Row="2" Grid.Column="2" x:Name="ShaderCache_Button" Height="20" Width="25" Content="..." HorizontalAlignment="Left" Margin="10,0,0,0" Visibility="Collapsed"/>
+                            <Button Grid.Row="3" Grid.Column="2" x:Name="ShaderBackup_Button" Click="ShaderBackup_Button_Click" Height="20" Width="25" Content="..." HorizontalAlignment="Left" Margin="10,0,0,0"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Header="User Interface" Margin="5" DockPanel.Dock="Top" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <Grid Margin="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Grid.Column="0">Theme:</Label>
+                            <ComboBox x:Name="Theme_ComboBox" Foreground="{DynamicResource TextColor}" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Width="100" HorizontalAlignment="Left" SelectionChanged="Theme_SelectionChanged"/>
+                        </Grid>
+                    </GroupBox>
+
+                </DockPanel>
+            </TabItem>
+
+            <TabItem Header="About">
+                <DockPanel Margin="3,3,3,3">
+
+                    <TextBlock HorizontalAlignment="Left" TextWrapping="NoWrap"
+                               Text="Version" VerticalAlignment="Top" FontSize="20" FontWeight="Bold" />
+
+                    <TextBlock HorizontalAlignment="Left" TextWrapping="NoWrap"
+                               Text="0.0.1 Initial V5 Test" VerticalAlignment="Top" FontSize="20" RenderTransformOrigin="0.5,0.5" >
+                        <TextBlock.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform X="10"/>
+                            </TransformGroup>
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+
+                    <TextBlock HorizontalAlignment="Left" TextWrapping="NoWrap"
+                               Text="V4 Tweaks Working in V5 without changing" VerticalAlignment="Top" FontSize="10" RenderTransformOrigin="0.0,0.0" FontWeight="Bold" >
+                        <TextBlock.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform X="-232"/>
+                                <TranslateTransform Y="40"/>
+                            </TransformGroup>
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+
+                    <TextBlock HorizontalAlignment="Left" TextWrapping="NoWrap"
+                               Text="Clouds: Cirrus Lighting, Cloud lighting tuning, Cloud Saturation, Cloud puffs width and height scaling" VerticalAlignment="Top" FontSize="10" RenderTransformOrigin="0.0,0.0" Margin="0,2,0,0" >
+                        <TextBlock.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform X="-438"/>
+                                <TranslateTransform Y="60"/>
+                            </TransformGroup>
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+
+                </DockPanel>
+            </TabItem>
+
+        </TabControl>
+
+        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Height="2"/>
+
+        <DockPanel Margin="3,3,3,3" Grid.Row="3" Height="Auto" >
+            <Label Content="Log" DockPanel.Dock="Top" Margin="5"/>
+            <RichTextBox x:Name="Log_RichTextBox" IsReadOnly="True" VerticalScrollBarVisibility="Auto">
+                <RichTextBox.Resources>
+                    <Style TargetType="{x:Type Paragraph}">
+                        <Setter Property="Margin" Value="0"/>
+                    </Style>
+                </RichTextBox.Resources>
+            </RichTextBox>
+        </DockPanel>
+    </Grid>
+</Window>

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
+using System.Security.Cryptography;
 using System.Windows;
 
 namespace OpenShade.Classes
@@ -13,13 +16,17 @@ namespace OpenShade.Classes
 
         public const string settingsFile = "config.txt";
 
+        public const string PrecipParticleFile = "PrecipParticle.fx";
         public const string cloudFile = "Cloud.fx";
         public const string generalFile = "General.fx";
-        public const string terrainFile = "GPUTerrain.fx";
+        public const string terrainFile = "Terrain.fx";
         public const string funclibFile = "FuncLibrary.fxh";
-        public const string terrainFXHFile = "GPUTerrain.fxh";
+        public const string terrainFXHFile = "Terrain.fxh";
         public const string shadowFile = "Shadow.fxh";
         public const string HDRFile = "HDR.hlsl";
+        public const string PBRFile = "PBRBase.fx";
+        public const string compositeFile = "DeferredComposite.fx";
+
 
         public FileIO(MainWindow handle)
         {
@@ -32,11 +39,14 @@ namespace OpenShade.Classes
             {
                 MainWindow.cloudText = File.ReadAllText(dir + cloudFile);
                 MainWindow.generalText = File.ReadAllText(dir + generalFile);
-                MainWindow.terrainText = File.ReadAllText(dir + terrainFile);
                 MainWindow.funclibText = File.ReadAllText(dir + funclibFile);
                 MainWindow.terrainFXHText = File.ReadAllText(dir + terrainFXHFile);
+                MainWindow.terrainText = File.ReadAllText(dir + terrainFile);
                 MainWindow.shadowText = File.ReadAllText(dir + shadowFile);
                 MainWindow.HDRText = File.ReadAllText(dir + HDRFile);
+                MainWindow.PBRText = File.ReadAllText(dir + PBRFile);
+                MainWindow.compositeText = File.ReadAllText(dir + compositeFile);
+                MainWindow.PrecipParticleText = File.ReadAllText(dir + PrecipParticleFile);
 
                 return true;
 
@@ -51,11 +61,14 @@ namespace OpenShade.Classes
         public bool CheckShaderBackup(string dir) {
             if (File.Exists(dir + cloudFile) == false) { return false; }
             if (File.Exists(dir + generalFile) == false) { return false; }
-            if (File.Exists(dir + terrainFile) == false) { return false; }
             if (File.Exists(dir + funclibFile) == false) { return false; }
             if (File.Exists(dir + terrainFXHFile) == false) { return false; }
+            if (File.Exists(dir + terrainFile) == false) { return false; }
             if (File.Exists(dir + shadowFile) == false) { return false; }
             if (File.Exists(dir + HDRFile) == false) { return false; }
+            if (File.Exists(dir + PBRFile) == false) { return false; }
+            if (File.Exists(dir + compositeFile) == false) { return false; }
+            if (File.Exists(dir + PrecipParticleFile) == false) { return false; }
 
             return true;
         }
@@ -66,10 +79,13 @@ namespace OpenShade.Classes
             {
                 File.Copy(origin + cloudFile, destination + cloudFile, true);
                 File.Copy(origin + generalFile, destination + generalFile, true);
-                File.Copy(origin + terrainFile, destination + terrainFile, true);
                 File.Copy(origin + funclibFile, destination + funclibFile, true);
                 File.Copy(origin + terrainFXHFile, destination + terrainFXHFile, true);
+                File.Copy(origin + terrainFile, destination + terrainFile, true);
                 File.Copy(origin + shadowFile, destination + shadowFile, true);
+                File.Copy(origin + PBRFile, destination + PBRFile, true);
+                File.Copy(origin + compositeFile, destination + compositeFile, true);
+                File.Copy(origin + PrecipParticleFile, destination + PrecipParticleFile, true);
 
                 if (origin.Contains("ShadersHLSL"))
                 {
@@ -133,7 +149,7 @@ namespace OpenShade.Classes
                 else if (!pref.KeyExists("IsActive", tweak.key))
                 {
                     mainWindowHandle.Log(ErrorType.Warning, "Missing entry 'IsActive' for tweak [" + tweak.key + "]");
-                    break;
+                    //break;
                 }
                 else
                 {
@@ -178,93 +194,6 @@ namespace OpenShade.Classes
             }           
         }
 
-        public void LoadCustomTweaks(ObservableCollection<CustomTweak> customTweaks, IniFile pref, bool monitorChanges)
-        {
-            // TODO: Find a decent way to check if there are changes between the new loaded custom tweaks and the old ones
-
-            customTweaks.Clear();
-            int count = 0;
-            string section = "CUSTOM_TWEAK" + count.ToString();
-            bool customExists = pref.KeyExists("isActive", section);
-
-            while (customExists)
-            {
-                var newTweak = new CustomTweak(section, 
-                    pref.Read("Name", section),
-                    Path.GetFileName(pref.Read("Shader", section)), // to remove Post-Process// directory for HDR file
-                    int.Parse(pref.Read("Index", section)),
-                    pref.Read("OldPattern", section).FromHexString(),
-                    pref.Read("NewPattern", section).FromHexString(),
-                    pref.Read("IsActive", section) == "1" ? true : false);
-
-                customTweaks.Add(newTweak);
-
-                count++;
-                section = "CUSTOM_TWEAK" + count.ToString();
-                customExists = pref.KeyExists("isActive", section);
-            }
-
-        }
-
-        public void LoadPostProcesses(List<PostProcess> postProcesses, IniFile pref, bool monitorChanges)
-        {
-            foreach (var post in postProcesses)
-            {
-                bool wasEnabled = post.isEnabled;
-                if (!pref.KeyExists("IsActive", post.key))
-                {
-                    mainWindowHandle.Log(ErrorType.Warning, "Missing entry 'IsActive' for post-process [" + post.key + "]");
-                    break;
-                }
-                post.isEnabled = pref.Read("IsActive", post.key) == "1" ? true : false;
-
-                if (!monitorChanges)
-                {
-                    post.wasEnabled = post.isEnabled;
-                }                
-
-                post.index = int.Parse(pref.Read("Index", post.key));
-
-                string rawParams = pref.Read("Params", post.key).FromHexString();
-                string[] lines = rawParams.Split(new string[] { "\r\n" }, StringSplitOptions.None);
-
-                foreach (var param in post.parameters)
-                {
-                    param.oldValue = param.value;
-
-                    if (param.control == UIType.RGB)
-                    {
-                        string dataR = param.dataName.Split(',')[0];
-                        string dataG = param.dataName.Split(',')[1];
-                        string dataB = param.dataName.Split(',')[2];
-
-                        string identifiedLineR = lines.FirstOrDefault(p => p.StartsWith(dataR));
-                        string identifiedLineG = lines.FirstOrDefault(p => p.StartsWith(dataG));
-                        string identifiedLineB = lines.FirstOrDefault(p => p.StartsWith(dataB));
-
-                        if (identifiedLineR == null) { mainWindowHandle.Log(ErrorType.Warning, "Missing entry '" + dataR + "' for post-process [" + post.key + "]"); break; }
-                        if (identifiedLineG == null) { mainWindowHandle.Log(ErrorType.Warning, "Missing entry '" + dataG + "' for post-process [" + post.key + "]"); break; }
-                        if (identifiedLineB == null) { mainWindowHandle.Log(ErrorType.Warning, "Missing entry '" + dataB + "' for post-process [" + post.key + "]"); break; }
-
-                        param.value = identifiedLineR.Split('=')[1] + "," + identifiedLineG.Split('=')[1] + "," + identifiedLineB.Split('=')[1];
-                    }
-                    else
-                    {
-                        string identifiedLine = lines.FirstOrDefault(p => p.StartsWith(param.dataName));
-                        if (identifiedLine == null) { mainWindowHandle.Log(ErrorType.Warning, "Missing entry '" + param.dataName + "' for post-process [" + post.key + "]"); break; }
-                        param.value = identifiedLine.Split('=')[1];
-                    }
-                    
-                    if (!monitorChanges) {
-                        param.oldValue = param.value;
-                    }
-                }                
-            }
-
-            // Reorder the list based on process index
-            postProcesses.Sort((x, y) => x.index.CompareTo(y.index));
-        }
-
         public string LoadComments(IniFile pref) {
             if (pref.KeyExists("Comment", "PRESET COMMENTS")) {
                 string rawComment = pref.Read("Comment", "PRESET COMMENTS");
@@ -274,10 +203,21 @@ namespace OpenShade.Classes
             return "";            
         }
 
-        public void SavePreset(List<Tweak> tweaks, ObservableCollection<CustomTweak> customTweaks, List<PostProcess> postProcesses, string comment, IniFile preset)
-        {
-            // Standard tweaks    
+        public string MD5IntegrityCheck(string fileName) {
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = File.OpenRead(fileName))
+                {
+                    var hash = md5.ComputeHash(stream);
+                    return BitConverter.ToString(hash).Replace("-", string.Empty);
+                }
+            }
+        }
 
+        public void SavePreset(List<Tweak> tweaks, string comment, IniFile preset)
+        {
+
+            // Standard tweaks    
             foreach (var tweak in tweaks) {
                 preset.Write("IsActive", tweak.isEnabled ? "1" : "0", tweak.key);
 
@@ -308,53 +248,6 @@ namespace OpenShade.Classes
                     }
                 }                
             }       
-
-            // Custom tweaks
-
-            foreach (var custom in customTweaks)
-            {
-                preset.Write("IsActive", custom.isEnabled ? "1" : "0", custom.key);
-                preset.Write("Name", custom.name, custom.key);
-                preset.Write("Shader", custom.shaderFile, custom.key);
-                preset.Write("Index", custom.index.ToString(), custom.key);
-                preset.Write("OldPattern", custom.oldCode.ToHexString(), custom.key);
-                preset.Write("NewPattern", custom.newCode.ToHexString(), custom.key);                
-            }
-
-            // Post-Process
-            
-            foreach (var post in postProcesses)
-            {
-                preset.Write("IsActive", post.isEnabled ? "1" : "0", post.key);
-                preset.Write("Index", post.index.ToString(), post.key);
-
-                string finalString = "";
-
-                foreach (var param in post.parameters)
-                {
-                    if (param.control == UIType.RGB)
-                    {
-                        string dataR = param.dataName.Split(',')[0];
-                        string dataG = param.dataName.Split(',')[1];
-                        string dataB = param.dataName.Split(',')[2];
-
-                        string valueR = param.value.Split(',')[0];
-                        string valueG = param.value.Split(',')[1];
-                        string valueB = param.value.Split(',')[2];
-
-                        finalString += dataR + "=" + valueR + "\r\n";
-                        finalString += dataG + "=" + valueG + "\r\n";
-                        finalString += dataB + "=" + valueB + "\r\n";
-                    }
-                    else
-                    {
-                        finalString += param.dataName + "=" + param.value + "\r\n";
-                    }
-
-                    preset.Write("Params", finalString.ToHexString(), post.key);
-                }                
-            }
-
             // Comment
             preset.Write("Comment", comment.Replace("\r\n", "~^#"), "PRESET COMMENTS");
         }
@@ -413,12 +306,6 @@ namespace OpenShade.Classes
                         case "Col1_Width":
                             mainWindowHandle.Tweaks_Grid.ColumnDefinitions[0].Width = new GridLength(double.Parse(parts[1].Trim()));
                             break;
-                        case "Col2_Width":
-                            mainWindowHandle.Post_Grid.ColumnDefinitions[0].Width = new GridLength(double.Parse(parts[1].Trim()));
-                            break;
-                        case "Col3_Width":
-                            mainWindowHandle.Custom_Grid.ColumnDefinitions[0].Width = new GridLength(double.Parse(parts[1].Trim()));
-                            break;
                     }
                 }
                 else
@@ -434,15 +321,12 @@ namespace OpenShade.Classes
 
             if (mainWindowHandle.activePresetPath != null && File.Exists(mainWindowHandle.activePresetPath)) { lines.Add("Active_Preset, " + mainWindowHandle.activePresetPath); }
             if (mainWindowHandle.loadedPresetPath != null && File.Exists(mainWindowHandle.loadedPresetPath)) { lines.Add("Loaded_Preset, " + mainWindowHandle.loadedPresetPath); }
-
             lines.Add("P3D_Version, " + mainWindowHandle.P3DVersion);
-            lines.Add("Theme, " + ((App)Application.Current).CurrentTheme.ToString());
+            //lines.Add("Theme, " + ((App)Application.Current).CurrentTheme.ToString());
             lines.Add("Backup_Directory, " + mainWindowHandle.backupDirectory);
             lines.Add("Main_Width, " + mainWindowHandle.Width.ToString());
             lines.Add("Main_Height, " + mainWindowHandle.Height.ToString());
-            lines.Add("Col1_Width, " + mainWindowHandle.Tweaks_Grid.ColumnDefinitions[0].Width.ToString());
-            lines.Add("Col2_Width, " + mainWindowHandle.Post_Grid.ColumnDefinitions[0].Width.ToString());
-            lines.Add("Col3_Width, " + mainWindowHandle.Custom_Grid.ColumnDefinitions[0].Width.ToString());         
+            lines.Add("Col1_Width, " + mainWindowHandle.Tweaks_Grid.ColumnDefinitions[0].Width.ToString());       
 
             try
             {

@@ -1,0 +1,84 @@
+﻿<Window x:Class="OpenShade.Pages.HazeEffectCompare"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OpenShade.Pages"
+        mc:Ignorable="d"
+        Title="RayleighScatteringCompare" WindowStartupLocation="CenterScreen" Height="500" MaxHeight="500" Width="600" MaxWidth="600" MinHeight="450" MinWidth="800" ResizeMode="NoResize">
+    <Window.Resources>
+        <ControlTemplate x:Key="CustomSplitter69" TargetType="{x:Type GridSplitter}">
+            <Grid>
+                <Rectangle IsHitTestVisible="False" Fill="Black"/>
+                <Border Background="White" Width="25" Height="25" CornerRadius="50" Margin="-13 0">
+                    <Path Stroke="Black" StrokeThickness="0.6" Width="17" Height="7" Data="m 4.4549201,1048.4664 -4.33056515,1.9095 4.33056515,1.9094 0,-3.8189 z m 3.0901599,0 0,3.8189 4.330565,-1.9094 -4.330565,-1.9095 z m -3.2239449,0.2053 0,3.4083 -3.86518514,-1.7041 3.86518514,-1.7042 z m 3.3577349,0 3.865185,1.7042 -3.865185,1.7041 0,-3.4083 z" Stretch="Fill"/>
+                </Border>
+            </Grid>
+        </ControlTemplate>
+    </Window.Resources>
+
+
+
+    <Grid Margin="0,0,0,1">
+        <!--Tweak Overview None -> Tweaked-->
+        <Grid x:Name="Grid1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Image x:Name="After1" Source="/Resources/Images/HazeEffect/HazeEffectPowerOneNine.jpg" HorizontalAlignment="Left"
+                Grid.ColumnSpan="3" />
+            <Image x:Name="Before1" Source="/Resources/Images/HazeEffect/HazeEffectPowerOneZeroOne.jpg"  HorizontalAlignment="Left"
+                Width="{Binding ActualWidth, ElementName=After1}"
+                Height="{Binding ActualHeight, ElementName=After1}" />
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"  ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Panel.ZIndex="2" Width="2.5" Background="White">
+            </GridSplitter>
+            <GridSplitter Template="{DynamicResource CustomSplitter69}"  Grid.Column="1" Height="Auto" Width="1" HorizontalAlignment="Center"/>
+        </Grid>
+ 
+        <!--Tweaked Default -> Edited Diffuse Value-->
+        <Grid x:Name="Grid2">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected,ElementName=BoxItemDensity}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Image x:Name="After2" Source="/Resources/Images/HazeEffect/HazeEffectDensityOneZero.jpg" HorizontalAlignment="Left"
+                Grid.ColumnSpan="3" />
+            <Image x:Name="Before2" Source="/Resources/Images/HazeEffect/HazeEffectDensityZeroFive.jpg"  HorizontalAlignment="Left"
+                Width="{Binding ActualWidth, ElementName=After2}"
+                Height="{Binding ActualHeight, ElementName=After2}" />
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"  ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Panel.ZIndex="2" Width="2.5" Background="White">
+            </GridSplitter>
+            <GridSplitter Template="{DynamicResource CustomSplitter69}"  Grid.Column="1" Height="Auto" Width="1" HorizontalAlignment="Center"/>
+        </Grid>
+
+        <Button Content="Close" Click="CloseBTN_Click" HorizontalAlignment="Center" Height="29" Margin="0,0,0,09" Grid.Row="1" VerticalAlignment="Bottom" Grid.ColumnSpan="3" Width="150"/>
+        <ComboBox HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="29"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,0,-600,09" Width="138">
+            <ComboBoxItem x:Name="BoxItemPower" IsSelected="True">Power</ComboBoxItem>
+            <ComboBoxItem x:Name="BoxItemDensity">Density</ComboBoxItem>
+        </ComboBox>
+
+
+    </Grid>
+
+</Window>
